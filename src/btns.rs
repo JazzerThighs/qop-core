@@ -46,7 +46,7 @@ pub struct DeltaToggle {
     pressed: bool,
     idx_deltas: Vec<i64>,
     xtra_deltas: Vec<f64>,
-    transpose_one: Option<Vec<TransposeTrigger>>,
+    transpose_one: Vec<TransposeTrigger>,
 }
 
 impl Default for DeltaToggle {
@@ -56,7 +56,7 @@ impl Default for DeltaToggle {
             pressed: false,
             idx_deltas: vec![0i64],
             xtra_deltas: vec![0.0f64],
-            transpose_one: None,
+            transpose_one: vec![],
         };
     }
 }
@@ -91,8 +91,8 @@ pub struct Pluck {
     pluck: BtnToggle,
     idx_out: usize,
     xtra_out: f64,
-    holds: Option<HoldBtns>,
-    transpose_all: Option<Vec<TransposeTrigger>>,
+    holds: HoldBtns,
+    transpose_all: Vec<TransposeTrigger>,
 }
 
 impl Default for Pluck {
@@ -101,8 +101,8 @@ impl Default for Pluck {
             pluck: BtnToggle::default(),
             idx_out: 0usize,
             xtra_out: 0.0f64,
-            holds: None,
-            transpose_all: None,
+            holds: HoldBtns::default(),
+            transpose_all: vec![],
         };
     }
 }
@@ -113,16 +113,16 @@ impl Default for Pluck {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ValveSet {
     buttons: Vec<DeltaToggle>,
-    holds: Option<HoldBtns>,
-    transpose_all: Option<Vec<TransposeTrigger>>,
+    holds: HoldBtns,
+    transpose_all: Vec<TransposeTrigger>,
 }
 
 impl Default for ValveSet {
     fn default() -> ValveSet {
         return ValveSet {
             buttons: vec![DeltaToggle::default()],
-            holds: None,
-            transpose_all: None,
+            holds: HoldBtns::default(),
+            transpose_all: vec![],
         };
     }
 }
@@ -154,16 +154,16 @@ impl ValveSet {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FretSet {
     buttons: Vec<DeltaToggle>,
-    holds: Option<HoldBtns>,
-    transpose_all: Option<Vec<TransposeTrigger>>,
+    holds: HoldBtns,
+    transpose_all: Vec<TransposeTrigger>,
 }
 
 impl Default for FretSet {
     fn default() -> FretSet {
         return FretSet {
             buttons: vec![DeltaToggle::default()],
-            holds: None,
-            transpose_all: None,
+            holds: HoldBtns::default(),
+            transpose_all: vec![],
         };
     }
 }
@@ -198,8 +198,8 @@ pub struct RadioSet {
     max_pressed: u8,
     min_pressed: u8,
     pressed: VecDeque<usize>,
-    holds: Option<HoldBtns>,
-    transpose_all: Option<Vec<TransposeTrigger>>,
+    holds: HoldBtns,
+    transpose_all: Vec<TransposeTrigger>,
 }
 
 impl Default for RadioSet {
@@ -209,8 +209,8 @@ impl Default for RadioSet {
             max_pressed: 1u8,
             min_pressed: 0u8,
             pressed: VecDeque::new(),
-            holds: None,
-            transpose_all: None,
+            holds: HoldBtns::default(),
+            transpose_all: vec![],
         };
     }
 }
@@ -244,7 +244,7 @@ pub struct Combo {
     combo: Vec<bool>,
     idx_deltas: Vec<i64>,
     xtra_deltas: Vec<f64>,
-    transpose_one: Option<Vec<TransposeTrigger>>,
+    transpose_one: Vec<TransposeTrigger>,
 }
 
 impl Default for Combo {
@@ -253,7 +253,7 @@ impl Default for Combo {
             combo: vec![],
             idx_deltas: vec![0i64],
             xtra_deltas: vec![0.0f64],
-            transpose_one: None,
+            transpose_one: vec![],
         };
     }
 }
@@ -263,8 +263,8 @@ impl Default for Combo {
 pub struct AeroSet {
     buttons: Vec<BtnToggle>,
     combos: Vec<Combo>,
-    holds: Option<HoldBtns>,
-    transpose_all: Option<Vec<TransposeTrigger>>,
+    holds: HoldBtns,
+    transpose_all: Vec<TransposeTrigger>,
 }
 
 impl Default for AeroSet {
@@ -272,8 +272,8 @@ impl Default for AeroSet {
         let mut aero_set: AeroSet = AeroSet {
             buttons: vec![BtnToggle::default()],
             combos: vec![Combo::default()],
-            holds: None,
-            transpose_all: None,
+            holds: HoldBtns::default(),
+            transpose_all: vec![],
         };
         aero_set.combos[0].combo.push(true);
         return aero_set;

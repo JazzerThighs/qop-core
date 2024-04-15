@@ -60,7 +60,8 @@ impl Qop {
             }
         }
     }
-
+    pub fn change_pluck_keys(&mut self, p_idx: usize, k_ids: &[usize]) {todo!()}
+    
     pub fn insert_valve_set(&mut self, idx: usize) {
         self.valve_sets.insert(idx, ValveSet::default());
         self.valve_sets[idx].insert_set(self.plucks.len());
@@ -70,6 +71,8 @@ impl Qop {
             self.valve_sets.remove(idx);
         }
     }
+    pub fn insert_valve(&mut self, set_idx: usize, v_idx: usize) {todo!()}
+    pub fn remove_valve(&mut self, set_idx: usize, v_idx: usize) {todo!()}
 
     pub fn insert_fret_set(&mut self, idx: usize) {
         self.fret_sets.insert(idx, FretSet::default());
@@ -80,6 +83,8 @@ impl Qop {
             self.fret_sets.remove(idx);
         }
     }
+    pub fn insert_fret(&mut self, set_idx: usize, f_idx: usize) {todo!()}
+    pub fn remove_fret(&mut self, set_idx: usize, f_idx: usize) {todo!()}
 
     pub fn insert_radio_set(&mut self, idx: usize) {
         self.radio_sets.insert(idx, RadioSet::default());
@@ -90,6 +95,8 @@ impl Qop {
             self.radio_sets.remove(idx);
         }
     }
+    pub fn insert_radio(&mut self, set_idx: usize, r_idx: usize) {todo!()}
+    pub fn remove_radio(&mut self, set_idx: usize, r_idx: usize) {todo!()}
 
     pub fn insert_aero_set(&mut self, idx: usize) {
         self.aero_sets.insert(idx, AeroSet::default());
@@ -100,4 +107,13 @@ impl Qop {
             self.aero_sets.remove(idx);
         }
     }
+    pub fn insert_aero(&mut self, set_idx: usize, a_idx: usize) {todo!()}
+    pub fn remove_aero(&mut self, set_idx: usize, a_idx: usize) {todo!()}
+    pub fn insert_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
+    pub fn remove_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
+
+    pub fn change_set_btn_keys(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize, k_ids: &[usize]) {todo!()}
+    pub fn change_hold_btn(&mut self, set_idx: usize, k_ids: &[usize], h_kind: u8) {todo!()}
+    pub fn change_transpose_all(&mut self, set_idx: usize, k_ids: &[usize], i_delta: i64, x_delta: f64) {todo!()}
+    pub fn change_transpose_one(&mut self, set_idx: usize, btn_idx: usize, k_ids: &[usize], i_delta: i64, x_delta: f64) {todo!()}
 }
