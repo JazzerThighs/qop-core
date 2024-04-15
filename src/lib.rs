@@ -61,7 +61,8 @@ impl Qop {
         }
     }
     pub fn change_pluck_keys(&mut self, p_idx: usize, k_ids: &[usize]) {todo!()}
-    
+    pub fn change_pluck_delta(&mut self, p_idx: usize, i_deltas: &[i64], x_deltas: &[f64]) {todo!()}
+     
     pub fn insert_valve_set(&mut self, idx: usize) {
         self.valve_sets.insert(idx, ValveSet::default());
         self.valve_sets[idx].insert_set(self.plucks.len());
@@ -112,6 +113,7 @@ impl Qop {
     pub fn insert_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
     pub fn remove_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
 
+    pub fn change_set_delta(&mut self, set_kind: u8, set_idx: usize, d_idx: usize, i_deltas: &[i64], x_deltas: &[f64]) {todo!()}
     pub fn change_set_btn_keys(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize, k_ids: &[usize]) {todo!()}
     pub fn change_hold_btn(&mut self, set_idx: usize, k_ids: &[usize], h_kind: u8) {todo!()}
     pub fn change_transpose_all(&mut self, set_idx: usize, k_ids: &[usize], i_delta: i64, x_delta: f64) {todo!()}
