@@ -6,28 +6,31 @@ use serde::{Deserialize, Serialize};
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Qop {
+    key_idxs: Vec<usize>,
     plucks: Vec<Pluck>,
     valve_sets: Vec<ValveSet>,
     fret_sets: Vec<FretSet>,
     radio_sets: Vec<RadioSet>,
     aero_sets: Vec<AeroSet>,
-    key_idxs: Vec<usize>,
 }
 
 impl Default for Qop {
     fn default() -> Self {
         return Qop {
+            key_idxs: vec![0usize],
             plucks: vec![Pluck::default()],
             valve_sets: vec![],
             fret_sets: vec![],
             radio_sets: vec![],
             aero_sets: vec![],
-            key_idxs: vec![0usize],
         };
     }
 }
 
 impl Qop {
+    pub fn push_key_idx(key_id_val: usize) {todo!()}
+    pub fn remove_key_idx(key_id_val: usize) {todo!()}
+
     pub fn insert_pluck(&mut self, idx: usize) {
         self.plucks.insert(idx, Pluck::default());
         for set in 0..self.valve_sets.len() {
@@ -60,9 +63,11 @@ impl Qop {
             }
         }
     }
-    pub fn change_pluck_keys(&mut self, p_idx: usize, k_ids: &[usize]) {todo!()}
-    pub fn change_pluck_delta(&mut self, p_idx: usize, i_deltas: &[i64], x_deltas: &[f64]) {todo!()}
-     
+    pub fn push_pluck_key(&mut self, p_idx: usize, k_id_val: usize) {todo!()}
+    pub fn remove_pluck_key(&mut self, p_idx: usize, k_id_val: usize) {todo!()}
+    pub fn change_pluck_idx_out(&mut self, p_idx: usize, i_del_val: i64) {todo!()}
+    pub fn change_pluck_xtra_out(&mut self, p_idx: usize, i_del_val: i64) {todo!()}
+    
     pub fn insert_valve_set(&mut self, idx: usize) {
         self.valve_sets.insert(idx, ValveSet::default());
         self.valve_sets[idx].insert_set(self.plucks.len());
@@ -113,9 +118,13 @@ impl Qop {
     pub fn insert_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
     pub fn remove_combo(&mut self, set_idx: usize, c_idx: usize) {todo!()}
 
-    pub fn change_set_delta(&mut self, set_kind: u8, set_idx: usize, d_idx: usize, i_deltas: &[i64], x_deltas: &[f64]) {todo!()}
-    pub fn change_set_btn_keys(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize, k_ids: &[usize]) {todo!()}
-    pub fn change_hold_btn(&mut self, set_idx: usize, k_ids: &[usize], h_kind: u8) {todo!()}
-    pub fn change_transpose_all(&mut self, set_idx: usize, k_ids: &[usize], i_delta: i64, x_delta: f64) {todo!()}
-    pub fn change_transpose_one(&mut self, set_idx: usize, btn_idx: usize, k_ids: &[usize], i_delta: i64, x_delta: f64) {todo!()}
+    pub fn change_set_idx_delta(&mut self, set_kind: u8, set_idx: usize, del_idx: usize, i_del_idx: usize, i_del_val: i64) {todo!()}
+    pub fn change_set_xrta_delta(&mut self, set_kind: u8, set_idx: usize, del_idx: usize, x_del_idx: usize, x_del_val: i64) {todo!()}
+    pub fn push_set_btn_key(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize, k_id_val: usize) {todo!()}
+    pub fn remove_set_btn_key(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize, k_id_val: usize) {todo!()}
+    pub fn push_set_hold_btn_key(&mut self, set_kind: u8, set_idx: usize, h_kind: u8, k_id_val: usize) {todo!()}
+    pub fn push_transpose_all_key(&mut self, set_kind: u8, set_idx: usize, k_id_val: usize, i_delta: i64, x_delta: f64) {todo!()}
+    pub fn remove_transpose_all_key(&mut self, set_kind: u8, set_idx: usize, k_id_val: usize, i_delta: i64, x_delta: f64) {todo!()}
+    pub fn push_transpose_one_key(&mut self, set_kind: u8, set_idx: usize, d_idx: usize, k_id_val: usize, i_delta: i64, x_delta: f64) {todo!()}
+    pub fn remove_transpose_one_key(&mut self, set_kind: u8, set_idx: usize, d_idx: usize, k_id_val: usize, i_delta: i64, x_delta: f64) {todo!()}
 }

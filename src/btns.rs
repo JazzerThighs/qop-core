@@ -2,19 +2,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct BtnToggle {
     toggles: Vec<usize>,
     pressed: bool,
-}
-
-impl Default for BtnToggle {
-    fn default() -> BtnToggle {
-        return BtnToggle {
-            toggles: vec![],
-            pressed: false,
-        };
-    }
 }
 
 /* ************************************************************************* */
@@ -27,12 +18,12 @@ pub struct TransposeTrigger {
     xtra_delta: f64,
 }
 
-impl Default for TransposeTrigger {
-    fn default() -> TransposeTrigger {
+impl TransposeTrigger {
+    pub fn new(key_id_val: usize, i_del_val: i64, x_del_val: f64) -> TransposeTrigger {
         return TransposeTrigger {
-            triggers: vec![],
-            idx_delta: 0i64,
-            xtra_delta: 0.0f64,
+            triggers: vec![key_id_val],
+            idx_delta: i_del_val,
+            xtra_delta: x_del_val,
         };
     }
 }
@@ -64,7 +55,7 @@ impl Default for DeltaToggle {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct HoldBtns {
     sustain: BtnToggle,
     inv_sustain: BtnToggle,
@@ -72,39 +63,16 @@ pub struct HoldBtns {
     inv_sostenuto: BtnToggle,
 }
 
-impl Default for HoldBtns {
-    fn default() -> HoldBtns {
-        return HoldBtns {
-            sustain: BtnToggle::default(),
-            inv_sustain: BtnToggle::default(),
-            sostenuto: BtnToggle::default(),
-            inv_sostenuto: BtnToggle::default(),
-        };
-    }
-}
-
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Pluck {
     pluck: BtnToggle,
     idx_out: usize,
     xtra_out: f64,
     holds: HoldBtns,
     transpose_all: Vec<TransposeTrigger>,
-}
-
-impl Default for Pluck {
-    fn default() -> Self {
-        return Pluck {
-            pluck: BtnToggle::default(),
-            idx_out: 0usize,
-            xtra_out: 0.0f64,
-            holds: HoldBtns::default(),
-            transpose_all: vec![],
-        };
-    }
 }
 
 /* ************************************************************************* */
@@ -129,7 +97,7 @@ impl Default for ValveSet {
 
 impl ValveSet {
     pub fn insert_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
+        for b in 1..self.buttons.len() {
             self.buttons[b].idx_deltas.insert(idx, 0i64);
             self.buttons[b].xtra_deltas.insert(idx, 0f64);
         }
@@ -141,7 +109,7 @@ impl ValveSet {
         }
     }
     pub fn insert_set(&mut self, plucks: usize) {
-        for _ in 1..plucks {
+        for _ in 0..plucks {
             self.buttons[0].idx_deltas.push(0i64);
             self.buttons[0].xtra_deltas.push(0.0f64);
         }
