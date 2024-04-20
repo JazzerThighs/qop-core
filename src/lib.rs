@@ -136,7 +136,6 @@ impl Qop {
             _ => return,
         }
     }
-
     pub fn insert_btn(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize) {
         match set_kind {
             0 => self.valve_sets[set_idx].insert_btn(btn_idx, self.plucks.len()),
@@ -155,7 +154,6 @@ impl Qop {
             _ => return,
         }
     }
-
     pub fn insert_combo(&mut self, set_idx: usize, c_idx: usize) {
         self.aero_sets[set_idx].insert_combo(c_idx, self.plucks.len());
     }

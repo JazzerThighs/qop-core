@@ -227,7 +227,6 @@ impl AeroSet {
         self.buttons.insert(0usize, BtnToggle::default());
         self.insert_combo(0usize, plucks);
     }
-
     pub fn insert_btn(&mut self, btn_idx: usize) {
         if btn_idx <= self.buttons.len() {
             self.buttons.insert(btn_idx, BtnToggle::default());
