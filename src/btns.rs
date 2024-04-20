@@ -11,6 +11,29 @@ pub struct BtnToggle {
 /* ************************************************************************* */
 
 #[repr(C)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct DeltaToggle {
+    toggles: Vec<usize>,
+    pressed: bool,
+    idx_deltas: Vec<i64>,
+    xtra_deltas: Vec<f64>,
+    transpose_one: Vec<TransposeTrigger>,
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct HoldBtns {
+    sustain: BtnToggle,
+    inv_sustain: BtnToggle,
+    sostenuto: BtnToggle,
+    inv_sostenuto: BtnToggle,
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransposeTrigger {
     triggers: Vec<usize>,
@@ -31,41 +54,6 @@ impl TransposeTrigger {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DeltaToggle {
-    toggles: Vec<usize>,
-    pressed: bool,
-    idx_deltas: Vec<i64>,
-    xtra_deltas: Vec<f64>,
-    transpose_one: Vec<TransposeTrigger>,
-}
-
-impl Default for DeltaToggle {
-    fn default() -> DeltaToggle {
-        return DeltaToggle {
-            toggles: vec![],
-            pressed: false,
-            idx_deltas: vec![0i64],
-            xtra_deltas: vec![0.0f64],
-            transpose_one: vec![],
-        };
-    }
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub struct HoldBtns {
-    sustain: BtnToggle,
-    inv_sustain: BtnToggle,
-    sostenuto: BtnToggle,
-    inv_sostenuto: BtnToggle,
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Pluck {
     pluck: BtnToggle,
@@ -78,40 +66,44 @@ pub struct Pluck {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ValveSet {
     buttons: Vec<DeltaToggle>,
     holds: HoldBtns,
     transpose_all: Vec<TransposeTrigger>,
 }
 
-impl Default for ValveSet {
-    fn default() -> ValveSet {
-        return ValveSet {
-            buttons: vec![DeltaToggle::default()],
-            holds: HoldBtns::default(),
-            transpose_all: vec![],
-        };
-    }
-}
-
 impl ValveSet {
-    pub fn insert_pluck(&mut self, idx: usize) {
-        for b in 1..self.buttons.len() {
-            self.buttons[b].idx_deltas.insert(idx, 0i64);
-            self.buttons[b].xtra_deltas.insert(idx, 0f64);
+    pub fn init_set(&mut self, plucks: usize) {
+        self.insert_btn(0usize, plucks);
+    }
+    pub fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
+        if btn_idx <= self.buttons.len() {
+            self.buttons.insert(btn_idx, DeltaToggle::default());
+            self.init_btn(btn_idx, plucks);
         }
     }
-    pub fn remove_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
-            self.buttons[b].idx_deltas.remove(idx);
-            self.buttons[b].xtra_deltas.remove(idx);
-        }
-    }
-    pub fn insert_set(&mut self, plucks: usize) {
+    pub fn init_btn(&mut self, btn_idx: usize, plucks: usize) {
         for _ in 0..plucks {
-            self.buttons[0].idx_deltas.push(0i64);
-            self.buttons[0].xtra_deltas.push(0.0f64);
+            self.buttons[btn_idx].idx_deltas.push(0i64);
+            self.buttons[btn_idx].xtra_deltas.push(0.0f64);
+        }
+    }
+    pub fn remove_btn(&mut self, btn_idx: usize) {
+        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
+            self.buttons.remove(btn_idx);
+        }
+    }
+    pub fn insert_pluck(&mut self, p_idx: usize) {
+        for btn in 0..self.buttons.len() {
+            self.buttons[btn].idx_deltas.insert(p_idx, 0i64);
+            self.buttons[btn].xtra_deltas.insert(p_idx, 0f64);
+        }
+    }
+    pub fn remove_pluck(&mut self, p_idx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].idx_deltas.remove(p_idx);
+            self.buttons[b].xtra_deltas.remove(p_idx);
         }
     }
 }
@@ -119,40 +111,44 @@ impl ValveSet {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct FretSet {
     buttons: Vec<DeltaToggle>,
     holds: HoldBtns,
     transpose_all: Vec<TransposeTrigger>,
 }
 
-impl Default for FretSet {
-    fn default() -> FretSet {
-        return FretSet {
-            buttons: vec![DeltaToggle::default()],
-            holds: HoldBtns::default(),
-            transpose_all: vec![],
-        };
-    }
-}
-
 impl FretSet {
-    pub fn insert_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
-            self.buttons[b].idx_deltas.insert(idx, 0i64);
-            self.buttons[b].xtra_deltas.insert(idx, 0f64);
+    pub fn init_set(&mut self, plucks: usize) {
+        self.insert_btn(0usize, plucks);
+    }
+    pub fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
+        if btn_idx <= self.buttons.len() {
+            self.buttons.insert(btn_idx, DeltaToggle::default());
+            self.init_btn(btn_idx, plucks);
         }
     }
-    pub fn remove_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
-            self.buttons[b].idx_deltas.remove(idx);
-            self.buttons[b].xtra_deltas.remove(idx);
+    pub fn init_btn(&mut self, btn_idx: usize, plucks: usize) {
+        for _ in 0..plucks {
+            self.buttons[btn_idx].idx_deltas.push(0i64);
+            self.buttons[btn_idx].xtra_deltas.push(0.0f64);
         }
     }
-    pub fn insert_set(&mut self, plucks: usize) {
-        for _ in 1..plucks {
-            self.buttons[0].idx_deltas.push(0i64);
-            self.buttons[0].xtra_deltas.push(0.0f64);
+    pub fn remove_btn(&mut self, btn_idx: usize) {
+        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
+            self.buttons.remove(btn_idx);
+        }
+    }
+    pub fn insert_pluck(&mut self, p_idx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].idx_deltas.insert(p_idx, 0i64);
+            self.buttons[b].xtra_deltas.insert(p_idx, 0f64);
+        }
+    }
+    pub fn remove_pluck(&mut self, p_idx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].idx_deltas.remove(p_idx);
+            self.buttons[b].xtra_deltas.remove(p_idx);
         }
     }
 }
@@ -160,7 +156,7 @@ impl FretSet {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct RadioSet {
     buttons: Vec<DeltaToggle>,
     max_pressed: u8,
@@ -170,36 +166,38 @@ pub struct RadioSet {
     transpose_all: Vec<TransposeTrigger>,
 }
 
-impl Default for RadioSet {
-    fn default() -> RadioSet {
-        return RadioSet {
-            buttons: vec![DeltaToggle::default()],
-            max_pressed: 1u8,
-            min_pressed: 0u8,
-            pressed: VecDeque::new(),
-            holds: HoldBtns::default(),
-            transpose_all: vec![],
-        };
-    }
-}
-
 impl RadioSet {
-    pub fn insert_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
-            self.buttons[b].idx_deltas.insert(idx, 0i64);
-            self.buttons[b].xtra_deltas.insert(idx, 0f64);
+    pub fn init_set(&mut self, plucks: usize) {
+        self.insert_btn(0usize, plucks);
+        self.max_pressed = 1u8;
+    }
+    pub fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
+        if btn_idx <= self.buttons.len() {
+            self.buttons.insert(btn_idx, DeltaToggle::default());
+            self.init_btn(btn_idx, plucks);
         }
     }
-    pub fn remove_pluck(&mut self, idx: usize) {
-        for b in 0..self.buttons.len() {
-            self.buttons[b].idx_deltas.remove(idx);
-            self.buttons[b].xtra_deltas.remove(idx);
+    pub fn init_btn(&mut self, btn_idx: usize, plucks: usize) {
+        for _ in 0..plucks {
+            self.buttons[btn_idx].idx_deltas.push(0i64);
+            self.buttons[btn_idx].xtra_deltas.push(0.0f64);
         }
     }
-    pub fn insert_set(&mut self, plucks: usize) {
-        for _ in 1..plucks {
-            self.buttons[0].idx_deltas.push(0i64);
-            self.buttons[0].xtra_deltas.push(0.0f64);
+    pub fn remove_btn(&mut self, btn_idx: usize) {
+        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
+            self.buttons.remove(btn_idx);
+        }
+    }
+    pub fn insert_pluck(&mut self, p_idx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].idx_deltas.insert(p_idx, 0i64);
+            self.buttons[b].xtra_deltas.insert(p_idx, 0f64);
+        }
+    }
+    pub fn remove_pluck(&mut self, p_idx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].idx_deltas.remove(p_idx);
+            self.buttons[b].xtra_deltas.remove(p_idx);
         }
     }
 }
@@ -207,7 +205,7 @@ impl RadioSet {
 /* ************************************************************************* */
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Combo {
     combo: Vec<bool>,
     idx_deltas: Vec<i64>,
@@ -215,19 +213,8 @@ pub struct Combo {
     transpose_one: Vec<TransposeTrigger>,
 }
 
-impl Default for Combo {
-    fn default() -> Combo {
-        return Combo {
-            combo: vec![],
-            idx_deltas: vec![0i64],
-            xtra_deltas: vec![0.0f64],
-            transpose_one: vec![],
-        };
-    }
-}
-
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct AeroSet {
     buttons: Vec<BtnToggle>,
     combos: Vec<Combo>,
@@ -235,36 +222,55 @@ pub struct AeroSet {
     transpose_all: Vec<TransposeTrigger>,
 }
 
-impl Default for AeroSet {
-    fn default() -> AeroSet {
-        let mut aero_set: AeroSet = AeroSet {
-            buttons: vec![BtnToggle::default()],
-            combos: vec![Combo::default()],
-            holds: HoldBtns::default(),
-            transpose_all: vec![],
-        };
-        aero_set.combos[0].combo.push(true);
-        return aero_set;
-    }
-}
-
 impl AeroSet {
-    pub fn insert_pluck(&mut self, idx: usize) {
-        for c in 0..self.buttons.len() {
-            self.combos[c].idx_deltas.insert(idx, 0i64);
-            self.combos[c].xtra_deltas.insert(idx, 0f64);
+    pub fn init_set(&mut self, plucks: usize) {
+        self.buttons.insert(0usize, BtnToggle::default());
+        self.insert_combo(0usize, plucks);
+    }
+
+    pub fn insert_btn(&mut self, btn_idx: usize) {
+        if btn_idx <= self.buttons.len() {
+            self.buttons.insert(btn_idx, BtnToggle::default());
+            for c in 0..self.combos.len() {
+                self.combos[c].combo.insert(btn_idx, false);
+            }
         }
     }
-    pub fn remove_pluck(&mut self, idx: usize) {
-        for c in 0..self.buttons.len() {
-            self.combos[c].idx_deltas.remove(idx);
-            self.combos[c].xtra_deltas.remove(idx);
+    pub fn remove_btn(&mut self, btn_idx: usize) {
+        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
+            self.buttons.remove(btn_idx);
+            for c in 0..self.combos.len() {
+                self.combos[c].combo.remove(btn_idx);
+            }
         }
     }
-    pub fn insert_set(&mut self, plucks: usize) {
-        for _ in 1..plucks {
-            self.combos[0].idx_deltas.push(0i64);
-            self.combos[0].xtra_deltas.push(0.0f64);
+    pub fn insert_combo(&mut self, c_idx: usize, plucks: usize) {
+        if c_idx <= self.combos.len() {
+            self.combos.insert(c_idx, Combo::default());
+            for _ in 0..self.buttons.len() {
+                self.combos[c_idx].combo.push(false);
+            }
+            for _ in 0..plucks {
+                self.combos[c_idx].idx_deltas.push(0i64);
+                self.combos[c_idx].xtra_deltas.push(0.0f64);
+            }
+        }
+    }
+    pub fn remove_combo(&mut self, c_idx: usize) {
+        if self.combos.len() > 0 && c_idx < self.combos.len() {
+            self.combos.remove(c_idx);
+        }
+    }
+    pub fn insert_pluck(&mut self, p_idx: usize) {
+        for c in 0..self.buttons.len() {
+            self.combos[c].idx_deltas.insert(p_idx, 0i64);
+            self.combos[c].xtra_deltas.insert(p_idx, 0f64);
+        }
+    }
+    pub fn remove_pluck(&mut self, p_idx: usize) {
+        for c in 0..self.buttons.len() {
+            self.combos[c].idx_deltas.remove(p_idx);
+            self.combos[c].xtra_deltas.remove(p_idx);
         }
     }
 }
