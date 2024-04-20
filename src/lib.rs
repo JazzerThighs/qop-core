@@ -34,7 +34,7 @@ impl Qop {
     pub fn remove_key_idx(key_id_val: usize) {
         todo!()
     }
-
+    /* ********************************************************************* */
     pub fn insert_pluck(&mut self, p_idx: usize) {
         if p_idx <= self.plucks.len() {
             self.plucks.insert(p_idx, Pluck::default());
@@ -81,7 +81,7 @@ impl Qop {
     pub fn change_pluck_xtra_out(&mut self, p_idx: usize, i_del_val: i64) {
         todo!()
     }
-
+    /* ********************************************************************* */
     pub fn insert_set(&mut self, set_kind: u8, set_idx: usize) {
         match set_kind {
             0 => {
@@ -160,7 +160,7 @@ impl Qop {
     pub fn remove_combo(&mut self, set_idx: usize, c_idx: usize) {
         self.aero_sets[set_idx].remove_combo(c_idx);
     }
-
+    /* ********************************************************************* */
     pub fn change_set_idx_delta(
         &mut self,
         set_kind: u8,
