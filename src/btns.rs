@@ -11,6 +11,60 @@ pub(crate) struct BtnTog {
 /* ************************************************************************* */
 
 #[repr(C)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub(crate) struct HoldBtns {
+    sustain: BtnTog,
+    inv_sustain: BtnTog,
+    sostenuto: BtnTog,
+    inv_sostenuto: BtnTog,
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub(crate) struct TrnspPluck {
+    triggers: Vec<usize>,
+    idx_delta: i64,
+    xtra_delta: f64,
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub(crate) struct Pluck {
+    pluck: BtnTog,
+    idx_out: usize,
+    xtra_out: f64,
+    trnsp_pluck: Vec<TrnspPluck>,
+    tp_i_mem: i64,
+    tp_x_mem: f64,
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct TrnspSet {
+    triggers: Vec<usize>,
+    idx_delta: Vec<i64>,
+    xtra_delta: Vec<f64>,
+}
+
+impl TrnspSet {
+    pub(crate) fn new_tp_key(key_idx_vals: Vec<usize>, plucks: usize) -> Self {
+        return TrnspSet {
+            triggers: key_idx_vals,
+            idx_delta: vec![0i64; plucks],
+            xtra_delta: vec![0.0f64; plucks],
+        };
+    }
+}
+
+/* ************************************************************************* */
+
+#[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct DeltaTog {
     togs: Vec<usize>,
@@ -45,66 +99,6 @@ impl DeltaTog {
         self.xtra_deltas.remove(p_idx);
         self.tp_i_mem.remove(p_idx);
         self.tp_x_mem.remove(p_idx);
-    }
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub(crate) struct HoldBtns {
-    sustain: BtnTog,
-    inv_sustain: BtnTog,
-    sostenuto: BtnTog,
-    inv_sostenuto: BtnTog,
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub(crate) struct TrnspPluck {
-    trigger: usize,
-    idx_delta: i64,
-    xtra_delta: f64,
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub(crate) struct Pluck {
-    pluck: BtnTog,
-    idx_out: usize,
-    xtra_out: f64,
-    trnsp_pluck: Vec<TrnspPluck>,
-    tp_i_mem: i64,
-    tp_x_mem: f64,
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct TrnspSet {
-    trigger: usize,
-    idx_delta: Vec<i64>,
-    xtra_delta: Vec<f64>,
-}
-
-impl TrnspSet {
-    pub(crate) fn new_tp_key(key_id_val: usize, plucks: usize) -> Self {
-        return TrnspSet {
-            trigger: key_id_val,
-            idx_delta: vec![0i64; plucks],
-            xtra_delta: vec![0.0f64; plucks],
-        };
-    }
-    pub(crate) fn change_idx_delta(&mut self, p_idx: usize, i_delta_val: i64) {
-        todo!()
-    }
-    pub(crate) fn change_xtra_delta(&mut self, p_idx: usize, x_delta_val: f64) {
-        todo!()
     }
 }
 
