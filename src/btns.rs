@@ -106,87 +106,7 @@ impl DeltaTog {
 
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct ValveSet {
-    buttons: Vec<DeltaTog>,
-    holds: HoldBtns,
-    trnsp_all: Vec<TrnspSet>,
-}
-
-impl ValveSet {
-    pub(crate) fn new(plucks: usize) -> Self {
-        return ValveSet {
-            buttons: vec![DeltaTog::new(plucks)],
-            holds: HoldBtns::default(),
-            trnsp_all: vec![],
-        };
-    }
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
-        if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, DeltaTog::new(plucks));
-        }
-    }
-    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
-        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
-            self.buttons.remove(btn_idx);
-        }
-    }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].insert_pluck(p_idx);
-        }
-    }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].remove_pluck(p_idx);
-        }
-    }
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct FretSet {
-    buttons: Vec<DeltaTog>,
-    holds: HoldBtns,
-    trnsp_all: Vec<TrnspSet>,
-}
-
-impl FretSet {
-    pub(crate) fn new(plucks: usize) -> Self {
-        return FretSet {
-            buttons: vec![DeltaTog::new(plucks)],
-            holds: HoldBtns::default(),
-            trnsp_all: vec![],
-        };
-    }
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
-        if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, DeltaTog::new(plucks));
-        }
-    }
-    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
-        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
-            self.buttons.remove(btn_idx);
-        }
-    }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].insert_pluck(p_idx);
-        }
-    }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].remove_pluck(p_idx);
-        }
-    }
-}
-
-/* ************************************************************************* */
-
-#[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct RadioSet {
+pub(crate) struct IndvSet {
     buttons: Vec<DeltaTog>,
     max_pressed: u8,
     min_pressed: u8,
@@ -195,9 +115,9 @@ pub(crate) struct RadioSet {
     trnsp_all: Vec<TrnspSet>,
 }
 
-impl RadioSet {
+impl IndvSet {
     pub(crate) fn new(plucks: usize) -> Self {
-        return RadioSet {
+        return IndvSet {
             buttons: vec![DeltaTog::new(plucks)],
             max_pressed: 1u8,
             min_pressed: 0u8,
@@ -268,16 +188,16 @@ impl Combo {
 
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct AeroSet {
+pub(crate) struct ComboSet {
     buttons: Vec<BtnTog>,
     combos: Vec<Combo>,
     holds: HoldBtns,
     trnsp_all: Vec<TrnspSet>,
 }
 
-impl AeroSet {
+impl ComboSet {
     pub(crate) fn new(plucks: usize) -> Self {
-        return AeroSet {
+        return ComboSet {
             buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(plucks, 1usize)],
             holds: HoldBtns::default(),

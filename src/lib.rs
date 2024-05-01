@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 mod btns;
-use btns::{AeroSet, FretSet, HoldBtns, Pluck, RadioSet, ValveSet};
+use btns::{IndvSet, ComboSet, HoldBtns, Pluck};
 use serde::{Deserialize, Serialize};
 
 #[repr(C)]
@@ -9,10 +9,10 @@ pub struct Qop {
     key_idxs: Vec<usize>,
     plucks: Vec<Pluck>,
     plk_holds: HoldBtns,
-    valve_sets: Vec<ValveSet>,
-    fret_sets: Vec<FretSet>,
-    radio_sets: Vec<RadioSet>,
-    aero_sets: Vec<AeroSet>,
+    valve_sets: Vec<IndvSet>,
+    fret_sets: Vec<IndvSet>,
+    radio_sets: Vec<IndvSet>,
+    aero_sets: Vec<ComboSet>,
 }
 
 impl Default for Qop {
@@ -99,25 +99,25 @@ impl Qop {
             0 => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets
-                        .insert(set_idx, ValveSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.plucks.len()));
                 }
             }
             1 => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets
-                        .insert(set_idx, FretSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.plucks.len()));
                 }
             }
             2 => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets
-                        .insert(set_idx, RadioSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.plucks.len()));
                 }
             }
             3 => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets
-                        .insert(set_idx, AeroSet::new(self.plucks.len()));
+                        .insert(set_idx, ComboSet::new(self.plucks.len()));
                 }
             }
             _ => return,
@@ -206,22 +206,22 @@ impl Qop {
                 match set_kind {
                     0 => {
                         if set_idx <= self.valve_sets.len() {
-                            self.valve_sets[set_idx].change_btn_idx_delta(del_idx, i.unwrap());
+                            self.valve_sets[set_idx].change_btn_idx_delta(del_idx, i);
                         }
                     }
                     1 => {
                         if set_idx <= self.fret_sets.len() {
-                            self.fret_sets[set_idx].change_btn_idx_delta(del_idx, i.unwrap());
+                            self.fret_sets[set_idx].change_btn_idx_delta(del_idx, i);
                         }
                     }
                     2 => {
                         if set_idx <= self.radio_sets.len() {
-                            self.radio_sets[set_idx].change_btn_idx_delta(del_idx, i.unwrap());
+                            self.radio_sets[set_idx].change_btn_idx_delta(del_idx, i);
                         }
                     }
                     3 => {
                         if set_idx <= self.aero_sets.len() {
-                            self.aero_sets[set_idx].change_combo_idx_delta(del_idx, i.unwrap());
+                            self.aero_sets[set_idx].change_combo_idx_delta(del_idx, i);
                         }
                     }
                     _ => return,
@@ -241,22 +241,22 @@ impl Qop {
                 match set_kind {
                     0 => {
                         if set_idx <= self.valve_sets.len() {
-                            self.valve_sets[set_idx].change_btn_xtra_delta(del_idx, x.unwrap());
+                            self.valve_sets[set_idx].change_btn_xtra_delta(del_idx, x);
                         }
                     }
                     1 => {
                         if set_idx <= self.fret_sets.len() {
-                            self.fret_sets[set_idx].change_btn_xtra_delta(del_idx, x.unwrap());
+                            self.fret_sets[set_idx].change_btn_xtra_delta(del_idx, x);
                         }
                     }
                     2 => {
                         if set_idx <= self.radio_sets.len() {
-                            self.radio_sets[set_idx].change_btn_xtra_delta(del_idx, x.unwrap());
+                            self.radio_sets[set_idx].change_btn_xtra_delta(del_idx, x);
                         }
                     }
                     3 => {
                         if set_idx <= self.aero_sets.len() {
-                            self.aero_sets[set_idx].change_combo_xtra_delta(del_idx, x.unwrap());
+                            self.aero_sets[set_idx].change_combo_xtra_delta(del_idx, x);
                         }
                     }
                     _ => return,
