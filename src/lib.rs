@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Qop {
+pub struct QopEdit {
     key_idxs: Vec<usize>,
     plucks: Vec<Pluck>,
     plk_holds: HoldBtns,
@@ -15,9 +15,9 @@ pub struct Qop {
     aero_sets: Vec<ComboSet>,
 }
 
-impl Default for Qop {
+impl Default for QopEdit {
     fn default() -> Self {
-        return Qop {
+        return QopEdit {
             key_idxs: vec![0usize],
             plucks: vec![Pluck::default()],
             plk_holds: HoldBtns::default(),
@@ -29,12 +29,18 @@ impl Default for Qop {
     }
 }
 
-impl Qop {
+impl QopEdit {
     pub fn kdx_insert_k(key_idx_val: usize) {
         todo!()
     }
     pub fn kdx_remove_k(key_idx_val: usize) {
         todo!()
+    }
+    pub fn kdx_swap_idxs(idx1: usize, idx2: usize) {
+        // swaps the position of 2 existing keys, and in turn, would then need to swap all of the nodes' usize values in all of the plucks' and sets' various fields.
+    }
+    pub fn kdx_swap_key_labels(idx1: usize, idx2: usize) {
+        // swaps only the labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
     }
 
     /* ********************************************************************* */
