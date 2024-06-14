@@ -1,12 +1,13 @@
 #![allow(dead_code)]
 mod btns;
-use btns::{IndvSet, ComboSet, HoldBtns, Pluck};
+use btns::{ComboSet, HoldBtns, IndvSet, Pluck};
 use serde::{Deserialize, Serialize};
+use winit::keyboard::KeyCode;
 
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QopEdit {
-    key_idxs: Vec<usize>,
+    key_codes: Vec<KeyCode>,
     plucks: Vec<Pluck>,
     plk_holds: HoldBtns,
     valve_sets: Vec<IndvSet>,
@@ -18,7 +19,7 @@ pub struct QopEdit {
 impl Default for QopEdit {
     fn default() -> Self {
         return QopEdit {
-            key_idxs: vec![0usize],
+            key_codes: vec![],
             plucks: vec![Pluck::default()],
             plk_holds: HoldBtns::default(),
             valve_sets: vec![],
@@ -30,18 +31,65 @@ impl Default for QopEdit {
 }
 
 impl QopEdit {
-    pub fn kdx_insert_k(key_idx_val: usize) {
-        todo!()
+    pub fn kcs_insert_k(&mut self, key_code: KeyCode) {
+        if !self.key_codes.contains(&key_code) {
+            self.key_codes.push(key_code)
+        };
     }
-    pub fn kdx_remove_k(key_idx_val: usize) {
-        todo!()
+    pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
+        for i in 0..self.key_codes.len() {
+            if self.key_codes[i] == key_code {
+                for p in 0..self.plucks.len() {
+                    self.plucks[p].pluck.togs.retain(|&k| k != i);
+                    for t in 0..self.plucks[p].trnsp_pluck.len() {
+                        self.plucks[p].trnsp_pluck[t].triggers.retain(|&k| k != i);
+                    }
+                }
+                self.plk_holds.sustain.togs.retain(|&k| k != i);
+                self.plk_holds.inv_sustain.togs.retain(|&k| k != i);
+                self.plk_holds.sostenuto.togs.retain(|&k| k != i);
+                self.plk_holds.inv_sostenuto.togs.retain(|&k| k != i);
+                for set in 0..self.valve_sets.len() {
+                    self.valve_sets[set].remove_key_idx(i);
+                }
+                for set in 0..self.fret_sets.len() {
+                    self.fret_sets[set].remove_key_idx(i);
+                }
+                for set in 0..self.radio_sets.len() {
+                    self.radio_sets[set].remove_key_idx(i);
+                }
+                for set in 0..self.aero_sets.len() {
+                    self.aero_sets[set].remove_key_idx(i);
+                }
+            }
+        }
     }
-    pub fn kdx_swap_idxs(idx1: usize, idx2: usize) {
-        // swaps the position of 2 existing keys, and in turn, would then need to swap all of the nodes' usize values in all of the plucks' and sets' various fields.
-    }
-    pub fn kdx_swap_key_labels(idx1: usize, idx2: usize) {
+    pub fn kcs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) -> Option<(usize, usize)> {
         // swaps only the labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
+        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
+        for i in 0..self.key_codes.len() {
+            if self.key_codes[i] == kc1 {
+                i1 = Some(i);
+            } else if self.key_codes[i] == kc2 {
+                i2 = Some(i);
+            }
+        }
+        if i1.is_some() && i2.is_some() {
+            (self.key_codes[i1.unwrap()], self.key_codes[i2.unwrap()]) =
+                (self.key_codes[i2.unwrap()], self.key_codes[i1.unwrap()]);
+            return Some((i1.unwrap(), i2.unwrap()));
+        }
+        return None;
     }
+    pub fn kcs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
+        // swaps the position of 2 existing keys, and in turn, would then need to swap all of the nodes' usize values in all of the plucks' and sets' various fields.
+        let res: Option<(usize, usize)> = self.kcs_swap_labels(kc1, kc2);
+        if res.is_some() {
+            let (i1, i2) = (res.unwrap().0, res.unwrap().1);
+            todo!()
+        }
+    }
+    
 
     /* ********************************************************************* */
 
@@ -80,22 +128,79 @@ impl QopEdit {
         }
     }
     pub fn plk_insert_key(&mut self, p_idx: usize, key_idx_val: usize) {
-        todo!()
+        if p_idx < self.plucks.len() {
+            if !self.plucks[p_idx].pluck.togs.contains(&key_idx_val) {
+                self.plucks[p_idx].pluck.togs.push(key_idx_val)
+            };
+        }
     }
     pub fn plk_remove_key(&mut self, p_idx: usize, key_idx_val: usize) {
-        todo!()
+        if p_idx < self.plucks.len() {
+            self.plucks[p_idx]
+                .pluck
+                .togs
+                .retain(|&idx| idx != key_idx_val);
+        }
     }
     pub fn plk_insert_hold_btn(&mut self, h_kind: u8, key_idx_val: usize) {
-        todo!()
+        match h_kind {
+            0 => {
+                if !self.plk_holds.sustain.togs.contains(&key_idx_val) {
+                    self.plk_holds.sustain.togs.push(key_idx_val)
+                }
+            }
+            1 => {
+                if !self.plk_holds.inv_sustain.togs.contains(&key_idx_val) {
+                    self.plk_holds.inv_sustain.togs.push(key_idx_val)
+                }
+            }
+            2 => {
+                if !self.plk_holds.sostenuto.togs.contains(&key_idx_val) {
+                    self.plk_holds.sostenuto.togs.push(key_idx_val)
+                }
+            }
+            3 => {
+                if !self.plk_holds.inv_sostenuto.togs.contains(&key_idx_val) {
+                    self.plk_holds.inv_sostenuto.togs.push(key_idx_val)
+                }
+            }
+            _ => {}
+        }
     }
     pub fn plk_remove_hold_btn(&mut self, h_kind: u8, key_idx_val: usize) {
-        todo!()
+        match h_kind {
+            0 => self
+                .plk_holds
+                .sustain
+                .togs
+                .retain(|&idx| idx != key_idx_val),
+            1 => self
+                .plk_holds
+                .inv_sustain
+                .togs
+                .retain(|&idx| idx != key_idx_val),
+            2 => self
+                .plk_holds
+                .sostenuto
+                .togs
+                .retain(|&idx| idx != key_idx_val),
+            3 => self
+                .plk_holds
+                .inv_sostenuto
+                .togs
+                .retain(|&idx| idx != key_idx_val),
+            _ => {}
+        }
     }
-    pub fn plk_change_idx_out(&mut self, p_idx: usize, i_del_val: i64) {
-        todo!()
+    pub fn plk_change_idx_out(&mut self, p_idx: usize, i_del_val: usize) {
+        if p_idx < self.plucks.len() {
+            self.plucks[p_idx].idx_out = i_del_val;
+        }
     }
-    pub fn plk_change_xtra_out(&mut self, p_idx: usize, x_del_val: i64) {
-        todo!()
+    pub fn plk_change_xtra_out(&mut self, p_idx: usize, x_del_val: f64) {
+        if p_idx < self.plucks.len() {
+            self.plucks[p_idx].xtra_out = x_del_val;
+        }
     }
 
     /* ********************************************************************* */
@@ -207,29 +312,13 @@ impl QopEdit {
         del_idx: usize,
         i_del_vec: Vec<Option<i64>>,
     ) {
-        for i in 0..i_del_vec.len() {
-            if i <= self.plucks.len() && i_del_vec[i].is_some() {
+        for (i, &i_del) in i_del_vec.iter().enumerate() {
+            if let Some(delta) = i_del {
                 match set_kind {
-                    0 => {
-                        if set_idx <= self.valve_sets.len() {
-                            self.valve_sets[set_idx].change_btn_idx_delta(del_idx, i);
-                        }
-                    }
-                    1 => {
-                        if set_idx <= self.fret_sets.len() {
-                            self.fret_sets[set_idx].change_btn_idx_delta(del_idx, i);
-                        }
-                    }
-                    2 => {
-                        if set_idx <= self.radio_sets.len() {
-                            self.radio_sets[set_idx].change_btn_idx_delta(del_idx, i);
-                        }
-                    }
-                    3 => {
-                        if set_idx <= self.aero_sets.len() {
-                            self.aero_sets[set_idx].change_combo_idx_delta(del_idx, i);
-                        }
-                    }
+                    0 => self.valve_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta,
+                    1 => self.fret_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta,
+                    2 => self.radio_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta,
+                    3 => self.aero_sets[set_idx].combos[del_idx].idx_deltas[i] = delta,
                     _ => return,
                 }
             }
@@ -242,29 +331,13 @@ impl QopEdit {
         del_idx: usize,
         x_del_vec: Vec<Option<f64>>,
     ) {
-        for x in 0..x_del_vec.len() {
-            if x <= self.plucks.len() && x_del_vec[x].is_some() {
+        for (x, &x_del) in x_del_vec.iter().enumerate() {
+            if let Some(delta) = x_del {
                 match set_kind {
-                    0 => {
-                        if set_idx <= self.valve_sets.len() {
-                            self.valve_sets[set_idx].change_btn_xtra_delta(del_idx, x);
-                        }
-                    }
-                    1 => {
-                        if set_idx <= self.fret_sets.len() {
-                            self.fret_sets[set_idx].change_btn_xtra_delta(del_idx, x);
-                        }
-                    }
-                    2 => {
-                        if set_idx <= self.radio_sets.len() {
-                            self.radio_sets[set_idx].change_btn_xtra_delta(del_idx, x);
-                        }
-                    }
-                    3 => {
-                        if set_idx <= self.aero_sets.len() {
-                            self.aero_sets[set_idx].change_combo_xtra_delta(del_idx, x);
-                        }
-                    }
+                    0 => self.valve_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta,
+                    1 => self.fret_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta,
+                    2 => self.radio_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta,
+                    3 => self.aero_sets[set_idx].combos[del_idx].xtra_deltas[x] = delta,
                     _ => return,
                 }
             }

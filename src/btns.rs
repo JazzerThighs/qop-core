@@ -4,8 +4,8 @@ use std::collections::VecDeque;
 #[repr(C)]
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub(crate) struct BtnTog {
-    togs: Vec<usize>,
-    pressed: bool,
+    pub(crate) togs: Vec<usize>,
+    pub(crate) pressed: bool,
 }
 
 /* ************************************************************************* */
@@ -13,10 +13,10 @@ pub(crate) struct BtnTog {
 #[repr(C)]
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub(crate) struct HoldBtns {
-    sustain: BtnTog,
-    inv_sustain: BtnTog,
-    sostenuto: BtnTog,
-    inv_sostenuto: BtnTog,
+    pub(crate) sustain: BtnTog,
+    pub(crate) inv_sustain: BtnTog,
+    pub(crate) sostenuto: BtnTog,
+    pub(crate) inv_sostenuto: BtnTog,
 }
 
 /* ************************************************************************* */
@@ -24,9 +24,9 @@ pub(crate) struct HoldBtns {
 #[repr(C)]
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub(crate) struct TrnspPluck {
-    triggers: Vec<usize>,
-    idx_delta: i64,
-    xtra_delta: f64,
+    pub(crate) triggers: Vec<usize>,
+    pub(crate) idx_delta: i64,
+    pub(crate) xtra_delta: f64,
 }
 
 /* ************************************************************************* */
@@ -34,12 +34,12 @@ pub(crate) struct TrnspPluck {
 #[repr(C)]
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub(crate) struct Pluck {
-    pluck: BtnTog,
-    idx_out: usize,
-    xtra_out: f64,
-    trnsp_pluck: Vec<TrnspPluck>,
-    tp_i_mem: i64,
-    tp_x_mem: f64,
+    pub(crate) pluck: BtnTog,
+    pub(crate) idx_out: usize,
+    pub(crate) xtra_out: f64,
+    pub(crate) trnsp_pluck: Vec<TrnspPluck>,
+    pub(crate) tp_i_mem: i64,
+    pub(crate) tp_x_mem: f64,
 }
 
 /* ************************************************************************* */
@@ -67,13 +67,13 @@ impl TrnspSet {
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct DeltaTog {
-    togs: Vec<usize>,
-    pressed: bool,
-    idx_deltas: Vec<i64>,
-    xtra_deltas: Vec<f64>,
-    trnsp_one: Vec<TrnspSet>,
-    tp_i_mem: Vec<i64>,
-    tp_x_mem: Vec<f64>,
+    pub(crate) togs: Vec<usize>,
+    pub(crate) pressed: bool,
+    pub(crate) idx_deltas: Vec<i64>,
+    pub(crate) xtra_deltas: Vec<f64>,
+    pub(crate) trnsp_one: Vec<TrnspSet>,
+    pub(crate) tp_i_mem: Vec<i64>,
+    pub(crate) tp_x_mem: Vec<f64>,
 }
 
 impl DeltaTog {
@@ -107,12 +107,12 @@ impl DeltaTog {
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct IndvSet {
-    buttons: Vec<DeltaTog>,
-    max_pressed: u8,
-    min_pressed: u8,
-    pressed: VecDeque<usize>,
-    holds: HoldBtns,
-    trnsp_all: Vec<TrnspSet>,
+    pub(crate) buttons: Vec<DeltaTog>,
+    pub(crate) max_pressed: u8,
+    pub(crate) min_pressed: u8,
+    pub(crate) pressed: VecDeque<usize>,
+    pub(crate) holds: HoldBtns,
+    pub(crate) trnsp_all: Vec<TrnspSet>,
 }
 
 impl IndvSet {
@@ -146,6 +146,21 @@ impl IndvSet {
             self.buttons[btn].remove_pluck(p_idx);
         }
     }
+    pub(crate) fn remove_key_idx(&mut self, kdx: usize) {
+        for b in 0..self.buttons.len() {
+            self.buttons[b].togs.retain(|&k| k != kdx);
+            for t in 0..self.buttons[b].trnsp_one.len() {
+                self.buttons[b].trnsp_one[t].triggers.retain(|&k| k != kdx);
+            }
+        }
+        for t in 0..self.trnsp_all.len() {
+            self.trnsp_all[t].triggers.retain(|&k| k != kdx);
+        }
+        self.holds.sustain.togs.retain(|&k| k != kdx);
+        self.holds.inv_sostenuto.togs.retain(|&k| k != kdx);
+        self.holds.sostenuto.togs.retain(|&k| k != kdx);
+        self.holds.inv_sostenuto.togs.retain(|&k| k != kdx);
+    }
 }
 
 /* ************************************************************************* */
@@ -153,12 +168,12 @@ impl IndvSet {
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct Combo {
-    combo: Vec<bool>,
-    idx_deltas: Vec<i64>,
-    xtra_deltas: Vec<f64>,
-    trnsp_one: Vec<TrnspSet>,
-    tp_i_mem: Vec<i64>,
-    tp_x_mem: Vec<f64>,
+    pub(crate) combo: Vec<bool>,
+    pub(crate) idx_deltas: Vec<i64>,
+    pub(crate) xtra_deltas: Vec<f64>,
+    pub(crate) trnsp_one: Vec<TrnspSet>,
+    pub(crate) tp_i_mem: Vec<i64>,
+    pub(crate) tp_x_mem: Vec<f64>,
 }
 
 impl Combo {
@@ -189,10 +204,10 @@ impl Combo {
 #[repr(C)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct ComboSet {
-    buttons: Vec<BtnTog>,
-    combos: Vec<Combo>,
-    holds: HoldBtns,
-    trnsp_all: Vec<TrnspSet>,
+    pub(crate) buttons: Vec<BtnTog>,
+    pub(crate) combos: Vec<Combo>,
+    pub(crate) holds: HoldBtns,
+    pub(crate) trnsp_all: Vec<TrnspSet>,
 }
 
 impl ComboSet {
