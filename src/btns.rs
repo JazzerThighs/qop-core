@@ -146,20 +146,20 @@ impl IndvSet {
             self.buttons[btn].remove_pluck(p_idx);
         }
     }
-    pub(crate) fn remove_key_idx(&mut self, kdx: usize) {
+    pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
-            self.buttons[b].togs.retain(|&k| k != kdx);
+            vec_closure(&mut self.buttons[b].togs);
             for t in 0..self.buttons[b].trnsp_one.len() {
-                self.buttons[b].trnsp_one[t].triggers.retain(|&k| k != kdx);
+                vec_closure(&mut self.buttons[b].trnsp_one[t].triggers);
             }
         }
         for t in 0..self.trnsp_all.len() {
-            self.trnsp_all[t].triggers.retain(|&k| k != kdx);
+            vec_closure(&mut self.trnsp_all[t].triggers);
         }
-        self.holds.sustain.togs.retain(|&k| k != kdx);
-        self.holds.inv_sostenuto.togs.retain(|&k| k != kdx);
-        self.holds.sostenuto.togs.retain(|&k| k != kdx);
-        self.holds.inv_sostenuto.togs.retain(|&k| k != kdx);
+        vec_closure(&mut self.holds.sustain.togs);
+        vec_closure(&mut self.holds.inv_sustain.togs);
+        vec_closure(&mut self.holds.sostenuto.togs);
+        vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
 }
 
@@ -254,5 +254,22 @@ impl ComboSet {
         for c in 0..self.combos.len() {
             self.combos[c].remove_pluck(p_idx);
         }
+    }
+    pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
+        for b in 0..self.buttons.len() {
+            vec_closure(&mut self.buttons[b].togs);
+        }
+        for c in 0..self.combos.len() {
+            for t in 0..self.combos[c].trnsp_one.len() {
+                vec_closure(&mut self.combos[c].trnsp_one[t].triggers);
+            }
+        }
+        for t in 0..self.trnsp_all.len() {
+            vec_closure(&mut self.trnsp_all[t].triggers);
+        }
+        vec_closure(&mut self.holds.sustain.togs);
+        vec_closure(&mut self.holds.inv_sustain.togs);
+        vec_closure(&mut self.holds.sostenuto.togs);
+        vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
 }

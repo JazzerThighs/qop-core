@@ -39,27 +39,31 @@ impl QopEdit {
     pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
         for i in 0..self.key_codes.len() {
             if self.key_codes[i] == key_code {
+                let remove_key_idx = |key_idx_vec: &mut Vec<usize>| {
+                    key_idx_vec.retain(|&k| k != i);
+                };
+
                 for p in 0..self.plucks.len() {
-                    self.plucks[p].pluck.togs.retain(|&k| k != i);
+                    remove_key_idx(&mut self.plucks[p].pluck.togs);
                     for t in 0..self.plucks[p].trnsp_pluck.len() {
-                        self.plucks[p].trnsp_pluck[t].triggers.retain(|&k| k != i);
+                        remove_key_idx(&mut self.plucks[p].trnsp_pluck[t].triggers);
                     }
                 }
-                self.plk_holds.sustain.togs.retain(|&k| k != i);
-                self.plk_holds.inv_sustain.togs.retain(|&k| k != i);
-                self.plk_holds.sostenuto.togs.retain(|&k| k != i);
-                self.plk_holds.inv_sostenuto.togs.retain(|&k| k != i);
+                remove_key_idx(&mut self.plk_holds.sustain.togs);
+                remove_key_idx(&mut self.plk_holds.inv_sustain.togs);
+                remove_key_idx(&mut self.plk_holds.sostenuto.togs);
+                remove_key_idx(&mut self.plk_holds.inv_sostenuto.togs);
                 for set in 0..self.valve_sets.len() {
-                    self.valve_sets[set].remove_key_idx(i);
+                    self.valve_sets[set].all_key_idx_vecs(remove_key_idx);
                 }
                 for set in 0..self.fret_sets.len() {
-                    self.fret_sets[set].remove_key_idx(i);
+                    self.fret_sets[set].all_key_idx_vecs(remove_key_idx);
                 }
                 for set in 0..self.radio_sets.len() {
-                    self.radio_sets[set].remove_key_idx(i);
+                    self.radio_sets[set].all_key_idx_vecs(remove_key_idx);
                 }
                 for set in 0..self.aero_sets.len() {
-                    self.aero_sets[set].remove_key_idx(i);
+                    self.aero_sets[set].all_key_idx_vecs(remove_key_idx);
                 }
             }
         }
@@ -84,12 +88,87 @@ impl QopEdit {
     pub fn kcs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
         // swaps the position of 2 existing keys, and in turn, would then need to swap all of the nodes' usize values in all of the plucks' and sets' various fields.
         let res: Option<(usize, usize)> = self.kcs_swap_labels(kc1, kc2);
-        if res.is_some() {
-            let (i1, i2) = (res.unwrap().0, res.unwrap().1);
-            todo!()
+        if let Some((i1, i2)) = res {
+            let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| {
+                k_idx_vec.iter_mut().for_each(|k: &mut usize| {
+                    if *k == i1 {
+                        *k = i2;
+                    } else if *k == i2 {
+                        *k = i1;
+                    }
+                });
+            };
+
+            for p in 0..self.plucks.len() {
+                k_idxs_swap(&mut self.plucks[p].pluck.togs);
+                for t in 0..self.plucks[p].trnsp_pluck.len() {
+                    k_idxs_swap(&mut self.plucks[p].trnsp_pluck[t].triggers);
+                }
+            }
+            k_idxs_swap(&mut self.plk_holds.sustain.togs);
+            k_idxs_swap(&mut self.plk_holds.inv_sustain.togs);
+            k_idxs_swap(&mut self.plk_holds.sostenuto.togs);
+            k_idxs_swap(&mut self.plk_holds.inv_sostenuto.togs);
+
+            for set in 0..self.valve_sets.len() {
+                self.valve_sets[set].all_key_idx_vecs(k_idxs_swap);
+            }
+            for set in 0..self.fret_sets.len() {
+                self.fret_sets[set].all_key_idx_vecs(k_idxs_swap);
+            }
+            for set in 0..self.radio_sets.len() {
+                self.radio_sets[set].all_key_idx_vecs(k_idxs_swap);
+            }
+            for set in 0..self.aero_sets.len() {
+                self.aero_sets[set].all_key_idx_vecs(k_idxs_swap);
+            }
         }
     }
-    
+    pub fn kcs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
+        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
+        for i in 0..self.key_codes.len() {
+            if self.key_codes[i] == kc_old {
+                i1 = Some(i);
+            } else if self.key_codes[i] == kc_new {
+                i2 = Some(i);
+            }
+        }
+        if i1.is_some() && i2.is_some() {
+            let k_idx_update = |k_idx_vec: &mut Vec<usize>| {
+                k_idx_vec.iter_mut().for_each(|k: &mut usize| {
+                    if *k == i1.unwrap() {
+                        *k = i2.unwrap();
+                    }
+                });
+                k_idx_vec.sort();
+                k_idx_vec.dedup();
+            };
+
+            for p in 0..self.plucks.len() {
+                k_idx_update(&mut self.plucks[p].pluck.togs);
+                for t in 0..self.plucks[p].trnsp_pluck.len() {
+                    k_idx_update(&mut self.plucks[p].trnsp_pluck[t].triggers);
+                }
+            }
+            k_idx_update(&mut self.plk_holds.sustain.togs);
+            k_idx_update(&mut self.plk_holds.inv_sustain.togs);
+            k_idx_update(&mut self.plk_holds.sostenuto.togs);
+            k_idx_update(&mut self.plk_holds.inv_sostenuto.togs);
+
+            for set in 0..self.valve_sets.len() {
+                self.valve_sets[set].all_key_idx_vecs(k_idx_update);
+            }
+            for set in 0..self.fret_sets.len() {
+                self.fret_sets[set].all_key_idx_vecs(k_idx_update);
+            }
+            for set in 0..self.radio_sets.len() {
+                self.radio_sets[set].all_key_idx_vecs(k_idx_update);
+            }
+            for set in 0..self.aero_sets.len() {
+                self.aero_sets[set].all_key_idx_vecs(k_idx_update);
+            }
+        }
+    }
 
     /* ********************************************************************* */
 
@@ -111,7 +190,7 @@ impl QopEdit {
         }
     }
     pub fn plk_remove_p(&mut self, p_idx: usize) {
-        if self.plucks.len() > 1 && 0 <= p_idx && p_idx <= self.plucks.len() {
+        if self.plucks.len() > 1 && p_idx <= self.plucks.len() {
             self.plucks.remove(p_idx);
             for set in 0..self.valve_sets.len() {
                 self.valve_sets[set].remove_pluck(p_idx);
