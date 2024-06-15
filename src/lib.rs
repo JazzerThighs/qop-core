@@ -40,7 +40,16 @@ impl QopEdit {
         for i in 0..self.key_codes.len() {
             if self.key_codes[i] == key_code {
                 let remove_key_idx = |key_idx_vec: &mut Vec<usize>| {
-                    key_idx_vec.retain(|&k| k != i);
+                    key_idx_vec.retain_mut(|k: &mut usize| -> bool {
+                        if *k < i {
+                            return true;
+                        } else if *k == i {
+                            return false;
+                        } else {
+                            *k -= 1;
+                            return true;
+                        }
+                    })
                 };
 
                 for p in 0..self.plucks.len() {
