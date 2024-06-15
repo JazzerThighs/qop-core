@@ -36,6 +36,21 @@ impl QopEdit {
             self.key_codes.push(key_code)
         };
     }
+    pub fn kcs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
+        // swaps only the keycode labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
+        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
+        for i in 0..self.key_codes.len() {
+            if self.key_codes[i] == kc1 {
+                i1 = Some(i);
+            } else if self.key_codes[i] == kc2 {
+                i2 = Some(i);
+            }
+        }
+        if i1.is_some() && i2.is_some() {
+            (self.key_codes[i1.unwrap()], self.key_codes[i2.unwrap()]) =
+                (self.key_codes[i2.unwrap()], self.key_codes[i1.unwrap()]);
+        }
+    }
     pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
         for i in 0..self.key_codes.len() {
             if self.key_codes[i] == key_code {
@@ -74,22 +89,9 @@ impl QopEdit {
                 for set in 0..self.aero_sets.len() {
                     self.aero_sets[set].all_key_idx_vecs(remove_key_idx);
                 }
+                self.key_codes.remove(i);
+                break;
             }
-        }
-    }
-    pub fn kcs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
-        // swaps only the keycode labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
-        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
-        for i in 0..self.key_codes.len() {
-            if self.key_codes[i] == kc1 {
-                i1 = Some(i);
-            } else if self.key_codes[i] == kc2 {
-                i2 = Some(i);
-            }
-        }
-        if i1.is_some() && i2.is_some() {
-            (self.key_codes[i1.unwrap()], self.key_codes[i2.unwrap()]) =
-                (self.key_codes[i2.unwrap()], self.key_codes[i1.unwrap()]);
         }
     }
     pub fn kcs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
