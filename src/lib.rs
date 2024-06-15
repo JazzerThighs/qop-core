@@ -51,10 +51,35 @@ impl QopEdit {
                 (self.key_codes[i2.unwrap()], self.key_codes[i1.unwrap()]);
         }
     }
+    fn kcs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
+        for p in 0..self.plucks.len() {
+            operation(&mut self.plucks[p].pluck.togs);
+            for t in 0..self.plucks[p].trnsp_pluck.len() {
+                operation(&mut self.plucks[p].trnsp_pluck[t].triggers);
+            }
+        }
+        operation(&mut self.plk_holds.sustain.togs);
+        operation(&mut self.plk_holds.inv_sustain.togs);
+        operation(&mut self.plk_holds.sostenuto.togs);
+        operation(&mut self.plk_holds.inv_sostenuto.togs);
+
+        for set in 0..self.valve_sets.len() {
+            self.valve_sets[set].all_key_idx_vecs(&operation);
+        }
+        for set in 0..self.fret_sets.len() {
+            self.fret_sets[set].all_key_idx_vecs(&operation);
+        }
+        for set in 0..self.radio_sets.len() {
+            self.radio_sets[set].all_key_idx_vecs(&operation);
+        }
+        for set in 0..self.aero_sets.len() {
+            self.aero_sets[set].all_key_idx_vecs(&operation);
+        }
+    }
     pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
         for i in 0..self.key_codes.len() {
             if self.key_codes[i] == key_code {
-                let remove_key_idx = |key_idx_vec: &mut Vec<usize>| {
+                let k_idx_remove = |key_idx_vec: &mut Vec<usize>| {
                     key_idx_vec.retain_mut(|k: &mut usize| -> bool {
                         if *k < i {
                             return true;
@@ -66,29 +91,7 @@ impl QopEdit {
                         }
                     })
                 };
-
-                for p in 0..self.plucks.len() {
-                    remove_key_idx(&mut self.plucks[p].pluck.togs);
-                    for t in 0..self.plucks[p].trnsp_pluck.len() {
-                        remove_key_idx(&mut self.plucks[p].trnsp_pluck[t].triggers);
-                    }
-                }
-                remove_key_idx(&mut self.plk_holds.sustain.togs);
-                remove_key_idx(&mut self.plk_holds.inv_sustain.togs);
-                remove_key_idx(&mut self.plk_holds.sostenuto.togs);
-                remove_key_idx(&mut self.plk_holds.inv_sostenuto.togs);
-                for set in 0..self.valve_sets.len() {
-                    self.valve_sets[set].all_key_idx_vecs(remove_key_idx);
-                }
-                for set in 0..self.fret_sets.len() {
-                    self.fret_sets[set].all_key_idx_vecs(remove_key_idx);
-                }
-                for set in 0..self.radio_sets.len() {
-                    self.radio_sets[set].all_key_idx_vecs(remove_key_idx);
-                }
-                for set in 0..self.aero_sets.len() {
-                    self.aero_sets[set].all_key_idx_vecs(remove_key_idx);
-                }
+                QopEdit::kcs_global_vec_manip(self, k_idx_remove);
                 self.key_codes.remove(i);
                 break;
             }
@@ -114,30 +117,7 @@ impl QopEdit {
                     }
                 });
             };
-
-            for p in 0..self.plucks.len() {
-                k_idxs_swap(&mut self.plucks[p].pluck.togs);
-                for t in 0..self.plucks[p].trnsp_pluck.len() {
-                    k_idxs_swap(&mut self.plucks[p].trnsp_pluck[t].triggers);
-                }
-            }
-            k_idxs_swap(&mut self.plk_holds.sustain.togs);
-            k_idxs_swap(&mut self.plk_holds.inv_sustain.togs);
-            k_idxs_swap(&mut self.plk_holds.sostenuto.togs);
-            k_idxs_swap(&mut self.plk_holds.inv_sostenuto.togs);
-
-            for set in 0..self.valve_sets.len() {
-                self.valve_sets[set].all_key_idx_vecs(k_idxs_swap);
-            }
-            for set in 0..self.fret_sets.len() {
-                self.fret_sets[set].all_key_idx_vecs(k_idxs_swap);
-            }
-            for set in 0..self.radio_sets.len() {
-                self.radio_sets[set].all_key_idx_vecs(k_idxs_swap);
-            }
-            for set in 0..self.aero_sets.len() {
-                self.aero_sets[set].all_key_idx_vecs(k_idxs_swap);
-            }
+            QopEdit::kcs_global_vec_manip(self, k_idxs_swap);
         }
     }
     pub fn kcs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
@@ -159,33 +139,10 @@ impl QopEdit {
                 k_idx_vec.sort();
                 k_idx_vec.dedup();
             };
-
-            for p in 0..self.plucks.len() {
-                k_idx_update(&mut self.plucks[p].pluck.togs);
-                for t in 0..self.plucks[p].trnsp_pluck.len() {
-                    k_idx_update(&mut self.plucks[p].trnsp_pluck[t].triggers);
-                }
-            }
-            k_idx_update(&mut self.plk_holds.sustain.togs);
-            k_idx_update(&mut self.plk_holds.inv_sustain.togs);
-            k_idx_update(&mut self.plk_holds.sostenuto.togs);
-            k_idx_update(&mut self.plk_holds.inv_sostenuto.togs);
-
-            for set in 0..self.valve_sets.len() {
-                self.valve_sets[set].all_key_idx_vecs(k_idx_update);
-            }
-            for set in 0..self.fret_sets.len() {
-                self.fret_sets[set].all_key_idx_vecs(k_idx_update);
-            }
-            for set in 0..self.radio_sets.len() {
-                self.radio_sets[set].all_key_idx_vecs(k_idx_update);
-            }
-            for set in 0..self.aero_sets.len() {
-                self.aero_sets[set].all_key_idx_vecs(k_idx_update);
-            }
+            QopEdit::kcs_global_vec_manip(self, k_idx_update);
         }
     }
-
+    
     /* ********************************************************************* */
 
     pub fn plk_insert_p(&mut self, p_idx: usize) {
