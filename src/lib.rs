@@ -188,7 +188,7 @@ impl QopEdit {
     }
     pub fn plk_remove_key(&mut self, p_idx: usize, key_idx_val: usize) {
         if p_idx < self.plucks.len() && key_idx_val < self.key_codes.len() {
-            self.plucks[p_idx].pluck.togs.retain_mut(|idx| {
+            self.plucks[p_idx].pluck.togs.retain_mut(|idx: &mut usize| {
                 if *idx < key_idx_val {
                     return true;
                 } else if *idx == key_idx_val {
@@ -358,22 +358,22 @@ impl QopEdit {
             match set_kind {
                 0 => {
                     if set_idx < self.valve_sets.len() {
-                        self.valve_sets[set_idx].insert_btn_key(btn_idx, key_idx_val)
+                        self.valve_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
                     }
                 }
                 1 => {
                     if set_idx < self.fret_sets.len() {
-                        self.fret_sets[set_idx].insert_btn_key(btn_idx, key_idx_val)
+                        self.fret_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
                     }
                 }
                 2 => {
                     if set_idx < self.radio_sets.len() {
-                        self.radio_sets[set_idx].insert_btn_key(btn_idx, key_idx_val)
+                        self.radio_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
                     }
                 }
                 3 => {
                     if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].insert_btn_key(btn_idx, key_idx_val)
+                        self.aero_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
                     }
                 }
                 _ => return,
@@ -391,22 +391,22 @@ impl QopEdit {
             match set_kind {
                 0 => {
                     if set_idx < self.valve_sets.len() {
-                        self.valve_sets[set_idx].remove_btn_key(btn_idx, key_idx_val)
+                        self.valve_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
                     }
                 }
                 1 => {
                     if set_idx < self.fret_sets.len() {
-                        self.fret_sets[set_idx].remove_btn_key(btn_idx, key_idx_val)
+                        self.fret_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
                     }
                 }
                 2 => {
                     if set_idx < self.radio_sets.len() {
-                        self.radio_sets[set_idx].remove_btn_key(btn_idx, key_idx_val)
+                        self.radio_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
                     }
                 }
                 3 => {
                     if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].remove_btn_key(btn_idx, key_idx_val)
+                        self.aero_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
                     }
                 }
                 _ => return,
@@ -496,22 +496,22 @@ impl QopEdit {
             match set_kind {
                 0 => {
                     if set_idx < self.valve_sets.len() {
-                        self.valve_sets[set_idx].insert_hold_btn_key(h_kind, key_idx_val)
+                        self.valve_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
                     }
                 }
                 1 => {
                     if set_idx < self.fret_sets.len() {
-                        self.fret_sets[set_idx].insert_hold_btn_key(h_kind, key_idx_val)
+                        self.fret_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
                     }
                 }
                 2 => {
                     if set_idx < self.radio_sets.len() {
-                        self.radio_sets[set_idx].insert_hold_btn_key(h_kind, key_idx_val)
+                        self.radio_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
                     }
                 }
                 3 => {
                     if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].insert_hold_btn_key(h_kind, key_idx_val)
+                        self.aero_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
                     }
                 }
                 _ => return,
@@ -529,38 +529,83 @@ impl QopEdit {
             match set_kind {
                 0 => {
                     if set_idx < self.valve_sets.len() {
-                        self.valve_sets[set_idx].remove_hold_btn_key(h_kind, key_idx_val)
+                        self.valve_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
                     }
                 }
                 1 => {
                     if set_idx < self.fret_sets.len() {
-                        self.fret_sets[set_idx].remove_hold_btn_key(h_kind, key_idx_val)
+                        self.fret_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
                     }
                 }
                 2 => {
                     if set_idx < self.radio_sets.len() {
-                        self.radio_sets[set_idx].remove_hold_btn_key(h_kind, key_idx_val)
+                        self.radio_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
                     }
                 }
                 3 => {
                     if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].remove_hold_btn_key(h_kind, key_idx_val)
+                        self.aero_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
                     }
                 }
                 _ => return,
             }
         }
     }
-    
+
     /* ********************************************************************* */
-    
-    pub fn set_insert_trnsp_all_key(
+
+    pub fn set_trnsp_all_params(
         &mut self,
         set_kind: u8,
         set_idx: usize,
-        key_idx_val: Option<Vec<usize>>,
+        trnsp_idx: usize,
+        key_idx_vals: Vec<Option<usize>>,
+        i_del_vec: Vec<Option<i64>>,
+        x_del_vec: Vec<Option<f64>>,
     ) {
-        todo!()
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_all_params(
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_all_params(
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_all_params(
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_all_params(
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            _ => return,
+        }
     }
     pub fn set_remove_trnsp_all_key(
         &mut self,
@@ -569,63 +614,175 @@ impl QopEdit {
         trnsp_idx: usize,
         key_idx_val: usize,
     ) {
-        todo!()
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                }
+            }
+            _ => return,
+        }
     }
-    pub fn set_trnsp_all_idx_delta(
+    pub fn set_remove_trnsp_all(&mut self, set_kind: u8, set_idx: usize, trnsp_idx: usize) {
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                }
+            }
+            _ => return,
+        }
+    }
+
+    pub fn set_trnsp_one_params(
         &mut self,
         set_kind: u8,
         set_idx: usize,
-        key_idx_val: usize,
+        btn_idx: usize,
+        trnsp_idx: usize,
+        key_idx_vals: Vec<Option<usize>>,
         i_del_vec: Vec<Option<i64>>,
-    ) {
-        todo!()
-    }
-    pub fn set_trnsp_all_xrta_delta(
-        &mut self,
-        set_kind: u8,
-        set_idx: usize,
-        key_idx_val: usize,
         x_del_vec: Vec<Option<f64>>,
     ) {
-        todo!()
-    }
-    pub fn set_insert_trnsp_one_key(
-        &mut self,
-        set_kind: u8,
-        set_idx: usize,
-        d_idx: usize,
-        key_idx_vals: Option<Vec<usize>>,
-    ) {
-        todo!()
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_one_params(
+                        btn_idx,
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_one_params(
+                        btn_idx,
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_one_params(
+                        btn_idx,
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_one_params(
+                        btn_idx,
+                        trnsp_idx,
+                        key_idx_vals,
+                        i_del_vec,
+                        x_del_vec,
+                    );
+                }
+            }
+            _ => return,
+        }
     }
     pub fn set_remove_trnsp_one_key(
         &mut self,
         set_kind: u8,
         set_idx: usize,
-        d_idx: usize,
         trnsp_idx: usize,
+        btn_idx: usize,
         key_idx_val: usize,
     ) {
-        todo!()
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                }
+            }
+            _ => return,
+        }
     }
-    pub fn set_trnsp_one_idx_delta(
+    pub fn set_remove_trnsp_one(
         &mut self,
         set_kind: u8,
         set_idx: usize,
-        del_idx: usize,
-        key_idx_val: usize,
-        i_del_vec: Vec<Option<i64>>,
+        btn_idx: usize,
+        trnsp_idx: usize,
     ) {
-        todo!()
-    }
-    pub fn set_trnsp_one_xrta_delta(
-        &mut self,
-        set_kind: u8,
-        set_idx: usize,
-        del_idx: usize,
-        key_idx_val: usize,
-        x_del_vec: Vec<Option<f64>>,
-    ) {
-        todo!()
+        match set_kind {
+            0 => {
+                if set_idx <= self.valve_sets.len() {
+                    self.valve_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                }
+            }
+            1 => {
+                if set_idx <= self.fret_sets.len() {
+                    self.fret_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                }
+            }
+            2 => {
+                if set_idx <= self.radio_sets.len() {
+                    self.radio_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                }
+            }
+            3 => {
+                if set_idx <= self.aero_sets.len() {
+                    self.aero_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                }
+            }
+            _ => return,
+        }
     }
 }
