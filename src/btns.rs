@@ -161,6 +161,16 @@ impl IndvSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
+    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {todo!()}
+    pub(crate) fn trnsp_one_params(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
+    pub(crate) fn trnsp_one_remove_key(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {todo!()}
 }
 
 /* ************************************************************************* */
@@ -272,4 +282,14 @@ impl ComboSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
+    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {todo!()}
+    pub(crate) fn trnsp_one_params(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
+    pub(crate) fn trnsp_one_remove_key(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_val: usize) {todo!()}
+    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {todo!()}
 }
