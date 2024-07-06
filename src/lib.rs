@@ -571,6 +571,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -581,6 +582,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -591,6 +593,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -601,6 +604,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -683,6 +687,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -694,6 +699,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -705,6 +711,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }
@@ -716,6 +723,7 @@ impl QopEdit {
                         key_idx_vals,
                         i_del_vec,
                         x_del_vec,
+                        self.plucks.len(),
                     );
                 }
             }

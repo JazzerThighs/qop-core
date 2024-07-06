@@ -53,9 +53,9 @@ pub(crate) struct TrnspSet {
 }
 
 impl TrnspSet {
-    pub(crate) fn new_tp_key(key_idx_vals: Vec<usize>, plucks: usize) -> Self {
+    pub(crate) fn new(plucks: usize) -> Self {
         return TrnspSet {
-            triggers: key_idx_vals,
+            triggers: vec![],
             idx_delta: vec![0i64; plucks],
             xtra_delta: vec![0.0f64; plucks],
         };
@@ -113,6 +113,8 @@ pub(crate) struct IndvSet {
     pub(crate) pressed: VecDeque<usize>,
     pub(crate) holds: HoldBtns,
     pub(crate) trnsp_all: Vec<TrnspSet>,
+    pub(crate) tp_i_mem: Vec<i64>,
+    pub(crate) tp_x_mem: Vec<f64>,
 }
 
 impl IndvSet {
@@ -124,6 +126,8 @@ impl IndvSet {
             pressed: VecDeque::new(),
             holds: HoldBtns::default(),
             trnsp_all: vec![],
+            tp_i_mem: vec![0i64; plucks],
+            tp_x_mem: vec![0.0f64; plucks],
         };
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
@@ -139,11 +143,15 @@ impl IndvSet {
     pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
         for btn in 0..self.buttons.len() {
             self.buttons[btn].insert_pluck(p_idx);
+            self.tp_i_mem.insert(p_idx, 0i64);
+            self.tp_x_mem.insert(p_idx, 0.0f64);
         }
     }
     pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
         for btn in 0..self.buttons.len() {
             self.buttons[btn].remove_pluck(p_idx);
+            self.tp_i_mem.remove(p_idx);
+            self.tp_x_mem.remove(p_idx);
         }
     }
     pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
@@ -161,16 +169,168 @@ impl IndvSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
-    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
-    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {todo!()}
-    pub(crate) fn trnsp_one_params(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
-    pub(crate) fn trnsp_one_remove_key(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {todo!()}
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
+                self.buttons[btn_idx].togs.push(key_idx_val);
+            }
+        }
+    }
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
+        }
+    }
+    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {
+        match h_kind {
+            0 => {
+                if !self.holds.sustain.togs.contains(&key_idx_val) {
+                    self.holds.sustain.togs.push(key_idx_val)
+                }
+            }
+            1 => {
+                if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
+                    self.holds.inv_sustain.togs.push(key_idx_val)
+                }
+            }
+            2 => {
+                if !self.holds.sostenuto.togs.contains(&key_idx_val) {
+                    self.holds.sostenuto.togs.push(key_idx_val)
+                }
+            }
+            3 => {
+                if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
+                    self.holds.inv_sostenuto.togs.push(key_idx_val)
+                }
+            }
+            _ => {}
+        }
+    }
+    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {
+        match h_kind {
+            0 => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
+            1 => self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val),
+            2 => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            3 => self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            _ => {}
+        }
+    }
+    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>, plucks: usize) {
+        if trnsp_idx == self.trnsp_all.len() {
+            let mut tp: TrnspSet = TrnspSet::new(plucks);
+            for (_i, &key) in key_idx_vals.iter().enumerate() {
+                if let Some(k) = key {
+                    tp.triggers.push(k);
+                }
+            }
+            for (i, &i_del) in i_del_vec.iter().enumerate() {
+                if i < plucks {
+                    if let Some(delta) = i_del {
+                        tp.idx_delta[i] = delta;
+                    }
+                }
+            }
+            for (x, &x_del) in x_del_vec.iter().enumerate() {
+                if x < plucks {
+                    if let Some(delta) = x_del {
+                        tp.xtra_delta[x] = delta;
+                    }
+                }
+            }
+            self.trnsp_all.push(tp);
+        } else if trnsp_idx < self.trnsp_all.len() {
+            for (_i, &key) in key_idx_vals.iter().enumerate() {
+                if let Some(k) = key {
+                    if !self.trnsp_all[trnsp_idx].triggers.contains(&k) {self.trnsp_all[trnsp_idx].triggers.push(k);}
+                }
+            }
+            for (i, &i_del) in i_del_vec.iter().enumerate() {
+                if i < plucks {
+                    if let Some(delta) = i_del {
+                        self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
+                    }
+                }
+            }
+            for (x, &x_del) in x_del_vec.iter().enumerate() {
+                if x < plucks {
+                    if let Some(delta) = x_del {
+                        self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
+                    }
+                }
+            }
+        }
+    }
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
+        if trnsp_idx < self.trnsp_all.len() {
+            self.trnsp_all[trnsp_idx].triggers.retain(|&idx| idx != key_idx_val);
+        }
+    }
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
+        if trnsp_idx < self.trnsp_all.len() {
+            self.trnsp_all.remove(trnsp_idx);
+        }
+    }
+    pub(crate) fn trnsp_one_params(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>, plucks: usize) {
+        if btn_idx < self.buttons.len() {
+            if trnsp_idx == self.buttons[btn_idx].trnsp_one.len() {
+                let mut tp: TrnspSet = TrnspSet::new(plucks);
+                for (_i, &key) in key_idx_vals.iter().enumerate() {
+                    if let Some(k) = key {
+                        tp.triggers.push(k);
+                    }
+                }
+                for (i, &i_del) in i_del_vec.iter().enumerate() {
+                    if i < plucks {
+                        if let Some(delta) = i_del {
+                            tp.idx_delta[i] = delta;
+                        }
+                    }
+                }
+                for (x, &x_del) in x_del_vec.iter().enumerate() {
+                    if x < plucks {
+                        if let Some(delta) = x_del {
+                            tp.xtra_delta[x] = delta;
+                        }
+                    }
+                }
+                self.buttons[btn_idx].trnsp_one.push(tp);
+            } else if trnsp_idx < self.buttons[btn_idx].trnsp_one.len() {
+                for (_i, &key) in key_idx_vals.iter().enumerate() {
+                    if let Some(k) = key {
+                        if !self.buttons[btn_idx].trnsp_one[trnsp_idx].triggers.contains(&k) {self.buttons[btn_idx].trnsp_one[trnsp_idx].triggers.push(k);}
+                    }
+                }
+                for (i, &i_del) in i_del_vec.iter().enumerate() {
+                    if i < plucks {
+                        if let Some(delta) = i_del {
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
+                        }
+                    }
+                }
+                for (x, &x_del) in x_del_vec.iter().enumerate() {
+                    if x < plucks {
+                        if let Some(delta) = x_del {
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    pub(crate) fn trnsp_one_remove_key(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            if trnsp_idx < self.buttons[btn_idx].trnsp_one.len() {
+                self.buttons[btn_idx].trnsp_one[trnsp_idx].triggers.retain(|&idx| idx != key_idx_val);
+            }
+        }
+    }
+    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {
+        if btn_idx < self.buttons.len() {
+            if trnsp_idx < self.buttons[btn_idx].trnsp_one.len() {
+                self.buttons[btn_idx].trnsp_one.remove(trnsp_idx);
+            }
+        }
+    }
 }
 
 /* ************************************************************************* */
@@ -218,6 +378,8 @@ pub(crate) struct ComboSet {
     pub(crate) combos: Vec<Combo>,
     pub(crate) holds: HoldBtns,
     pub(crate) trnsp_all: Vec<TrnspSet>,
+    pub(crate) tp_i_mem: Vec<i64>,
+    pub(crate) tp_x_mem: Vec<f64>,
 }
 
 impl ComboSet {
@@ -227,6 +389,8 @@ impl ComboSet {
             combos: vec![Combo::new(plucks, 1usize)],
             holds: HoldBtns::default(),
             trnsp_all: vec![],
+            tp_i_mem: vec![0i64; plucks],
+            tp_x_mem: vec![0.0f64; plucks],
         };
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
@@ -258,11 +422,15 @@ impl ComboSet {
     pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
         for c in 0..self.combos.len() {
             self.combos[c].insert_pluck(p_idx);
+            self.tp_i_mem.insert(p_idx, 0i64);
+            self.tp_x_mem.insert(p_idx, 0.0f64);
         }
     }
     pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
         for c in 0..self.combos.len() {
             self.combos[c].remove_pluck(p_idx);
+            self.tp_i_mem.remove(p_idx);
+            self.tp_x_mem.remove(p_idx);
         }
     }
     pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
@@ -282,14 +450,168 @@ impl ComboSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
-    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
-    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {todo!()}
-    pub(crate) fn trnsp_one_params(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>) {todo!()}
-    pub(crate) fn trnsp_one_remove_key(&mut self, btn_idx: usize, trnsp_idx: usize, key_idx_val: usize) {todo!()}
-    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {todo!()}
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
+                self.buttons[btn_idx].togs.push(key_idx_val);
+            }
+        }
+    }
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
+        }
+    }
+    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {
+        match h_kind {
+            0 => {
+                if !self.holds.sustain.togs.contains(&key_idx_val) {
+                    self.holds.sustain.togs.push(key_idx_val)
+                }
+            }
+            1 => {
+                if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
+                    self.holds.inv_sustain.togs.push(key_idx_val)
+                }
+            }
+            2 => {
+                if !self.holds.sostenuto.togs.contains(&key_idx_val) {
+                    self.holds.sostenuto.togs.push(key_idx_val)
+                }
+            }
+            3 => {
+                if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
+                    self.holds.inv_sostenuto.togs.push(key_idx_val)
+                }
+            }
+            _ => {}
+        }
+    }
+    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {
+        match h_kind {
+            0 => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
+            1 => self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val),
+            2 => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            3 => self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            _ => {}
+        }
+    }
+    pub(crate) fn trnsp_all_params(&mut self, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>, plucks: usize) {
+        if trnsp_idx == self.trnsp_all.len() {
+            let mut tp: TrnspSet = TrnspSet::new(plucks);
+            for (_i, &key) in key_idx_vals.iter().enumerate() {
+                if let Some(k) = key {
+                    tp.triggers.push(k);
+                }
+            }
+            for (i, &i_del) in i_del_vec.iter().enumerate() {
+                if i < plucks {
+                    if let Some(delta) = i_del {
+                        tp.idx_delta[i] = delta;
+                    }
+                }
+            }
+            for (x, &x_del) in x_del_vec.iter().enumerate() {
+                if x < plucks {
+                    if let Some(delta) = x_del {
+                        tp.xtra_delta[x] = delta;
+                    }
+                }
+            }
+            self.trnsp_all.push(tp);
+        } else if trnsp_idx < self.trnsp_all.len() {
+            for (_i, &key) in key_idx_vals.iter().enumerate() {
+                if let Some(k) = key {
+                    if !self.trnsp_all[trnsp_idx].triggers.contains(&k) {self.trnsp_all[trnsp_idx].triggers.push(k);}
+                }
+            }
+            for (i, &i_del) in i_del_vec.iter().enumerate() {
+                if i < plucks {
+                    if let Some(delta) = i_del {
+                        self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
+                    }
+                }
+            }
+            for (x, &x_del) in x_del_vec.iter().enumerate() {
+                if x < plucks {
+                    if let Some(delta) = x_del {
+                        self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
+                    }
+                }
+            }
+        }
+    }
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
+        if trnsp_idx < self.trnsp_all.len() {
+            self.trnsp_all[trnsp_idx].triggers.retain(|&idx| idx != key_idx_val);
+        }
+    }
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
+        if trnsp_idx < self.trnsp_all.len() {
+            self.trnsp_all.remove(trnsp_idx);
+        }
+    }
+    pub(crate) fn trnsp_one_params(&mut self, c_idx: usize, trnsp_idx: usize, key_idx_vals: Vec<Option<usize>>, i_del_vec: Vec<Option<i64>>, x_del_vec: Vec<Option<f64>>, plucks: usize) {
+        if c_idx < self.combos.len() {
+            if c_idx < self.buttons.len() {
+            if trnsp_idx == self.combos[c_idx].trnsp_one.len() {
+                let mut tp: TrnspSet = TrnspSet::new(plucks);
+                for (_i, &key) in key_idx_vals.iter().enumerate() {
+                    if let Some(k) = key {
+                        tp.triggers.push(k);
+                    }
+                }
+                for (i, &i_del) in i_del_vec.iter().enumerate() {
+                    if i < plucks {
+                        if let Some(delta) = i_del {
+                            tp.idx_delta[i] = delta;
+                        }
+                    }
+                }
+                for (x, &x_del) in x_del_vec.iter().enumerate() {
+                    if x < plucks {
+                        if let Some(delta) = x_del {
+                            tp.xtra_delta[x] = delta;
+                        }
+                    }
+                }
+                self.combos[c_idx].trnsp_one.push(tp);
+            } else if trnsp_idx < self.combos[c_idx].trnsp_one.len() {
+                for (_i, &key) in key_idx_vals.iter().enumerate() {
+                    if let Some(k) = key {
+                        if !self.combos[c_idx].trnsp_one[trnsp_idx].triggers.contains(&k) {self.combos[c_idx].trnsp_one[trnsp_idx].triggers.push(k);}
+                    }
+                }
+                for (i, &i_del) in i_del_vec.iter().enumerate() {
+                    if i < plucks {
+                        if let Some(delta) = i_del {
+                            self.combos[c_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
+                        }
+                    }
+                }
+                for (x, &x_del) in x_del_vec.iter().enumerate() {
+                    if x < plucks {
+                        if let Some(delta) = x_del {
+                            self.combos[c_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
+                        }
+                    }
+                }
+            }
+        }
+        }
+    }
+    pub(crate) fn trnsp_one_remove_key(&mut self, c_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
+        if c_idx < self.combos.len() {
+            if trnsp_idx < self.combos[c_idx].trnsp_one.len() {
+                self.combos[c_idx].trnsp_one[trnsp_idx].triggers.retain(|&idx| idx != key_idx_val);
+            }
+        }
+    }
+    pub(crate) fn trnsp_one_remove(&mut self, c_idx: usize, trnsp_idx: usize) {
+        if c_idx < self.combos.len() {
+            if trnsp_idx < self.combos[c_idx].trnsp_one.len() {
+                self.combos[c_idx].trnsp_one.remove(trnsp_idx);
+            }
+        }
+    }
 }
