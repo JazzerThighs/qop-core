@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use winit::keyboard::KeyCode;
 
 #[repr(C)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct QopEdit {
     pub(super) key_codes: Vec<KeyCode>,
     pub(super) plucks: Vec<Pluck>,
