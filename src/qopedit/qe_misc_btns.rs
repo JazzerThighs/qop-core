@@ -1,5 +1,4 @@
-use std::collections::VecDeque;
-use crate::qopedit::{TrnspSet, DeltaTog, IndvSet, Combo, ComboSet};
+use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, ComboSet};
 
 impl TrnspSet {
     pub(crate) fn new(plucks: usize) -> Self {
@@ -43,7 +42,6 @@ impl IndvSet {
             buttons: vec![DeltaTog::new(plucks)],
             max_pressed: 1u8,
             min_pressed: 0u8,
-            pressed: VecDeque::new(),
             holds: HoldBtns::default(),
             trnsp_all: vec![],
             tp_i_mem: vec![0i64; plucks],
