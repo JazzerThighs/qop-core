@@ -1,4 +1,4 @@
-use super::{QopEdit, btns::Pluck};
+use crate::qopedit::{QopEdit, Pluck};
 
 impl QopEdit {
     pub fn plk_insert_p(&mut self, p_idx: usize) {

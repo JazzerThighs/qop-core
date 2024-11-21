@@ -1,4 +1,4 @@
-use super::{QopEdit, btns::{ComboSet, IndvSet}};
+use crate::qopedit::{QopEdit, ComboSet, IndvSet};
 
 impl QopEdit {
     pub fn set_insert_set(&mut self, set_kind: u8, set_idx: usize) {

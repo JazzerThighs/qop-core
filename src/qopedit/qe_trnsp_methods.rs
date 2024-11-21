@@ -1,4 +1,4 @@
-use super::QopEdit;
+use crate::qopedit::QopEdit;
 
 impl QopEdit {
     pub fn set_trnsp_all_params(

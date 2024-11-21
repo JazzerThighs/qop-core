@@ -1,5 +1,5 @@
 use winit::keyboard::KeyCode;
-use crate::{qopedit::btns::{ComboSet, HoldBtns, IndvSet, Pluck}, QopEdit};
+use crate::qopedit::{QopEdit, ComboSet, HoldBtns, IndvSet, Pluck};
 
 #[repr(C)]
 #[derive(Debug)]
