@@ -6,25 +6,25 @@ impl QopEdit {
             0 => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets
-                        .insert(set_idx, IndvSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.guts.len()));
                 }
             }
             1 => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets
-                        .insert(set_idx, IndvSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.guts.len()));
                 }
             }
             2 => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets
-                        .insert(set_idx, IndvSet::new(self.plucks.len()));
+                        .insert(set_idx, IndvSet::new(self.guts.len()));
                 }
             }
             3 => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets
-                        .insert(set_idx, ComboSet::new(self.plucks.len()));
+                        .insert(set_idx, ComboSet::new(self.guts.len()));
                 }
             }
             _ => return,
@@ -57,9 +57,9 @@ impl QopEdit {
     }
     pub fn set_insert_btn(&mut self, set_kind: u8, set_idx: usize, btn_idx: usize) {
         match set_kind {
-            0 => self.valve_sets[set_idx].insert_btn(btn_idx, self.plucks.len()),
-            1 => self.fret_sets[set_idx].insert_btn(btn_idx, self.plucks.len()),
-            2 => self.radio_sets[set_idx].insert_btn(btn_idx, self.plucks.len()),
+            0 => self.valve_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
+            1 => self.fret_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
+            2 => self.radio_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
             3 => self.aero_sets[set_idx].insert_btn(btn_idx),
             _ => return,
         }
@@ -75,7 +75,7 @@ impl QopEdit {
     }
     pub fn set_insert_combo(&mut self, set_idx: usize, c_idx: usize) {
         if set_idx <= self.aero_sets.len() {
-            self.aero_sets[set_idx].insert_combo(c_idx, self.plucks.len());
+            self.aero_sets[set_idx].insert_combo(c_idx, self.guts.len());
         }
     }
     pub fn set_remove_combo(&mut self, set_idx: usize, c_idx: usize) {
@@ -156,7 +156,7 @@ impl QopEdit {
         del_idx: usize,
         i_del_vec: Vec<Option<i64>>,
     ) {
-        if del_idx < self.plucks.len() {
+        if del_idx < self.guts.len() {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if let Some(delta) = i_del {
                     match set_kind {

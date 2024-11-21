@@ -23,16 +23,16 @@ impl QopEdit {
         }
     }
     fn kcs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
-        for p in 0..self.plucks.len() {
-            operation(&mut self.plucks[p].pluck.togs);
-            for t in 0..self.plucks[p].trnsp_pluck.len() {
-                operation(&mut self.plucks[p].trnsp_pluck[t].triggers);
+        for g in 0..self.guts.len() {
+            operation(&mut self.guts[g].gut_triggers.togs);
+            for t in 0..self.guts[g].trnsp_gut.len() {
+                operation(&mut self.guts[g].trnsp_gut[t].triggers);
             }
         }
-        operation(&mut self.plk_holds.sustain.togs);
-        operation(&mut self.plk_holds.inv_sustain.togs);
-        operation(&mut self.plk_holds.sostenuto.togs);
-        operation(&mut self.plk_holds.inv_sostenuto.togs);
+        operation(&mut self.gut_holds.sustain.togs);
+        operation(&mut self.gut_holds.inv_sustain.togs);
+        operation(&mut self.gut_holds.sostenuto.togs);
+        operation(&mut self.gut_holds.inv_sostenuto.togs);
 
         for set in 0..self.valve_sets.len() {
             self.valve_sets[set].all_key_idx_vecs(&operation);

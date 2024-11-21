@@ -1,56 +1,56 @@
 use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, ComboSet};
 
 impl TrnspSet {
-    pub(crate) fn new(plucks: usize) -> Self {
+    pub(crate) fn new(guts: usize) -> Self {
         return TrnspSet {
             triggers: vec![],
-            idx_delta: vec![0i64; plucks],
-            xtra_delta: vec![0.0f64; plucks],
+            idx_delta: vec![0i64; guts],
+            xtra_delta: vec![0.0f64; guts],
         };
     }
 }
 
 impl DeltaTog {
-    pub(crate) fn new(plucks: usize) -> Self {
+    pub(crate) fn new(guts: usize) -> Self {
         return DeltaTog {
             togs: vec![],
             pressed: false,
-            idx_deltas: vec![0i64; plucks],
-            xtra_deltas: vec![0.0f64; plucks],
+            idx_deltas: vec![0i64; guts],
+            xtra_deltas: vec![0.0f64; guts],
             trnsp_one: vec![],
-            tp_i_mem: vec![0i64; plucks],
-            tp_x_mem: vec![0.0f64; plucks],
+            tp_i_mem: vec![0i64; guts],
+            tp_x_mem: vec![0.0f64; guts],
         };
     }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
-        self.idx_deltas.insert(p_idx, 0i64);
-        self.xtra_deltas.insert(p_idx, 0.0f64);
-        self.tp_i_mem.insert(p_idx, 0i64);
-        self.tp_x_mem.insert(p_idx, 0.0f64);
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        self.idx_deltas.insert(g_idx, 0i64);
+        self.xtra_deltas.insert(g_idx, 0.0f64);
+        self.tp_i_mem.insert(g_idx, 0i64);
+        self.tp_x_mem.insert(g_idx, 0.0f64);
     }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
-        self.idx_deltas.remove(p_idx);
-        self.xtra_deltas.remove(p_idx);
-        self.tp_i_mem.remove(p_idx);
-        self.tp_x_mem.remove(p_idx);
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        self.idx_deltas.remove(g_idx);
+        self.xtra_deltas.remove(g_idx);
+        self.tp_i_mem.remove(g_idx);
+        self.tp_x_mem.remove(g_idx);
     }
 }
 
 impl IndvSet {
-    pub(crate) fn new(plucks: usize) -> Self {
+    pub(crate) fn new(guts: usize) -> Self {
         return IndvSet {
-            buttons: vec![DeltaTog::new(plucks)],
+            buttons: vec![DeltaTog::new(guts)],
             max_pressed: 1u8,
             min_pressed: 0u8,
             holds: HoldBtns::default(),
             trnsp_all: vec![],
-            tp_i_mem: vec![0i64; plucks],
-            tp_x_mem: vec![0.0f64; plucks],
+            tp_i_mem: vec![0i64; guts],
+            tp_x_mem: vec![0.0f64; guts],
         };
     }
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize, plucks: usize) {
+    pub(crate) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
         if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, DeltaTog::new(plucks));
+            self.buttons.insert(btn_idx, DeltaTog::new(guts));
         }
     }
     pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
@@ -58,18 +58,18 @@ impl IndvSet {
             self.buttons.remove(btn_idx);
         }
     }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         for btn in 0..self.buttons.len() {
-            self.buttons[btn].insert_pluck(p_idx);
-            self.tp_i_mem.insert(p_idx, 0i64);
-            self.tp_x_mem.insert(p_idx, 0.0f64);
+            self.buttons[btn].insert_gut(g_idx);
+            self.tp_i_mem.insert(g_idx, 0i64);
+            self.tp_x_mem.insert(g_idx, 0.0f64);
         }
     }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         for btn in 0..self.buttons.len() {
-            self.buttons[btn].remove_pluck(p_idx);
-            self.tp_i_mem.remove(p_idx);
-            self.tp_x_mem.remove(p_idx);
+            self.buttons[btn].remove_gut(g_idx);
+            self.tp_i_mem.remove(g_idx);
+            self.tp_x_mem.remove(g_idx);
         }
     }
     pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
@@ -147,24 +147,24 @@ impl IndvSet {
         key_idx_vals: Vec<Option<usize>>,
         i_del_vec: Vec<Option<i64>>,
         x_del_vec: Vec<Option<f64>>,
-        plucks: usize,
+        guts: usize,
     ) {
         if trnsp_idx == self.trnsp_all.len() {
-            let mut tp: TrnspSet = TrnspSet::new(plucks);
+            let mut tp: TrnspSet = TrnspSet::new(guts);
             for (_i, &key) in key_idx_vals.iter().enumerate() {
                 if let Some(k) = key {
                     tp.triggers.push(k);
                 }
             }
             for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if i < plucks {
+                if i < guts {
                     if let Some(delta) = i_del {
                         tp.idx_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if x < plucks {
+                if x < guts {
                     if let Some(delta) = x_del {
                         tp.xtra_delta[x] = delta;
                     }
@@ -180,14 +180,14 @@ impl IndvSet {
                 }
             }
             for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if i < plucks {
+                if i < guts {
                     if let Some(delta) = i_del {
                         self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if x < plucks {
+                if x < guts {
                     if let Some(delta) = x_del {
                         self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
                     }
@@ -214,25 +214,25 @@ impl IndvSet {
         key_idx_vals: Vec<Option<usize>>,
         i_del_vec: Vec<Option<i64>>,
         x_del_vec: Vec<Option<f64>>,
-        plucks: usize,
+        guts: usize,
     ) {
         if btn_idx < self.buttons.len() {
             if trnsp_idx == self.buttons[btn_idx].trnsp_one.len() {
-                let mut tp: TrnspSet = TrnspSet::new(plucks);
+                let mut tp: TrnspSet = TrnspSet::new(guts);
                 for (_i, &key) in key_idx_vals.iter().enumerate() {
                     if let Some(k) = key {
                         tp.triggers.push(k);
                     }
                 }
                 for (i, &i_del) in i_del_vec.iter().enumerate() {
-                    if i < plucks {
+                    if i < guts {
                         if let Some(delta) = i_del {
                             tp.idx_delta[i] = delta;
                         }
                     }
                 }
                 for (x, &x_del) in x_del_vec.iter().enumerate() {
-                    if x < plucks {
+                    if x < guts {
                         if let Some(delta) = x_del {
                             tp.xtra_delta[x] = delta;
                         }
@@ -251,14 +251,14 @@ impl IndvSet {
                     }
                 }
                 for (i, &i_del) in i_del_vec.iter().enumerate() {
-                    if i < plucks {
+                    if i < guts {
                         if let Some(delta) = i_del {
                             self.buttons[btn_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
                         }
                     }
                 }
                 for (x, &x_del) in x_del_vec.iter().enumerate() {
-                    if x < plucks {
+                    if x < guts {
                         if let Some(delta) = x_del {
                             self.buttons[btn_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
                         }
@@ -291,39 +291,39 @@ impl IndvSet {
 }
 
 impl Combo {
-    pub(crate) fn new(plucks: usize, btns: usize) -> Self {
+    pub(crate) fn new(guts: usize, btns: usize) -> Self {
         return Combo {
             combo: vec![false; btns],
-            idx_deltas: vec![0i64; plucks],
-            xtra_deltas: vec![0.0f64; plucks],
+            idx_deltas: vec![0i64; guts],
+            xtra_deltas: vec![0.0f64; guts],
             trnsp_one: vec![],
-            tp_i_mem: vec![0i64; plucks],
-            tp_x_mem: vec![0.0f64; plucks],
+            tp_i_mem: vec![0i64; guts],
+            tp_x_mem: vec![0.0f64; guts],
         };
     }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
-        self.idx_deltas.insert(p_idx, 0i64);
-        self.xtra_deltas.insert(p_idx, 0.0f64);
-        self.tp_i_mem.insert(p_idx, 0i64);
-        self.tp_x_mem.insert(p_idx, 0.0f64);
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        self.idx_deltas.insert(g_idx, 0i64);
+        self.xtra_deltas.insert(g_idx, 0.0f64);
+        self.tp_i_mem.insert(g_idx, 0i64);
+        self.tp_x_mem.insert(g_idx, 0.0f64);
     }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
-        self.idx_deltas.remove(p_idx);
-        self.xtra_deltas.remove(p_idx);
-        self.tp_i_mem.remove(p_idx);
-        self.tp_x_mem.remove(p_idx);
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        self.idx_deltas.remove(g_idx);
+        self.xtra_deltas.remove(g_idx);
+        self.tp_i_mem.remove(g_idx);
+        self.tp_x_mem.remove(g_idx);
     }
 }
 
 impl ComboSet {
-    pub(crate) fn new(plucks: usize) -> Self {
+    pub(crate) fn new(guts: usize) -> Self {
         return ComboSet {
             buttons: vec![BtnTog::default()],
-            combos: vec![Combo::new(plucks, 1usize)],
+            combos: vec![Combo::new(guts, 1usize)],
             holds: HoldBtns::default(),
             trnsp_all: vec![],
-            tp_i_mem: vec![0i64; plucks],
-            tp_x_mem: vec![0.0f64; plucks],
+            tp_i_mem: vec![0i64; guts],
+            tp_x_mem: vec![0.0f64; guts],
         };
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
@@ -342,10 +342,10 @@ impl ComboSet {
             }
         }
     }
-    pub(crate) fn insert_combo(&mut self, c_idx: usize, plucks: usize) {
+    pub(crate) fn insert_combo(&mut self, c_idx: usize, guts: usize) {
         if c_idx <= self.combos.len() {
             self.combos
-                .insert(c_idx, Combo::new(plucks, self.buttons.len()));
+                .insert(c_idx, Combo::new(guts, self.buttons.len()));
         }
     }
     pub(crate) fn remove_combo(&mut self, c_idx: usize) {
@@ -353,18 +353,18 @@ impl ComboSet {
             self.combos.remove(c_idx);
         }
     }
-    pub(crate) fn insert_pluck(&mut self, p_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         for c in 0..self.combos.len() {
-            self.combos[c].insert_pluck(p_idx);
-            self.tp_i_mem.insert(p_idx, 0i64);
-            self.tp_x_mem.insert(p_idx, 0.0f64);
+            self.combos[c].insert_gut(g_idx);
+            self.tp_i_mem.insert(g_idx, 0i64);
+            self.tp_x_mem.insert(g_idx, 0.0f64);
         }
     }
-    pub(crate) fn remove_pluck(&mut self, p_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         for c in 0..self.combos.len() {
-            self.combos[c].remove_pluck(p_idx);
-            self.tp_i_mem.remove(p_idx);
-            self.tp_x_mem.remove(p_idx);
+            self.combos[c].remove_gut(g_idx);
+            self.tp_i_mem.remove(g_idx);
+            self.tp_x_mem.remove(g_idx);
         }
     }
     pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
@@ -444,24 +444,24 @@ impl ComboSet {
         key_idx_vals: Vec<Option<usize>>,
         i_del_vec: Vec<Option<i64>>,
         x_del_vec: Vec<Option<f64>>,
-        plucks: usize,
+        guts: usize,
     ) {
         if trnsp_idx == self.trnsp_all.len() {
-            let mut tp: TrnspSet = TrnspSet::new(plucks);
+            let mut tp: TrnspSet = TrnspSet::new(guts);
             for (_i, &key) in key_idx_vals.iter().enumerate() {
                 if let Some(k) = key {
                     tp.triggers.push(k);
                 }
             }
             for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if i < plucks {
+                if i < guts {
                     if let Some(delta) = i_del {
                         tp.idx_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if x < plucks {
+                if x < guts {
                     if let Some(delta) = x_del {
                         tp.xtra_delta[x] = delta;
                     }
@@ -477,14 +477,14 @@ impl ComboSet {
                 }
             }
             for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if i < plucks {
+                if i < guts {
                     if let Some(delta) = i_del {
                         self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if x < plucks {
+                if x < guts {
                     if let Some(delta) = x_del {
                         self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
                     }
@@ -511,26 +511,26 @@ impl ComboSet {
         key_idx_vals: Vec<Option<usize>>,
         i_del_vec: Vec<Option<i64>>,
         x_del_vec: Vec<Option<f64>>,
-        plucks: usize,
+        guts: usize,
     ) {
         if c_idx < self.combos.len() {
             if c_idx < self.buttons.len() {
                 if trnsp_idx == self.combos[c_idx].trnsp_one.len() {
-                    let mut tp: TrnspSet = TrnspSet::new(plucks);
+                    let mut tp: TrnspSet = TrnspSet::new(guts);
                     for (_i, &key) in key_idx_vals.iter().enumerate() {
                         if let Some(k) = key {
                             tp.triggers.push(k);
                         }
                     }
                     for (i, &i_del) in i_del_vec.iter().enumerate() {
-                        if i < plucks {
+                        if i < guts {
                             if let Some(delta) = i_del {
                                 tp.idx_delta[i] = delta;
                             }
                         }
                     }
                     for (x, &x_del) in x_del_vec.iter().enumerate() {
-                        if x < plucks {
+                        if x < guts {
                             if let Some(delta) = x_del {
                                 tp.xtra_delta[x] = delta;
                             }
@@ -549,14 +549,14 @@ impl ComboSet {
                         }
                     }
                     for (i, &i_del) in i_del_vec.iter().enumerate() {
-                        if i < plucks {
+                        if i < guts {
                             if let Some(delta) = i_del {
                                 self.combos[c_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
                             }
                         }
                     }
                     for (x, &x_del) in x_del_vec.iter().enumerate() {
-                        if x < plucks {
+                        if x < guts {
                             if let Some(delta) = x_del {
                                 self.combos[c_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
                             }

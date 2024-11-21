@@ -8,14 +8,14 @@ nest! {
     #[derive(Default)]*
     pub struct QopEdit {
         pub(crate) key_codes: Vec<KeyCode>,
-        pub(crate) plucks: Vec< pub(crate) struct Pluck {
-            pub(crate) pluck: pub(crate) struct BtnTog {
+        pub(crate) guts: Vec< pub(crate) struct Gut {
+            pub(crate) gut_triggers: pub(crate) struct BtnTog {
                 pub(crate) togs: Vec<usize>,
                 pub(crate) pressed: bool,
             },
             pub(crate) idx_out: usize,
             pub(crate) xtra_out: f64,
-            pub(crate) trnsp_pluck: Vec<pub(crate) struct TrnspPluck {
+            pub(crate) trnsp_gut: Vec<pub(crate) struct TrnspGut {
                 pub(crate) triggers: Vec<usize>,
                 pub(crate) idx_delta: i64,
                 pub(crate) xtra_delta: f64,
@@ -23,7 +23,7 @@ nest! {
             pub(crate) tp_i_mem: i64,
             pub(crate) tp_x_mem: f64,
         }>,
-        pub(crate) plk_holds: pub(crate) struct HoldBtns {
+        pub(crate) gut_holds: pub(crate) struct HoldBtns {
             pub(crate) sustain: BtnTog,
             pub(crate) inv_sustain: BtnTog,
             pub(crate) sostenuto: BtnTog,
@@ -78,8 +78,8 @@ impl QopEdit {
     pub fn new() -> Self {
         return Self {
             key_codes: vec![],
-            plucks: vec![Pluck::default()],
-            plk_holds: HoldBtns::default(),
+            guts: vec![Gut::default()],
+            gut_holds: HoldBtns::default(),
             valve_sets: vec![],
             fret_sets: vec![],
             radio_sets: vec![],
@@ -90,6 +90,6 @@ impl QopEdit {
 
 mod qe_misc_btns;
 mod qe_kcs_methods;
-mod qe_plk_methods;
+mod qe_gut_methods;
 mod qe_set_methods;
 mod qe_trnsp_methods;
