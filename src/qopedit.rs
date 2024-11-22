@@ -88,6 +88,20 @@ impl QopEdit {
     }
 }
 
+pub enum SetType {
+    ValveSet,
+    FretSet,
+    RadioSet,
+    ComboSet
+}
+
+pub enum HoldType {
+    Sustain,
+    InvSustain,
+    Sostenuto,
+    InvSostenuto
+}
+
 mod qe_misc_btns;
 mod qe_kcs_methods;
 mod qe_gut_methods;

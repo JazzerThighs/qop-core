@@ -1,4 +1,4 @@
-use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, ComboSet};
+use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, ComboSet, HoldType};
 
 impl TrnspSet {
     pub(crate) fn new(guts: usize) -> Self {
@@ -99,46 +99,46 @@ impl IndvSet {
             self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {
+    pub(crate) fn hold_insert_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
         match h_kind {
-            0 => {
+            HoldType::Sustain => {
                 if !self.holds.sustain.togs.contains(&key_idx_val) {
                     self.holds.sustain.togs.push(key_idx_val)
                 }
             }
-            1 => {
+            HoldType::InvSustain => {
                 if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
                     self.holds.inv_sustain.togs.push(key_idx_val)
                 }
             }
-            2 => {
+            HoldType::Sostenuto => {
                 if !self.holds.sostenuto.togs.contains(&key_idx_val) {
                     self.holds.sostenuto.togs.push(key_idx_val)
                 }
             }
-            3 => {
+            HoldType::InvSostenuto => {
                 if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
                     self.holds.inv_sostenuto.togs.push(key_idx_val)
                 }
             }
-            _ => {}
+            
         }
     }
-    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {
+    pub(crate) fn hold_remove_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
         match h_kind {
-            0 => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
-            1 => self
+            HoldType::Sustain => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
+            HoldType::InvSustain => self
                 .holds
                 .inv_sustain
                 .togs
                 .retain(|&idx| idx != key_idx_val),
-            2 => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
-            3 => self
+            HoldType::Sostenuto => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            HoldType::InvSostenuto => self
                 .holds
                 .inv_sostenuto
                 .togs
                 .retain(|&idx| idx != key_idx_val),
-            _ => {}
+            
         }
     }
     pub(crate) fn trnsp_all_params(
@@ -396,46 +396,46 @@ impl ComboSet {
             self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(crate) fn hold_insert_key(&mut self, h_kind: u8, key_idx_val: usize) {
+    pub(crate) fn hold_insert_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
         match h_kind {
-            0 => {
+            HoldType::Sustain => {
                 if !self.holds.sustain.togs.contains(&key_idx_val) {
                     self.holds.sustain.togs.push(key_idx_val)
                 }
             }
-            1 => {
+            HoldType::InvSustain => {
                 if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
                     self.holds.inv_sustain.togs.push(key_idx_val)
                 }
             }
-            2 => {
+            HoldType::Sostenuto => {
                 if !self.holds.sostenuto.togs.contains(&key_idx_val) {
                     self.holds.sostenuto.togs.push(key_idx_val)
                 }
             }
-            3 => {
+            HoldType::InvSostenuto => {
                 if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
                     self.holds.inv_sostenuto.togs.push(key_idx_val)
                 }
             }
-            _ => {}
+            
         }
     }
-    pub(crate) fn hold_remove_key(&mut self, h_kind: u8, key_idx_val: usize) {
+    pub(crate) fn hold_remove_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
         match h_kind {
-            0 => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
-            1 => self
+            HoldType::Sustain => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
+            HoldType::InvSustain => self
                 .holds
                 .inv_sustain
                 .togs
                 .retain(|&idx| idx != key_idx_val),
-            2 => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
-            3 => self
+            HoldType::Sostenuto => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
+            HoldType::InvSostenuto => self
                 .holds
                 .inv_sostenuto
                 .togs
                 .retain(|&idx| idx != key_idx_val),
-            _ => {}
+            
         }
     }
     pub(crate) fn trnsp_all_params(

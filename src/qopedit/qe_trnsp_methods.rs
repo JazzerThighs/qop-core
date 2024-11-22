@@ -1,9 +1,9 @@
-use crate::qopedit::QopEdit;
+use crate::qopedit::{QopEdit, SetType};
 
 impl QopEdit {
     pub fn set_trnsp_all_params(
         &mut self,
-        set_kind: u8,
+        set_kind: SetType,
         set_idx: usize,
         trnsp_idx: usize,
         key_idx_vals: Vec<Option<usize>>,
@@ -11,7 +11,7 @@ impl QopEdit {
         x_del_vec: Vec<Option<f64>>,
     ) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_all_params(
                         trnsp_idx,
@@ -22,7 +22,7 @@ impl QopEdit {
                     );
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_all_params(
                         trnsp_idx,
@@ -33,7 +33,7 @@ impl QopEdit {
                     );
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_all_params(
                         trnsp_idx,
@@ -44,7 +44,7 @@ impl QopEdit {
                     );
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_all_params(
                         trnsp_idx,
@@ -55,63 +55,60 @@ impl QopEdit {
                     );
                 }
             }
-            _ => return,
         }
     }
     pub fn set_remove_trnsp_all_key(
         &mut self,
-        set_kind: u8,
+        set_kind: SetType,
         set_idx: usize,
         trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
-            _ => return,
         }
     }
-    pub fn set_remove_trnsp_all(&mut self, set_kind: u8, set_idx: usize, trnsp_idx: usize) {
+    pub fn set_remove_trnsp_all(&mut self, set_kind: SetType, set_idx: usize, trnsp_idx: usize) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
-            _ => return,
         }
     }
 
@@ -119,7 +116,7 @@ impl QopEdit {
 
     pub fn set_trnsp_one_params(
         &mut self,
-        set_kind: u8,
+        set_kind: SetType,
         set_idx: usize,
         btn_idx: usize,
         trnsp_idx: usize,
@@ -128,7 +125,7 @@ impl QopEdit {
         x_del_vec: Vec<Option<f64>>,
     ) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_one_params(
                         btn_idx,
@@ -140,7 +137,7 @@ impl QopEdit {
                     );
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_one_params(
                         btn_idx,
@@ -152,7 +149,7 @@ impl QopEdit {
                     );
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_one_params(
                         btn_idx,
@@ -164,7 +161,7 @@ impl QopEdit {
                     );
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_one_params(
                         btn_idx,
@@ -176,70 +173,67 @@ impl QopEdit {
                     );
                 }
             }
-            _ => return,
         }
     }
     pub fn set_remove_trnsp_one_key(
         &mut self,
-        set_kind: u8,
+        set_kind: SetType,
         set_idx: usize,
         trnsp_idx: usize,
         btn_idx: usize,
         key_idx_val: usize,
     ) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
-            _ => return,
         }
     }
     pub fn set_remove_trnsp_one(
         &mut self,
-        set_kind: u8,
+        set_kind: SetType,
         set_idx: usize,
         btn_idx: usize,
         trnsp_idx: usize,
     ) {
         match set_kind {
-            0 => {
+            SetType::ValveSet => {
                 if set_idx <= self.valve_sets.len() {
                     self.valve_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
-            1 => {
+            SetType::FretSet => {
                 if set_idx <= self.fret_sets.len() {
                     self.fret_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
-            2 => {
+            SetType::RadioSet => {
                 if set_idx <= self.radio_sets.len() {
                     self.radio_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
-            3 => {
+            SetType::ComboSet => {
                 if set_idx <= self.aero_sets.len() {
                     self.aero_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
-            _ => return,
         }
     }
 }
