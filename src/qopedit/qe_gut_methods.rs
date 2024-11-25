@@ -13,8 +13,8 @@ impl QopEdit {
             for set in 0..self.radio_sets.len() {
                 self.radio_sets[set].insert_gut(g_idx);
             }
-            for set in 0..self.aero_sets.len() {
-                self.aero_sets[set].insert_gut(g_idx);
+            for set in 0..self.combo_sets.len() {
+                self.combo_sets[set].insert_gut(g_idx);
             }
         }
     }
@@ -30,8 +30,8 @@ impl QopEdit {
             for set in 0..self.radio_sets.len() {
                 self.radio_sets[set].remove_gut(g_idx);
             }
-            for set in 0..self.aero_sets.len() {
-                self.aero_sets[set].remove_gut(g_idx);
+            for set in 0..self.combo_sets.len() {
+                self.combo_sets[set].remove_gut(g_idx);
             }
         }
     }

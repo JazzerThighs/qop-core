@@ -43,8 +43,8 @@ impl QopEdit {
         for set in 0..self.radio_sets.len() {
             self.radio_sets[set].all_key_idx_vecs(&operation);
         }
-        for set in 0..self.aero_sets.len() {
-            self.aero_sets[set].all_key_idx_vecs(&operation);
+        for set in 0..self.combo_sets.len() {
+            self.combo_sets[set].all_key_idx_vecs(&operation);
         }
     }
     pub fn kcs_remove_k(&mut self, key_code: KeyCode) {

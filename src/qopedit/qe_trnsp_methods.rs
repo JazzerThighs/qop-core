@@ -45,8 +45,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_all_params(
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_all_params(
                         trnsp_idx,
                         key_idx_vals,
                         i_del_vec,
@@ -81,8 +81,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
         }
@@ -105,8 +105,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
         }
@@ -162,8 +162,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_one_params(
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_one_params(
                         btn_idx,
                         trnsp_idx,
                         key_idx_vals,
@@ -200,8 +200,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
         }
@@ -230,8 +230,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
         }

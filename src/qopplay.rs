@@ -10,7 +10,7 @@ pub struct QopPlay {
     valve_sets: Vec<IndvSet>,
     fret_sets: Vec<IndvSet>,
     radio_sets: Vec<IndvSet>,
-    aero_sets: Vec<ComboSet>,
+    combo_sets: Vec<ComboSet>,
 }
 
 impl From<&QopEdit> for QopPlay {
@@ -22,7 +22,7 @@ impl From<&QopEdit> for QopPlay {
             valve_sets: qe.valve_sets.clone(),
             fret_sets: qe.fret_sets.clone(),
             radio_sets: qe.radio_sets.clone(),
-            aero_sets: qe.aero_sets.clone(),
+            combo_sets: qe.combo_sets.clone(),
         };
     }
 }

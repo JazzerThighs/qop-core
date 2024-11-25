@@ -22,8 +22,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.aero_sets.len() {
-                    self.aero_sets
+                if set_idx <= self.combo_sets.len() {
+                    self.combo_sets
                         .insert(set_idx, ComboSet::new(self.guts.len()));
                 }
             }
@@ -47,8 +47,8 @@ impl QopEdit {
                 }
             }
             SetType::ComboSet => {
-                if self.aero_sets.len() > 0 && self.aero_sets.len() > set_idx {
-                    self.aero_sets.remove(set_idx);
+                if self.combo_sets.len() > 0 && self.combo_sets.len() > set_idx {
+                    self.combo_sets.remove(set_idx);
                 }
             }
         }
@@ -58,7 +58,7 @@ impl QopEdit {
             SetType::ValveSet => self.valve_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
             SetType::FretSet => self.fret_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
             SetType::RadioSet => self.radio_sets[set_idx].insert_btn(btn_idx, self.guts.len()),
-            SetType::ComboSet => self.aero_sets[set_idx].insert_btn(btn_idx),
+            SetType::ComboSet => self.combo_sets[set_idx].insert_btn(btn_idx),
         }
     }
     pub fn set_remove_btn(&mut self, set_kind: SetType, set_idx: usize, btn_idx: usize) {
@@ -66,17 +66,17 @@ impl QopEdit {
             SetType::ValveSet => self.valve_sets[set_idx].remove_btn(btn_idx),
             SetType::FretSet => self.fret_sets[set_idx].remove_btn(btn_idx),
             SetType::RadioSet => self.radio_sets[set_idx].remove_btn(btn_idx),
-            SetType::ComboSet => self.aero_sets[set_idx].remove_btn(btn_idx),
+            SetType::ComboSet => self.combo_sets[set_idx].remove_btn(btn_idx),
         }
     }
     pub fn set_insert_combo(&mut self, set_idx: usize, c_idx: usize) {
-        if set_idx <= self.aero_sets.len() {
-            self.aero_sets[set_idx].insert_combo(c_idx, self.guts.len());
+        if set_idx <= self.combo_sets.len() {
+            self.combo_sets[set_idx].insert_combo(c_idx, self.guts.len());
         }
     }
     pub fn set_remove_combo(&mut self, set_idx: usize, c_idx: usize) {
-        if set_idx <= self.aero_sets.len() {
-            self.aero_sets[set_idx].remove_combo(c_idx);
+        if set_idx <= self.combo_sets.len() {
+            self.combo_sets[set_idx].remove_combo(c_idx);
         }
     }
     pub fn set_insert_btn_key(
@@ -104,8 +104,8 @@ impl QopEdit {
                     }
                 }
                 SetType::ComboSet => {
-                    if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
+                    if set_idx < self.combo_sets.len() {
+                        self.combo_sets[set_idx].btn_insert_key(btn_idx, key_idx_val)
                     }
                 }
             }
@@ -136,8 +136,8 @@ impl QopEdit {
                     }
                 }
                 SetType::ComboSet => {
-                    if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
+                    if set_idx < self.combo_sets.len() {
+                        self.combo_sets[set_idx].btn_remove_key(btn_idx, key_idx_val)
                     }
                 }
             }
@@ -170,8 +170,8 @@ impl QopEdit {
                             }
                         }
                         SetType::ComboSet => {
-                            if set_idx < self.aero_sets.len() {
-                                self.aero_sets[set_idx].combos[del_idx].idx_deltas[i] = delta
+                            if set_idx < self.combo_sets.len() {
+                                self.combo_sets[set_idx].combos[del_idx].idx_deltas[i] = delta
                             }
                         }
                     }
@@ -205,8 +205,8 @@ impl QopEdit {
                         }
                     }
                     SetType::ComboSet => {
-                        if set_idx < self.aero_sets.len() {
-                            self.aero_sets[set_idx].combos[del_idx].xtra_deltas[x] = delta
+                        if set_idx < self.combo_sets.len() {
+                            self.combo_sets[set_idx].combos[del_idx].xtra_deltas[x] = delta
                         }
                     }
                 }
@@ -238,8 +238,8 @@ impl QopEdit {
                     }
                 }
                 SetType::ComboSet => {
-                    if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
+                    if set_idx < self.combo_sets.len() {
+                        self.combo_sets[set_idx].hold_insert_key(h_kind, key_idx_val)
                     }
                 }
             }
@@ -270,8 +270,8 @@ impl QopEdit {
                     }
                 }
                 SetType::ComboSet => {
-                    if set_idx < self.aero_sets.len() {
-                        self.aero_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
+                    if set_idx < self.combo_sets.len() {
+                        self.combo_sets[set_idx].hold_remove_key(h_kind, key_idx_val)
                     }
                 }
             }

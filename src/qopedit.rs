@@ -45,16 +45,16 @@ nest! {
                     pub(crate) tp_i_mem: Vec<i64>,
                     pub(crate) tp_x_mem: Vec<f64>,
                 }>,
-                pub(crate) max_pressed: u8,
-                pub(crate) min_pressed: u8,
-                pub(crate) holds: HoldBtns,
                 pub(crate) trnsp_all: Vec<TrnspSet>,
                 pub(crate) tp_i_mem: Vec<i64>,
                 pub(crate) tp_x_mem: Vec<f64>,
+                pub(crate) holds: HoldBtns,
+                pub(crate) max_pressed: u8,
+                pub(crate) min_pressed: u8,
             }>,
         pub(crate) fret_sets: Vec<IndvSet>,
         pub(crate) radio_sets: Vec<IndvSet>,
-        pub(crate) aero_sets: Vec<
+        pub(crate) combo_sets: Vec<
             #[derive(Default)]/
             pub(crate) struct ComboSet {
                 pub(crate) buttons: Vec<BtnTog>,
@@ -77,14 +77,168 @@ nest! {
 impl QopEdit {
     pub fn new() -> Self {
         return Self {
-            key_codes: vec![],
             guts: vec![Gut::default()],
-            gut_holds: HoldBtns::default(),
-            valve_sets: vec![],
-            fret_sets: vec![],
-            radio_sets: vec![],
-            aero_sets: vec![],
+            ..Default::default()
         };
+    }
+
+    pub fn check_gutdelta_lengths(&self) {
+        for set in 0..self.valve_sets.len() {
+            todo!()
+        }
+        for set in 0..self.fret_sets.len() {
+            todo!()
+        }
+        for set in 0..self.radio_sets.len() {
+            todo!()
+        }
+        for set in 0..self.combo_sets.len() {
+            todo!()
+        }
+    }
+
+    pub fn check_digitalref_invariants(&self) {
+        for g in 0..self.guts.len() {
+            for t in 0..self.guts[g].gut_triggers.togs.len() {
+                assert!(self.guts[g].gut_triggers.togs[t] < self.key_codes.len(), "self.guts[{g}].gut_triggers.togs[{t}] is an index to an OOB Digital Input!");
+            }
+            for tg in 0..self.guts[g].trnsp_gut.len() {
+                for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {
+                    assert!(self.guts[g].trnsp_gut[tg].triggers[t] < self.key_codes.len(), "self.guts[{g}].trnsp_gut[{tg}].triggers[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+        }
+        for sus in 0..self.gut_holds.sustain.togs.len() {
+            assert!(self.gut_holds.sustain.togs[sus] < self.key_codes.len(), "self.gut_holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+        }
+        for isus in 0..self.gut_holds.inv_sustain.togs.len() {
+            assert!(self.gut_holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.gut_holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+        }
+        for sos in 0..self.gut_holds.sostenuto.togs.len() {
+            assert!(self.gut_holds.sostenuto.togs[sos] < self.key_codes.len(), "self.gut_holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+        }
+        for isos in 0..self.gut_holds.inv_sostenuto.togs.len() {
+            assert!(self.gut_holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.gut_holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+        }
+
+        for set in 0..self.valve_sets.len() {
+            for b in 0..self.valve_sets[set].buttons.len() {
+                for t in 0..self.valve_sets[set].buttons[b].togs.len() {
+                    assert!(self.valve_sets[set].buttons[b].togs[t] < self.key_codes.len(), "self.valve_sets[{set}].buttons[{b}].togs[{t}] is an index to an OOB Digital Input!")
+                }
+                for to in 0..self.valve_sets[set].buttons[b].trnsp_one.len() {
+                    for t in 0..self.valve_sets[set].buttons[b].trnsp_one[to].triggers.len() {
+                        assert!(self.valve_sets[set].buttons[b].trnsp_one[to].triggers[t] < self.key_codes.len(), "self.valve_sets[{set}].buttons[{b}].trnsp_one[{to}].triggers[{t}] is an index to an OOB Digital Input!")
+                    }
+                }
+            }
+            for ta in 0..self.valve_sets[set].trnsp_all.len() {
+                for t in 0..self.valve_sets[set].trnsp_all[ta].triggers.len() {
+                    assert!(self.valve_sets[set].trnsp_all[ta].triggers[t] < self.key_codes.len(), "self.valve_sets[{set}].trnsp_all[{ta}].triggers[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+            for sus in 0..self.valve_sets[set].holds.sustain.togs.len() {
+                assert!(self.valve_sets[set].holds.sustain.togs[sus] < self.key_codes.len(), "self.valve_sets[{set}].holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+            }
+            for isus in 0..self.valve_sets[set].holds.inv_sustain.togs.len() {
+                assert!(self.valve_sets[set].holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.valve_sets[{set}].holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+            }
+            for sos in 0..self.valve_sets[set].holds.sostenuto.togs.len() {
+                assert!(self.valve_sets[set].holds.sostenuto.togs[sos] < self.key_codes.len(), "self.valve_sets[{set}].holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+            }
+            for isos in 0..self.valve_sets[set].holds.inv_sostenuto.togs.len() {
+                assert!(self.valve_sets[set].holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.valve_sets[{set}].holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+            }
+        }
+        for set in 0..self.fret_sets.len() {
+            for b in 0..self.fret_sets[set].buttons.len() {
+                for t in 0..self.fret_sets[set].buttons[b].togs.len() {
+                    assert!(self.fret_sets[set].buttons[b].togs[t] < self.key_codes.len(), "self.fret_sets[{set}].buttons[{b}].togs[{t}] is an index to an OOB Digital Input!")
+                }
+                for to in 0..self.fret_sets[set].buttons[b].trnsp_one.len() {
+                    for t in 0..self.fret_sets[set].buttons[b].trnsp_one[to].triggers.len() {
+                        assert!(self.fret_sets[set].buttons[b].trnsp_one[to].triggers[t] < self.key_codes.len(), "self.fret_sets[{set}].buttons[{b}].trnsp_one[{to}].triggers[{t}] is an index to an OOB Digital Input!")
+                    }
+                }
+            }
+            for ta in 0..self.fret_sets[set].trnsp_all.len() {
+                for t in 0..self.fret_sets[set].trnsp_all[ta].triggers.len() {
+                    assert!(self.fret_sets[set].trnsp_all[ta].triggers[t] < self.key_codes.len(), "self.fret_sets[{set}].trnsp_all[{ta}].triggers[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+            for sus in 0..self.fret_sets[set].holds.sustain.togs.len() {
+                assert!(self.fret_sets[set].holds.sustain.togs[sus] < self.key_codes.len(), "self.fret_sets[{set}].holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+            }
+            for isus in 0..self.fret_sets[set].holds.inv_sustain.togs.len() {
+                assert!(self.fret_sets[set].holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.fret_sets[{set}].holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+            }
+            for sos in 0..self.fret_sets[set].holds.sostenuto.togs.len() {
+                assert!(self.fret_sets[set].holds.sostenuto.togs[sos] < self.key_codes.len(), "self.fret_sets[{set}].holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+            }
+            for isos in 0..self.fret_sets[set].holds.inv_sostenuto.togs.len() {
+                assert!(self.fret_sets[set].holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.fret_sets[{set}].holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+            }
+        }
+        for set in 0..self.radio_sets.len() {
+            for b in 0..self.radio_sets[set].buttons.len() {
+                for t in 0..self.radio_sets[set].buttons[b].togs.len() {
+                    assert!(self.radio_sets[set].buttons[b].togs[t] < self.key_codes.len(), "self.radio_sets[{set}].buttons[{b}].togs[{t}] is an index to an OOB Digital Input!")
+                }
+                for to in 0..self.radio_sets[set].buttons[b].trnsp_one.len() {
+                    for t in 0..self.radio_sets[set].buttons[b].trnsp_one[to].triggers.len() {
+                        assert!(self.radio_sets[set].buttons[b].trnsp_one[to].triggers[t] < self.key_codes.len(), "self.radio_sets[{set}].buttons[{b}].trnsp_one[{to}].triggers[{t}] is an index to an OOB Digital Input!")
+                    }
+                }
+            }
+            for ta in 0..self.radio_sets[set].trnsp_all.len() {
+                for t in 0..self.radio_sets[set].trnsp_all[ta].triggers.len() {
+                    assert!(self.radio_sets[set].trnsp_all[ta].triggers[t] < self.key_codes.len(), "self.radio_sets[{set}].trnsp_all[{ta}].triggers[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+            for sus in 0..self.radio_sets[set].holds.sustain.togs.len() {
+                assert!(self.radio_sets[set].holds.sustain.togs[sus] < self.key_codes.len(), "self.radio_sets[{set}].holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+            }
+            for isus in 0..self.radio_sets[set].holds.inv_sustain.togs.len() {
+                assert!(self.radio_sets[set].holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.radio_sets[{set}].holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+            }
+            for sos in 0..self.radio_sets[set].holds.sostenuto.togs.len() {
+                assert!(self.radio_sets[set].holds.sostenuto.togs[sos] < self.key_codes.len(), "self.radio_sets[{set}].holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+            }
+            for isos in 0..self.radio_sets[set].holds.inv_sostenuto.togs.len() {
+                assert!(self.radio_sets[set].holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.radio_sets[{set}].holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+            }
+        }
+        for set in 0..self.combo_sets.len() {
+            for b in 0..self.combo_sets[set].buttons.len() {
+                for t in 0..self.combo_sets[set].buttons[b].togs.len() {
+                    assert!(self.combo_sets[set].buttons[b].togs[t] < self.key_codes.len(), "self.combo_sets[{set}].buttons[{b}].togs[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+            for c in 0..self.combo_sets[set].combos.len() {
+                for to in 0..self.combo_sets[set].combos[c].trnsp_one.len() {
+                    for t in 0..self.combo_sets[set].combos[c].trnsp_one[to].triggers.len() {
+                        assert!(self.combo_sets[set].combos[c].trnsp_one[to].triggers[t] < self.key_codes.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].triggers[{t}] is an index to an OOB Digital Input!")
+                    }
+                }
+            }
+            for ta in 0..self.combo_sets[set].trnsp_all.len() {
+                for t in 0..self.combo_sets[set].trnsp_all[ta].triggers.len() {
+                    assert!(self.combo_sets[set].trnsp_all[ta].triggers[t] < self.key_codes.len(), "self.combo_sets[{set}].trnsp_all[{ta}].triggers[{t}] is an index to an OOB Digital Input!")
+                }
+            }
+            for sus in 0..self.combo_sets[set].holds.sustain.togs.len() {
+                assert!(self.combo_sets[set].holds.sustain.togs[sus] < self.key_codes.len(), "self.combo_sets[{set}].holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+            }
+            for isus in 0..self.combo_sets[set].holds.inv_sustain.togs.len() {
+                assert!(self.combo_sets[set].holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.combo_sets[{set}].holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+            }
+            for sos in 0..self.combo_sets[set].holds.sostenuto.togs.len() {
+                assert!(self.combo_sets[set].holds.sostenuto.togs[sos] < self.key_codes.len(), "self.combo_sets[{set}].holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+            }
+            for isos in 0..self.combo_sets[set].holds.inv_sostenuto.togs.len() {
+                assert!(self.combo_sets[set].holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.combo_sets[{set}].holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+            }
+        }
     }
 }
 
@@ -92,18 +246,18 @@ pub enum SetType {
     ValveSet,
     FretSet,
     RadioSet,
-    ComboSet
+    ComboSet,
 }
 
 pub enum HoldType {
     Sustain,
     InvSustain,
     Sostenuto,
-    InvSostenuto
+    InvSostenuto,
 }
 
-mod qe_misc_btns;
-mod qe_kcs_methods;
 mod qe_gut_methods;
+mod qe_kcs_methods;
+mod qe_misc_btns;
 mod qe_set_methods;
 mod qe_trnsp_methods;
