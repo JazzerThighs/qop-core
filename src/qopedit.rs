@@ -84,59 +84,24 @@ impl QopEdit {
 
     pub fn check_gutdelta_lengths(&self) {
         for set in 0..self.valve_sets.len() {
-            for b in 0..self.valve_sets[set].buttons.len() {
-                assert!(self.valve_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
-                assert!(self.valve_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
-                for to in 0..self.valve_sets[set].buttons[b].trnsp_one.len() {
-                    assert!(self.valve_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
-                    assert!(self.valve_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
-                }
-            }
-            for ta in 0..self.valve_sets[set].trnsp_all.len() {
-                assert!(self.valve_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
-                assert!(self.valve_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
-            }
+            self.valve_sets[set].check_gutdelta_lengths(format!("self.valve_sets[{set}]").as_str(), self.guts.len());
         }
         for set in 0..self.fret_sets.len() {
-            for b in 0..self.fret_sets[set].buttons.len() {
-                assert!(self.fret_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
-                assert!(self.fret_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
-                for to in 0..self.fret_sets[set].buttons[b].trnsp_one.len() {
-                    assert!(self.fret_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
-                    assert!(self.fret_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
-                }
-            }
-            for ta in 0..self.fret_sets[set].trnsp_all.len() {
-                assert!(self.fret_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
-                assert!(self.fret_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
-            }
+            self.fret_sets[set].check_gutdelta_lengths(format!("self.fret_sets[{set}]").as_str(), self.guts.len());
         }
         for set in 0..self.radio_sets.len() {
-            for b in 0..self.radio_sets[set].buttons.len() {
-                assert!(self.radio_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
-                assert!(self.radio_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
-                for to in 0..self.radio_sets[set].buttons[b].trnsp_one.len() {
-                    assert!(self.radio_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
-                    assert!(self.radio_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
-                }
-            }
-            for ta in 0..self.radio_sets[set].trnsp_all.len() {
-                assert!(self.radio_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
-                assert!(self.radio_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
-            }
+            self.radio_sets[set].check_gutdelta_lengths(format!("self.radio_sets[{set}]").as_str(), self.guts.len());
         }
         for set in 0..self.combo_sets.len() {
             for c in 0..self.combo_sets[set].combos.len() {
                 assert!(self.combo_sets[set].combos[c].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].i_deltas does not have the same length as self.guts!");
                 assert!(self.combo_sets[set].combos[c].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].x_deltas does not have the same length as self.guts!");
                 for to in 0..self.combo_sets[set].combos[c].trnsp_one.len() {
-                    assert!(self.combo_sets[set].combos[c].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
-                    assert!(self.combo_sets[set].combos[c].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
+                    self.combo_sets[set].combos[c].trnsp_one[to].check_gutdelta_lengths(format!("self.combo_sets[{set}].combos[{c}].trnsp_one[{to}]").as_str(), self.guts.len());
                 }
             }
             for ta in 0..self.combo_sets[set].trnsp_all.len() {
-                assert!(self.combo_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
-                assert!(self.combo_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
+                self.combo_sets[set].trnsp_all[ta].check_gutdelta_lengths(format!("self.combo_sets[{set}].trnsp_all[{ta}]").as_str(), self.guts.len());
             }
         }
     }
@@ -152,18 +117,7 @@ impl QopEdit {
                 }
             }
         }
-        for sus in 0..self.gut_holds.sustain.togs.len() {
-            assert!(self.gut_holds.sustain.togs[sus] < self.key_codes.len(), "self.gut_holds.sustain.togs[{sus}] is an index to an OOB Digital Input!")
-        }
-        for isus in 0..self.gut_holds.inv_sustain.togs.len() {
-            assert!(self.gut_holds.inv_sustain.togs[isus] < self.key_codes.len(), "self.gut_holds.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
-        }
-        for sos in 0..self.gut_holds.sostenuto.togs.len() {
-            assert!(self.gut_holds.sostenuto.togs[sos] < self.key_codes.len(), "self.gut_holds.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
-        }
-        for isos in 0..self.gut_holds.inv_sostenuto.togs.len() {
-            assert!(self.gut_holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.gut_holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
-        }
+        self.gut_holds.check_digitalref_invariants("self.gutholds", self.key_codes.len());
 
         for set in 0..self.valve_sets.len() {
             for b in 0..self.valve_sets[set].buttons.len() {
@@ -283,6 +237,45 @@ impl QopEdit {
                 assert!(self.combo_sets[set].holds.inv_sostenuto.togs[isos] < self.key_codes.len(), "self.combo_sets[{set}].holds.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
             }
         }
+    }
+}
+
+impl HoldBtns {
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, dig_vec_len: usize) {
+        for sus in 0..self.sustain.togs.len() {
+            assert!(self.sustain.togs[sus] < dig_vec_len, "{leading_str}.sustain.togs[{sus}] is an index to an OOB Digital Input!")
+        }
+        for isus in 0..self.inv_sustain.togs.len() {
+            assert!(self.inv_sustain.togs[isus] < dig_vec_len, "{leading_str}.inv_sustain.togs[{isus}] is an index to an OOB Digital Input!")
+        }
+        for sos in 0..self.sostenuto.togs.len() {
+            assert!(self.sostenuto.togs[sos] < dig_vec_len, "{leading_str}.sostenuto.togs[{sos}] is an index to an OOB Digital Input!")
+        }
+        for isos in 0..self.inv_sostenuto.togs.len() {
+            assert!(self.inv_sostenuto.togs[isos] < dig_vec_len, "{leading_str}.inv_sostenuto.togs[{isos}] is an index to an OOB Digital Input!")
+        }
+    }
+}
+
+impl IndvSet {
+    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, gut_len: usize) {
+        for b in 0..self.buttons.len() {
+            assert!(self.buttons[b].i_deltas.len() == gut_len, "{leading_str}.buttons[{b}].i_deltas does not have the same length as self.guts!");
+            assert!(self.buttons[b].x_deltas.len() == gut_len, "{leading_str}.buttons[{b}].x_deltas does not have the same length as self.guts!");
+            for to in 0..self.buttons[b].trnsp_one.len() {
+                self.buttons[b].trnsp_one[to].check_gutdelta_lengths(format!("{leading_str}.buttons[{b}].trnsp_one[{to}]").as_str(), gut_len);
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            self.trnsp_all[ta].check_gutdelta_lengths(format!("{leading_str}.trnsp_all[{ta}]").as_str(), gut_len);
+        }
+    }
+}
+
+impl TrnspSet {
+    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, gut_len: usize) {
+        assert!(self.i_deltas.len() == gut_len, "{leading_str}.i_deltas does not have the same length as self.guts!");
+        assert!(self.x_deltas.len() == gut_len, "{leading_str}.x_deltas does not have the same length as self.guts!")
     }
 }
 
