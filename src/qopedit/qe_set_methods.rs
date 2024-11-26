@@ -156,22 +156,22 @@ impl QopEdit {
                     match set_kind {
                         SetType::ValveSet => {
                             if set_idx < self.valve_sets.len() {
-                                self.valve_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta
+                                self.valve_sets[set_idx].buttons[del_idx].i_deltas[i] = delta
                             }
                         }
                         SetType::FretSet => {
                             if set_idx < self.fret_sets.len() {
-                                self.fret_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta
+                                self.fret_sets[set_idx].buttons[del_idx].i_deltas[i] = delta
                             }
                         }
                         SetType::RadioSet => {
                             if set_idx < self.radio_sets.len() {
-                                self.radio_sets[set_idx].buttons[del_idx].idx_deltas[i] = delta
+                                self.radio_sets[set_idx].buttons[del_idx].i_deltas[i] = delta
                             }
                         }
                         SetType::ComboSet => {
                             if set_idx < self.combo_sets.len() {
-                                self.combo_sets[set_idx].combos[del_idx].idx_deltas[i] = delta
+                                self.combo_sets[set_idx].combos[del_idx].i_deltas[i] = delta
                             }
                         }
                     }
@@ -191,22 +191,22 @@ impl QopEdit {
                 match set_kind {
                     SetType::ValveSet => {
                         if set_idx < self.valve_sets.len() {
-                            self.valve_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta
+                            self.valve_sets[set_idx].buttons[del_idx].x_deltas[x] = delta
                         }
                     }
                     SetType::FretSet => {
                         if set_idx < self.fret_sets.len() {
-                            self.fret_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta
+                            self.fret_sets[set_idx].buttons[del_idx].x_deltas[x] = delta
                         }
                     }
                     SetType::RadioSet => {
                         if set_idx < self.radio_sets.len() {
-                            self.radio_sets[set_idx].buttons[del_idx].xtra_deltas[x] = delta
+                            self.radio_sets[set_idx].buttons[del_idx].x_deltas[x] = delta
                         }
                     }
                     SetType::ComboSet => {
                         if set_idx < self.combo_sets.len() {
-                            self.combo_sets[set_idx].combos[del_idx].xtra_deltas[x] = delta
+                            self.combo_sets[set_idx].combos[del_idx].x_deltas[x] = delta
                         }
                     }
                 }

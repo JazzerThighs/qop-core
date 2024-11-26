@@ -13,12 +13,12 @@ nest! {
                 pub(crate) togs: Vec<usize>,
                 pub(crate) pressed: bool,
             },
-            pub(crate) idx_out: usize,
-            pub(crate) xtra_out: f64,
+            pub(crate) index_out: usize,
+            pub(crate) extra_out: f64,
             pub(crate) trnsp_gut: Vec<pub(crate) struct TrnspGut {
                 pub(crate) triggers: Vec<usize>,
-                pub(crate) idx_delta: i64,
-                pub(crate) xtra_delta: f64,
+                pub(crate) i_delta: i64,
+                pub(crate) x_delta: f64,
             }>,
             pub(crate) tp_i_mem: i64,
             pub(crate) tp_x_mem: f64,
@@ -35,12 +35,12 @@ nest! {
                 pub(crate) buttons: Vec<pub(crate) struct DeltaTog {
                     pub(crate) togs: Vec<usize>,
                     pub(crate) pressed: bool,
-                    pub(crate) idx_deltas: Vec<i64>,
-                    pub(crate) xtra_deltas: Vec<f64>,
+                    pub(crate) i_deltas: Vec<i64>,
+                    pub(crate) x_deltas: Vec<f64>,
                     pub(crate) trnsp_one: Vec<pub(crate) struct TrnspSet {
                         triggers: Vec<usize>,
-                        idx_delta: Vec<i64>,
-                        xtra_delta: Vec<f64>,
+                        i_deltas: Vec<i64>,
+                        x_deltas: Vec<f64>,
                     }>,
                     pub(crate) tp_i_mem: Vec<i64>,
                     pub(crate) tp_x_mem: Vec<f64>,
@@ -60,8 +60,8 @@ nest! {
                 pub(crate) buttons: Vec<BtnTog>,
                 pub(crate) combos: Vec<pub(crate) struct Combo {
                     pub(crate) combo: Vec<bool>,
-                    pub(crate) idx_deltas: Vec<i64>,
-                    pub(crate) xtra_deltas: Vec<f64>,
+                    pub(crate) i_deltas: Vec<i64>,
+                    pub(crate) x_deltas: Vec<f64>,
                     pub(crate) trnsp_one: Vec<TrnspSet>,
                     pub(crate) tp_i_mem: Vec<i64>,
                     pub(crate) tp_x_mem: Vec<f64>,
@@ -84,16 +84,60 @@ impl QopEdit {
 
     pub fn check_gutdelta_lengths(&self) {
         for set in 0..self.valve_sets.len() {
-            todo!()
+            for b in 0..self.valve_sets[set].buttons.len() {
+                assert!(self.valve_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
+                assert!(self.valve_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
+                for to in 0..self.valve_sets[set].buttons[b].trnsp_one.len() {
+                    assert!(self.valve_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
+                    assert!(self.valve_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
+                }
+            }
+            for ta in 0..self.valve_sets[set].trnsp_all.len() {
+                assert!(self.valve_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.valve_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
+                assert!(self.valve_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.valve_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
+            }
         }
         for set in 0..self.fret_sets.len() {
-            todo!()
+            for b in 0..self.fret_sets[set].buttons.len() {
+                assert!(self.fret_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
+                assert!(self.fret_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
+                for to in 0..self.fret_sets[set].buttons[b].trnsp_one.len() {
+                    assert!(self.fret_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
+                    assert!(self.fret_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
+                }
+            }
+            for ta in 0..self.fret_sets[set].trnsp_all.len() {
+                assert!(self.fret_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.fret_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
+                assert!(self.fret_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.fret_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
+            }
         }
         for set in 0..self.radio_sets.len() {
-            todo!()
+            for b in 0..self.radio_sets[set].buttons.len() {
+                assert!(self.radio_sets[set].buttons[b].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].i_deltas does not have the same length as self.guts!");
+                assert!(self.radio_sets[set].buttons[b].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].x_deltas does not have the same length as self.guts!");
+                for to in 0..self.radio_sets[set].buttons[b].trnsp_one.len() {
+                    assert!(self.radio_sets[set].buttons[b].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
+                    assert!(self.radio_sets[set].buttons[b].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].buttons[{b}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
+                }
+            }
+            for ta in 0..self.radio_sets[set].trnsp_all.len() {
+                assert!(self.radio_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.radio_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
+                assert!(self.radio_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.radio_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
+            }
         }
         for set in 0..self.combo_sets.len() {
-            todo!()
+            for c in 0..self.combo_sets[set].combos.len() {
+                assert!(self.combo_sets[set].combos[c].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].i_deltas does not have the same length as self.guts!");
+                assert!(self.combo_sets[set].combos[c].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].x_deltas does not have the same length as self.guts!");
+                for to in 0..self.combo_sets[set].combos[c].trnsp_one.len() {
+                    assert!(self.combo_sets[set].combos[c].trnsp_one[to].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].i_deltas does not have the same length as self.guts!");
+                    assert!(self.combo_sets[set].combos[c].trnsp_one[to].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].x_deltas does not have the same length as self.guts!");
+                }
+            }
+            for ta in 0..self.combo_sets[set].trnsp_all.len() {
+                assert!(self.combo_sets[set].trnsp_all[ta].i_deltas.len() == self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
+                assert!(self.combo_sets[set].trnsp_all[ta].x_deltas.len() == self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!");
+            }
         }
     }
 

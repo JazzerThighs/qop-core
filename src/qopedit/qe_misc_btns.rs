@@ -4,8 +4,8 @@ impl TrnspSet {
     pub(crate) fn new(guts: usize) -> Self {
         return TrnspSet {
             triggers: vec![],
-            idx_delta: vec![0i64; guts],
-            xtra_delta: vec![0.0f64; guts],
+            i_deltas: vec![0i64; guts],
+            x_deltas: vec![0.0f64; guts],
         };
     }
 }
@@ -19,22 +19,22 @@ impl DeltaTog {
         return DeltaTog {
             togs: vec![],
             pressed: false,
-            idx_deltas: vec![0i64; guts],
-            xtra_deltas: vec![0.0f64; guts],
+            i_deltas: vec![0i64; guts],
+            x_deltas: vec![0.0f64; guts],
             trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
         };
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
-        self.idx_deltas.insert(g_idx, 0i64);
-        self.xtra_deltas.insert(g_idx, 0.0f64);
+        self.i_deltas.insert(g_idx, 0i64);
+        self.x_deltas.insert(g_idx, 0.0f64);
         self.tp_i_mem.insert(g_idx, 0i64);
         self.tp_x_mem.insert(g_idx, 0.0f64);
     }
     pub(crate) fn remove_gut(&mut self, g_idx: usize) {
-        self.idx_deltas.remove(g_idx);
-        self.xtra_deltas.remove(g_idx);
+        self.i_deltas.remove(g_idx);
+        self.x_deltas.remove(g_idx);
         self.tp_i_mem.remove(g_idx);
         self.tp_x_mem.remove(g_idx);
     }
@@ -163,14 +163,14 @@ impl IndvSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        tp.idx_delta[i] = delta;
+                        tp.i_deltas[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        tp.xtra_delta[x] = delta;
+                        tp.x_deltas[x] = delta;
                     }
                 }
             }
@@ -186,14 +186,14 @@ impl IndvSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
+                        self.trnsp_all[trnsp_idx].i_deltas[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
+                        self.trnsp_all[trnsp_idx].x_deltas[x] = delta;
                     }
                 }
             }
@@ -231,14 +231,14 @@ impl IndvSet {
                 for (i, &i_del) in i_del_vec.iter().enumerate() {
                     if i < guts {
                         if let Some(delta) = i_del {
-                            tp.idx_delta[i] = delta;
+                            tp.i_deltas[i] = delta;
                         }
                     }
                 }
                 for (x, &x_del) in x_del_vec.iter().enumerate() {
                     if x < guts {
                         if let Some(delta) = x_del {
-                            tp.xtra_delta[x] = delta;
+                            tp.x_deltas[x] = delta;
                         }
                     }
                 }
@@ -257,14 +257,14 @@ impl IndvSet {
                 for (i, &i_del) in i_del_vec.iter().enumerate() {
                     if i < guts {
                         if let Some(delta) = i_del {
-                            self.buttons[btn_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].i_deltas[i] = delta;
                         }
                     }
                 }
                 for (x, &x_del) in x_del_vec.iter().enumerate() {
                     if x < guts {
                         if let Some(delta) = x_del {
-                            self.buttons[btn_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].x_deltas[x] = delta;
                         }
                     }
                 }
@@ -298,22 +298,22 @@ impl Combo {
     pub(crate) fn new(guts: usize, btns: usize) -> Self {
         return Combo {
             combo: vec![false; btns],
-            idx_deltas: vec![0i64; guts],
-            xtra_deltas: vec![0.0f64; guts],
+            i_deltas: vec![0i64; guts],
+            x_deltas: vec![0.0f64; guts],
             trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
         };
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
-        self.idx_deltas.insert(g_idx, 0i64);
-        self.xtra_deltas.insert(g_idx, 0.0f64);
+        self.i_deltas.insert(g_idx, 0i64);
+        self.x_deltas.insert(g_idx, 0.0f64);
         self.tp_i_mem.insert(g_idx, 0i64);
         self.tp_x_mem.insert(g_idx, 0.0f64);
     }
     pub(crate) fn remove_gut(&mut self, g_idx: usize) {
-        self.idx_deltas.remove(g_idx);
-        self.xtra_deltas.remove(g_idx);
+        self.i_deltas.remove(g_idx);
+        self.x_deltas.remove(g_idx);
         self.tp_i_mem.remove(g_idx);
         self.tp_x_mem.remove(g_idx);
     }
@@ -460,14 +460,14 @@ impl ComboSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        tp.idx_delta[i] = delta;
+                        tp.i_deltas[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        tp.xtra_delta[x] = delta;
+                        tp.x_deltas[x] = delta;
                     }
                 }
             }
@@ -483,14 +483,14 @@ impl ComboSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        self.trnsp_all[trnsp_idx].idx_delta[i] = delta;
+                        self.trnsp_all[trnsp_idx].i_deltas[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        self.trnsp_all[trnsp_idx].xtra_delta[x] = delta;
+                        self.trnsp_all[trnsp_idx].x_deltas[x] = delta;
                     }
                 }
             }
@@ -529,14 +529,14 @@ impl ComboSet {
                     for (i, &i_del) in i_del_vec.iter().enumerate() {
                         if i < guts {
                             if let Some(delta) = i_del {
-                                tp.idx_delta[i] = delta;
+                                tp.i_deltas[i] = delta;
                             }
                         }
                     }
                     for (x, &x_del) in x_del_vec.iter().enumerate() {
                         if x < guts {
                             if let Some(delta) = x_del {
-                                tp.xtra_delta[x] = delta;
+                                tp.x_deltas[x] = delta;
                             }
                         }
                     }
@@ -555,14 +555,14 @@ impl ComboSet {
                     for (i, &i_del) in i_del_vec.iter().enumerate() {
                         if i < guts {
                             if let Some(delta) = i_del {
-                                self.combos[c_idx].trnsp_one[trnsp_idx].idx_delta[i] = delta;
+                                self.combos[c_idx].trnsp_one[trnsp_idx].i_deltas[i] = delta;
                             }
                         }
                     }
                     for (x, &x_del) in x_del_vec.iter().enumerate() {
                         if x < guts {
                             if let Some(delta) = x_del {
-                                self.combos[c_idx].trnsp_one[trnsp_idx].xtra_delta[x] = delta;
+                                self.combos[c_idx].trnsp_one[trnsp_idx].x_deltas[x] = delta;
                             }
                         }
                     }
