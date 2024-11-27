@@ -143,7 +143,7 @@ impl QopEdit {
             }
         }
     }
-    pub fn set_change_idx_delta(
+    pub fn set_change_i_deltas(
         &mut self,
         set_kind: SetType,
         set_idx: usize,
@@ -179,7 +179,7 @@ impl QopEdit {
             }
         }
     }
-    pub fn set_change_xrta_delta(
+    pub fn set_change_x_deltas(
         &mut self,
         set_kind: SetType,
         set_idx: usize,

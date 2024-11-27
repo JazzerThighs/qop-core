@@ -2,21 +2,17 @@ use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, Combo
 
 impl TrnspSet {
     pub(crate) fn new(guts: usize) -> Self {
-        return TrnspSet {
+        TrnspSet {
             triggers: vec![],
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
-        };
+        }
     }
-}
-
-impl HoldBtns {
-    
 }
 
 impl DeltaTog {
     pub(crate) fn new(guts: usize) -> Self {
-        return DeltaTog {
+        DeltaTog {
             togs: vec![],
             pressed: false,
             i_deltas: vec![0i64; guts],
@@ -24,7 +20,7 @@ impl DeltaTog {
             trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
-        };
+        }
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         self.i_deltas.insert(g_idx, 0i64);
@@ -42,7 +38,7 @@ impl DeltaTog {
 
 impl IndvSet {
     pub(crate) fn new(guts: usize) -> Self {
-        return IndvSet {
+        IndvSet {
             buttons: vec![DeltaTog::new(guts)],
             max_pressed: 1u8,
             min_pressed: 0u8,
@@ -50,7 +46,7 @@ impl IndvSet {
             trnsp_all: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
-        };
+        }
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
         if btn_idx <= self.buttons.len() {
@@ -296,14 +292,14 @@ impl IndvSet {
 
 impl Combo {
     pub(crate) fn new(guts: usize, btns: usize) -> Self {
-        return Combo {
+        Combo {
             combo: vec![false; btns],
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
             trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
-        };
+        }
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         self.i_deltas.insert(g_idx, 0i64);
@@ -321,14 +317,14 @@ impl Combo {
 
 impl ComboSet {
     pub(crate) fn new(guts: usize) -> Self {
-        return ComboSet {
+        ComboSet {
             buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(guts, 1usize)],
             holds: HoldBtns::default(),
             trnsp_all: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
-        };
+        }
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
         if btn_idx <= self.buttons.len() {
