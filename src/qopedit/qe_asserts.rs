@@ -22,8 +22,8 @@ impl QopEdit {
                 }
             }
             for ta in 0..self.combo_sets[set].trnsp_all.len() {
-                assert_eq!(self.combo_sets[set].trnsp_all[ta].i_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].i_deltas{message}");
-                assert_eq!(self.combo_sets[set].trnsp_all[ta].x_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].x_deltas{message}")
+                assert_eq!(self.combo_sets[set].trnsp_all[ta].i_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].i_deltas does not have the same length as self.guts!");
+                assert_eq!(self.combo_sets[set].trnsp_all[ta].x_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].x_deltas does not have the same length as self.guts!")
             }
         }
     }
@@ -105,7 +105,7 @@ impl IndvSet {
         }
         for ta in 0..self.trnsp_all.len() {
             assert_eq!(self.trnsp_all[ta].i_deltas.len(), gut_len, "{leading_str}.trnsp_all[{ta}].i_deltas{message}");
-            assert_eq!(self.trnsp_all[ta].x_deltas.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_deltas{message}")
+            assert_eq!(self.trnsp_all[ta].x_deltas.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_deltas{message}");
         }
     }
 
