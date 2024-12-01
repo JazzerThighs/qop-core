@@ -1,6 +1,6 @@
-use crate::qopedit::{QopEdit, SetType};
+use crate::{Qop, SetType};
 
-impl QopEdit {
+impl Qop {
     pub fn set_trnsp_all_params(
         &mut self,
         set_kind: SetType,

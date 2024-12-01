@@ -1,7 +1,7 @@
-use super::QopEdit;
+use crate::Qop;
 use winit::keyboard::KeyCode;
 
-impl QopEdit {
+impl Qop {
     pub fn kcs_insert_k(&mut self, key_code: KeyCode) {
         if !self.key_codes.contains(&key_code) {
             self.key_codes.push(key_code)
@@ -62,7 +62,7 @@ impl QopEdit {
                         }
                     })
                 };
-                QopEdit::kcs_global_vec_manip(self, k_idx_remove);
+                Qop::kcs_global_vec_manip(self, k_idx_remove);
                 self.key_codes.remove(i);
                 break;
             }
@@ -88,7 +88,7 @@ impl QopEdit {
                     }
                 });
             };
-            QopEdit::kcs_global_vec_manip(self, k_idxs_swap);
+            Qop::kcs_global_vec_manip(self, k_idxs_swap);
         }
     }
     pub fn kcs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
@@ -110,7 +110,7 @@ impl QopEdit {
                 k_idx_vec.sort();
                 k_idx_vec.dedup();
             };
-            QopEdit::kcs_global_vec_manip(self, k_idx_update);
+            Qop::kcs_global_vec_manip(self, k_idx_update);
         }
     }
 }

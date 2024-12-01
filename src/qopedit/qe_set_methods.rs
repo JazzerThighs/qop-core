@@ -1,6 +1,6 @@
-use crate::qopedit::{ComboSet, HoldType, IndvSet, QopEdit, SetType};
+use crate::{Qop, HoldType, SetType, IndvSet, ComboSet};
 
-impl QopEdit {
+impl Qop {
     pub fn set_insert_set(&mut self, set_kind: SetType, set_idx: usize) {
         match set_kind {
             SetType::ValveSet => {

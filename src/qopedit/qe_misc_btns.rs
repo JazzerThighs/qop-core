@@ -1,11 +1,11 @@
-use crate::qopedit::{TrnspSet, HoldBtns, DeltaTog, IndvSet, BtnTog, Combo, ComboSet, HoldType};
+use crate::{TrnspSet, DeltaTog, IndvSet, BtnTog, Combo, ComboSet, HoldType};
 
 impl TrnspSet {
     pub(crate) fn new(guts: usize) -> Self {
         TrnspSet {
-            triggers: vec![],
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
+            ..Default::default()
         }
     }
 }
@@ -13,13 +13,11 @@ impl TrnspSet {
 impl DeltaTog {
     pub(crate) fn new(guts: usize) -> Self {
         DeltaTog {
-            togs: vec![],
-            pressed: false,
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
-            trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
+            ..Default::default()
         }
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
@@ -41,11 +39,9 @@ impl IndvSet {
         IndvSet {
             buttons: vec![DeltaTog::new(guts)],
             max_pressed: 1u8,
-            min_pressed: 0u8,
-            holds: HoldBtns::default(),
-            trnsp_all: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
+            ..Default::default()
         }
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
@@ -296,9 +292,9 @@ impl Combo {
             combo: vec![false; btns],
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
-            trnsp_one: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
+            ..Default::default()
         }
     }
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
@@ -320,10 +316,9 @@ impl ComboSet {
         ComboSet {
             buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(guts, 1usize)],
-            holds: HoldBtns::default(),
-            trnsp_all: vec![],
             tp_i_mem: vec![0i64; guts],
             tp_x_mem: vec![0.0f64; guts],
+            ..Default::default()
         }
     }
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {

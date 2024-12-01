@@ -1,34 +1,23 @@
-use crate::qopedit::{QopEdit, HoldBtns, IndvSet};
+use crate::{Qop, HoldBtns, IndvSet, ComboSet};
 
-impl QopEdit {
-    pub fn check_gutdelta_lengths(&self) {
+impl Qop {
+    pub(crate) fn check_gutdelta_lengths(&self) {
         let message: &str = " does not have the same length as self.guts!";
         for set in 0..self.valve_sets.len() {
-            self.valve_sets[set].check_gutdelta_lengths(format!("self.valve_sets[{set}]").as_str(), self.guts.len())
+            self.valve_sets[set].check_gutdelta_lengths(format!("self.valve_sets[{set}]").as_str(), message, self.guts.len())
         }
         for set in 0..self.fret_sets.len() {
-            self.fret_sets[set].check_gutdelta_lengths(format!("self.fret_sets[{set}]").as_str(), self.guts.len())
+            self.fret_sets[set].check_gutdelta_lengths(format!("self.fret_sets[{set}]").as_str(), message, self.guts.len())
         }
         for set in 0..self.radio_sets.len() {
-            self.radio_sets[set].check_gutdelta_lengths(format!("self.radio_sets[{set}]").as_str(), self.guts.len())
+            self.radio_sets[set].check_gutdelta_lengths(format!("self.radio_sets[{set}]").as_str(), message, self.guts.len())
         }
         for set in 0..self.combo_sets.len() {
-            for c in 0..self.combo_sets[set].combos.len() {
-                assert_eq!(self.combo_sets[set].combos[c].i_deltas.len(), self.guts.len(), "self.combo_sets[{set}].combos[{c}].i_deltas{message}");
-                assert_eq!(self.combo_sets[set].combos[c].x_deltas.len(), self.guts.len(), "self.combo_sets[{set}].combos[{c}].x_deltas{message}");
-                for to in 0..self.combo_sets[set].combos[c].trnsp_one.len() {
-                    assert_eq!(self.combo_sets[set].combos[c].trnsp_one[to].i_deltas.len(), self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].i_deltas{message}");
-                    assert_eq!(self.combo_sets[set].combos[c].trnsp_one[to].x_deltas.len(), self.guts.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].x_deltas{message}")
-                }
-            }
-            for ta in 0..self.combo_sets[set].trnsp_all.len() {
-                assert_eq!(self.combo_sets[set].trnsp_all[ta].i_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].i_deltas{message}");
-                assert_eq!(self.combo_sets[set].trnsp_all[ta].x_deltas.len(), self.guts.len(), "self.combo_sets[{set}].trnsp_all[{ta}].x_deltas{message}")
-            }
+            self.combo_sets[set].check_gutdelta_lengths(format!("self.combo_sets[{set}]").as_str(), message, self.guts.len())
         }
     }
 
-    pub fn check_digitalref_invariants(&self) {
+    pub(crate) fn check_digitalref_invariants(&self) {
         let message: &str = " is an index to an OOB Digital Input!";
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].gut_triggers.togs.len() {
@@ -40,43 +29,25 @@ impl QopEdit {
                 }
             }
         }
-        self.gut_holds.check_digitalref_invariants("self.gutholds", self.key_codes.len());
+        self.gut_holds.check_digitalref_invariants("self.gutholds", message, self.key_codes.len());
 
         for set in 0..self.valve_sets.len() {
-            self.valve_sets[set].check_digitalref_invariants(format!("self.valve_sets[{set}]").as_str(), self.key_codes.len())
+            self.valve_sets[set].check_digitalref_invariants(format!("self.valve_sets[{set}]").as_str(), message, self.key_codes.len())
         }
         for set in 0..self.fret_sets.len() {
-            self.fret_sets[set].check_digitalref_invariants(format!("self.fret_sets[{set}]").as_str(), self.key_codes.len())
+            self.fret_sets[set].check_digitalref_invariants(format!("self.fret_sets[{set}]").as_str(), message, self.key_codes.len())
         }
         for set in 0..self.radio_sets.len() {
-            self.radio_sets[set].check_digitalref_invariants(format!("self.radio_sets[{set}]").as_str(), self.key_codes.len())
+            self.radio_sets[set].check_digitalref_invariants(format!("self.radio_sets[{set}]").as_str(), message, self.key_codes.len())
         }
         for set in 0..self.combo_sets.len() {
-            for b in 0..self.combo_sets[set].buttons.len() {
-                for t in 0..self.combo_sets[set].buttons[b].togs.len() {
-                    assert!(self.combo_sets[set].buttons[b].togs[t] < self.key_codes.len(), "self.combo_sets[{set}].buttons[{b}].togs[{t}]{message}")
-                }
-            }
-            for c in 0..self.combo_sets[set].combos.len() {
-                for to in 0..self.combo_sets[set].combos[c].trnsp_one.len() {
-                    for t in 0..self.combo_sets[set].combos[c].trnsp_one[to].triggers.len() {
-                        assert!(self.combo_sets[set].combos[c].trnsp_one[to].triggers[t] < self.key_codes.len(), "self.combo_sets[{set}].combos[{c}].trnsp_one[{to}].triggers[{t}]{message}")
-                    }
-                }
-            }
-            for ta in 0..self.combo_sets[set].trnsp_all.len() {
-                for t in 0..self.combo_sets[set].trnsp_all[ta].triggers.len() {
-                    assert!(self.combo_sets[set].trnsp_all[ta].triggers[t] < self.key_codes.len(), "self.combo_sets[{set}].trnsp_all[{ta}].triggers[{t}]{message}")
-                }
-            }
-            self.combo_sets[set].holds.check_digitalref_invariants(format!("self.combo_sets[{set}].holds").as_str(), self.key_codes.len())
+            self.combo_sets[set].check_digitalref_invariants(format!("self.combo_sets[{set}]").as_str(), message, self.key_codes.len())
         }
     }
 }
 
 impl HoldBtns {
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, dig_vec_len: usize) {
-        let message: &str = " is an index to an OOB Digital Input!";
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for sus in 0..self.sustain.togs.len() {
             assert!(self.sustain.togs[sus] < dig_vec_len, "{leading_str}.sustain.togs[{sus}]{message}")
         }
@@ -93,8 +64,7 @@ impl HoldBtns {
 }
 
 impl IndvSet {
-    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, gut_len: usize) {
-        let message: &str = " does not have the same length as self.guts!";
+    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
         for b in 0..self.buttons.len() {
             assert_eq!(self.buttons[b].i_deltas.len(), gut_len, "{leading_str}.buttons[{b}].i_deltas{message}");
             assert_eq!(self.buttons[b].x_deltas.len(), gut_len, "{leading_str}.buttons[{b}].x_deltas{message}");
@@ -109,8 +79,7 @@ impl IndvSet {
         }
     }
 
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, dig_vec_len: usize) {
-        let message: &str = " is an index to an OOB Digital Input!";
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
                 assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
@@ -126,6 +95,44 @@ impl IndvSet {
                 assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}");
             }
         }
-        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), dig_vec_len)
+        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
+    }
+}
+
+impl ComboSet {
+    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
+        for c in 0..self.combos.len() {
+            assert_eq!(self.combos[c].i_deltas.len(), gut_len, "{leading_str}.combos[{c}].i_deltas{message}");
+            assert_eq!(self.combos[c].x_deltas.len(), gut_len, "{leading_str}.combos[{c}].x_deltas{message}");
+            for to in 0..self.combos[c].trnsp_one.len() {
+                assert_eq!(self.combos[c].trnsp_one[to].i_deltas.len(), gut_len, "{leading_str}.combos[{c}].trnsp_one[{to}].i_deltas{message}");
+                assert_eq!(self.combos[c].trnsp_one[to].x_deltas.len(), gut_len, "{leading_str}.combos[{c}].trnsp_one[{to}].x_deltas{message}")
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            assert_eq!(self.trnsp_all[ta].i_deltas.len(), gut_len, "{leading_str}.trnsp_all[{ta}].i_deltas{message}");
+            assert_eq!(self.trnsp_all[ta].x_deltas.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_deltas{message}")
+        }
+    }
+
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+        for b in 0..self.buttons.len() {
+            for t in 0..self.buttons[b].togs.len() {
+                assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
+            }
+        }
+        for c in 0..self.combos.len() {
+            for to in 0..self.combos[c].trnsp_one.len() {
+                for t in 0..self.combos[c].trnsp_one[to].triggers.len() {
+                    assert!(self.combos[c].trnsp_one[to].triggers[t] < dig_vec_len, "{leading_str}.combos[{c}].trnsp_one[{to}].triggers[{t}]{message}")
+                }
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            for t in 0..self.trnsp_all[ta].triggers.len() {
+                assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}")
+            }
+        }
+        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
     }
 }
