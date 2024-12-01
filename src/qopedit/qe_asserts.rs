@@ -1,7 +1,7 @@
 use crate::{Qop, HoldBtns, IndvSet, ComboSet};
 
 impl Qop {
-    pub(crate) fn check_gutdelta_lengths(&self) {
+    pub(super) fn check_gutdelta_lengths(&self) {
         let message: &str = " does not have the same length as self.guts!";
         for set in 0..self.valve_sets.len() {
             self.valve_sets[set].check_gutdelta_lengths(format!("self.valve_sets[{set}]").as_str(), message, self.guts.len())
@@ -17,7 +17,7 @@ impl Qop {
         }
     }
 
-    pub(crate) fn check_digitalref_invariants(&self) {
+    pub(super) fn check_digitalref_invariants(&self) {
         let message: &str = " is an index to an OOB Digital Input!";
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].gut_triggers.togs.len() {
@@ -47,7 +47,7 @@ impl Qop {
 }
 
 impl HoldBtns {
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(super) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for sus in 0..self.sustain.togs.len() {
             assert!(self.sustain.togs[sus] < dig_vec_len, "{leading_str}.sustain.togs[{sus}]{message}")
         }
@@ -64,7 +64,7 @@ impl HoldBtns {
 }
 
 impl IndvSet {
-    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
+    pub(super) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
         for b in 0..self.buttons.len() {
             assert_eq!(self.buttons[b].i_deltas.len(), gut_len, "{leading_str}.buttons[{b}].i_deltas{message}");
             assert_eq!(self.buttons[b].x_deltas.len(), gut_len, "{leading_str}.buttons[{b}].x_deltas{message}");
@@ -79,7 +79,7 @@ impl IndvSet {
         }
     }
 
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(super) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
                 assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
@@ -100,7 +100,7 @@ impl IndvSet {
 }
 
 impl ComboSet {
-    pub(crate) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
+    pub(super) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
         for c in 0..self.combos.len() {
             assert_eq!(self.combos[c].i_deltas.len(), gut_len, "{leading_str}.combos[{c}].i_deltas{message}");
             assert_eq!(self.combos[c].x_deltas.len(), gut_len, "{leading_str}.combos[{c}].x_deltas{message}");
@@ -115,7 +115,7 @@ impl ComboSet {
         }
     }
 
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(super) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
                 assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
