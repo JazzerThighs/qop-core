@@ -3,16 +3,17 @@ use nestify::nest;
 use serde::{Deserialize, Serialize};
 use winit::keyboard::KeyCode;
 
+#[derive(Default)]
+
+struct Edit;
+struct Play;
+
 nest! {
     #[repr(C)]*
     #[derive(Debug, Clone, Serialize, Deserialize)]*
     #[derive(Default)]*
-    pub struct Qop {
-        pub(crate) qop_mode: pub(crate) enum QopMode {
-            #[default]
-            Edit,
-            Play
-        },
+    pub struct Qop<Mode = Edit> {
+        pub(crate) qop_mode: std::marker::PhantomData<Mode>,
         pub(crate) key_codes: Vec<KeyCode>,
         pub(crate) guts: Vec<pub(crate) struct Gut {
             pub(crate) gut_triggers: pub(crate) struct BtnTog {
@@ -76,11 +77,24 @@ nest! {
     }
 }
 
-impl Qop {
-    pub fn new() -> Self {
-        Self {
+impl Qop<Edit> {
+    pub fn new() -> Qop<Edit> {
+        Qop {
             guts: vec![Gut::default()],
             ..Default::default()
+        }
+    }
+
+    pub fn to_play(&self) -> Qop<Play> {
+        Qop {
+            qop_mode: std::marker::PhantomData,
+            key_codes: self.key_codes.clone(),
+            guts: self.guts.clone(),
+            gut_holds: self.gut_holds.clone(),
+            valve_sets: self.valve_sets.clone(),
+            fret_sets: self.fret_sets.clone(),
+            radio_sets: self.radio_sets.clone(),
+            combo_sets: self.combo_sets.clone(),
         }
     }
 }
