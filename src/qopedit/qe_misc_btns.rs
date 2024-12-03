@@ -1,8 +1,8 @@
 use crate::*;
 
-impl TrnspSet {
-    pub(super) fn new(guts: usize) -> Self {
-        TrnspSet {
+impl MultiTrnsp {
+    pub(crate) fn new(guts: usize) -> Self {
+        MultiTrnsp {
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
             ..Default::default()
@@ -10,65 +10,65 @@ impl TrnspSet {
     }
 }
 
-impl DeltaTog {
-    pub(super) fn new(guts: usize) -> Self {
-        DeltaTog {
+impl MultiTog {
+    pub(crate) fn new(guts: usize) -> Self {
+        MultiTog {
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
-            tp_i_mem: vec![0i64; guts],
-            tp_x_mem: vec![0.0f64; guts],
+            i_mem: vec![0i64; guts],
+            x_mem: vec![0.0f64; guts],
             ..Default::default()
         }
     }
-    pub(super) fn insert_gut(&mut self, g_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         self.i_deltas.insert(g_idx, 0i64);
         self.x_deltas.insert(g_idx, 0.0f64);
-        self.tp_i_mem.insert(g_idx, 0i64);
-        self.tp_x_mem.insert(g_idx, 0.0f64);
+        self.i_mem.insert(g_idx, 0i64);
+        self.x_mem.insert(g_idx, 0.0f64);
     }
-    pub(super) fn remove_gut(&mut self, g_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         self.i_deltas.remove(g_idx);
         self.x_deltas.remove(g_idx);
-        self.tp_i_mem.remove(g_idx);
-        self.tp_x_mem.remove(g_idx);
+        self.i_mem.remove(g_idx);
+        self.x_mem.remove(g_idx);
     }
 }
 
-impl IndvSet {
-    pub(super) fn new(guts: usize) -> Self {
-        IndvSet {
-            buttons: vec![DeltaTog::new(guts)],
+impl MultiSet {
+    pub(crate) fn new(guts: usize) -> Self {
+        MultiSet {
+            buttons: vec![MultiTog::new(guts)],
             max_pressed: 1u8,
-            tp_i_mem: vec![0i64; guts],
-            tp_x_mem: vec![0.0f64; guts],
+            i_mem: vec![0i64; guts],
+            x_mem: vec![0.0f64; guts],
             ..Default::default()
         }
     }
-    pub(super) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
+    pub(crate) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
         if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, DeltaTog::new(guts));
+            self.buttons.insert(btn_idx, MultiTog::new(guts));
         }
     }
-    pub(super) fn remove_btn(&mut self, btn_idx: usize) {
+    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
         if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
             self.buttons.remove(btn_idx);
         }
     }
-    pub(super) fn insert_gut(&mut self, g_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         for btn in 0..self.buttons.len() {
             self.buttons[btn].insert_gut(g_idx);
-            self.tp_i_mem.insert(g_idx, 0i64);
-            self.tp_x_mem.insert(g_idx, 0.0f64);
+            self.i_mem.insert(g_idx, 0i64);
+            self.x_mem.insert(g_idx, 0.0f64);
         }
     }
-    pub(super) fn remove_gut(&mut self, g_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         for btn in 0..self.buttons.len() {
             self.buttons[btn].remove_gut(g_idx);
-            self.tp_i_mem.remove(g_idx);
-            self.tp_x_mem.remove(g_idx);
+            self.i_mem.remove(g_idx);
+            self.x_mem.remove(g_idx);
         }
     }
-    pub(super) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
+    pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);
             for t in 0..self.buttons[b].trnsp_one.len() {
@@ -83,61 +83,52 @@ impl IndvSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(super) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
                 self.buttons[btn_idx].togs.push(key_idx_val);
             }
         }
     }
-    pub(super) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(super) fn hold_insert_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
-        match h_kind {
-            HoldType::Sustain => {
-                if !self.holds.sustain.togs.contains(&key_idx_val) {
-                    self.holds.sustain.togs.push(key_idx_val)
-                }
-            }
-            HoldType::InvSustain => {
-                if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
-                    self.holds.inv_sustain.togs.push(key_idx_val)
-                }
-            }
-            HoldType::Sostenuto => {
-                if !self.holds.sostenuto.togs.contains(&key_idx_val) {
-                    self.holds.sostenuto.togs.push(key_idx_val)
-                }
-            }
-            HoldType::InvSostenuto => {
-                if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
-                    self.holds.inv_sostenuto.togs.push(key_idx_val)
-                }
-            }
-            
+    pub(crate) fn sustain_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.sustain.togs.contains(&key_idx_val) {
+            self.holds.sustain.togs.push(key_idx_val)
         }
     }
-    pub(super) fn hold_remove_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
-        match h_kind {
-            HoldType::Sustain => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
-            HoldType::InvSustain => self
-                .holds
-                .inv_sustain
-                .togs
-                .retain(|&idx| idx != key_idx_val),
-            HoldType::Sostenuto => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
-            HoldType::InvSostenuto => self
-                .holds
-                .inv_sostenuto
-                .togs
-                .retain(|&idx| idx != key_idx_val),
-            
+    pub(crate) fn inv_sustain_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
+            self.holds.inv_sustain.togs.push(key_idx_val)
         }
     }
-    pub(super) fn trnsp_all_params(
+    pub(crate) fn sostenuto_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.sostenuto.togs.contains(&key_idx_val) {
+            self.holds.sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn inv_sostenuto_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
+            self.holds.inv_sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn sustain_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.sustain.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val)
+    }
+    
+    pub(crate) fn trnsp_all_params(
         &mut self,
         trnsp_idx: usize,
         key_idx_vals: Vec<Option<usize>>,
@@ -146,7 +137,7 @@ impl IndvSet {
         guts: usize,
     ) {
         if trnsp_idx == self.trnsp_all.len() {
-            let mut tp: TrnspSet = TrnspSet::new(guts);
+            let mut tp: MultiTrnsp = MultiTrnsp::new(guts);
             for (_i, &key) in key_idx_vals.iter().enumerate() {
                 if let Some(k) = key {
                     tp.triggers.push(k);
@@ -191,19 +182,19 @@ impl IndvSet {
             }
         }
     }
-    pub(super) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
         if trnsp_idx < self.trnsp_all.len() {
             self.trnsp_all[trnsp_idx]
                 .triggers
                 .retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(super) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
         if trnsp_idx < self.trnsp_all.len() {
             self.trnsp_all.remove(trnsp_idx);
         }
     }
-    pub(super) fn trnsp_one_params(
+    pub(crate) fn trnsp_one_params(
         &mut self,
         btn_idx: usize,
         trnsp_idx: usize,
@@ -214,7 +205,7 @@ impl IndvSet {
     ) {
         if btn_idx < self.buttons.len() {
             if trnsp_idx == self.buttons[btn_idx].trnsp_one.len() {
-                let mut tp: TrnspSet = TrnspSet::new(guts);
+                let mut tp: MultiTrnsp = MultiTrnsp::new(guts);
                 for (_i, &key) in key_idx_vals.iter().enumerate() {
                     if let Some(k) = key {
                         tp.triggers.push(k);
@@ -263,7 +254,7 @@ impl IndvSet {
             }
         }
     }
-    pub(super) fn trnsp_one_remove_key(
+    pub(crate) fn trnsp_one_remove_key(
         &mut self,
         btn_idx: usize,
         trnsp_idx: usize,
@@ -277,7 +268,7 @@ impl IndvSet {
             }
         }
     }
-    pub(super) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {
+    pub(crate) fn trnsp_one_remove(&mut self, btn_idx: usize, trnsp_idx: usize) {
         if btn_idx < self.buttons.len() {
             if trnsp_idx < self.buttons[btn_idx].trnsp_one.len() {
                 self.buttons[btn_idx].trnsp_one.remove(trnsp_idx);
@@ -287,41 +278,41 @@ impl IndvSet {
 }
 
 impl Combo {
-    pub(super) fn new(guts: usize, btns: usize) -> Self {
+    pub(crate) fn new(guts: usize, btns: usize) -> Self {
         Combo {
             combo: vec![false; btns],
             i_deltas: vec![0i64; guts],
             x_deltas: vec![0.0f64; guts],
-            tp_i_mem: vec![0i64; guts],
-            tp_x_mem: vec![0.0f64; guts],
+            i_mem: vec![0i64; guts],
+            x_mem: vec![0.0f64; guts],
             ..Default::default()
         }
     }
-    pub(super) fn insert_gut(&mut self, g_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         self.i_deltas.insert(g_idx, 0i64);
         self.x_deltas.insert(g_idx, 0.0f64);
-        self.tp_i_mem.insert(g_idx, 0i64);
-        self.tp_x_mem.insert(g_idx, 0.0f64);
+        self.i_mem.insert(g_idx, 0i64);
+        self.x_mem.insert(g_idx, 0.0f64);
     }
-    pub(super) fn remove_gut(&mut self, g_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         self.i_deltas.remove(g_idx);
         self.x_deltas.remove(g_idx);
-        self.tp_i_mem.remove(g_idx);
-        self.tp_x_mem.remove(g_idx);
+        self.i_mem.remove(g_idx);
+        self.x_mem.remove(g_idx);
     }
 }
 
-impl ComboSet {
-    pub(super) fn new(guts: usize) -> Self {
-        ComboSet {
+impl MultiComboSet {
+    pub(crate) fn new(guts: usize) -> Self {
+        MultiComboSet {
             buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(guts, 1usize)],
-            tp_i_mem: vec![0i64; guts],
-            tp_x_mem: vec![0.0f64; guts],
+            i_mem: vec![0i64; guts],
+            x_mem: vec![0.0f64; guts],
             ..Default::default()
         }
     }
-    pub(super) fn insert_btn(&mut self, btn_idx: usize) {
+    pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
         if btn_idx <= self.buttons.len() {
             self.buttons.insert(btn_idx, BtnTog::default());
             for c in 0..self.combos.len() {
@@ -329,7 +320,7 @@ impl ComboSet {
             }
         }
     }
-    pub(super) fn remove_btn(&mut self, btn_idx: usize) {
+    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
         if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
             self.buttons.remove(btn_idx);
             for c in 0..self.combos.len() {
@@ -337,32 +328,32 @@ impl ComboSet {
             }
         }
     }
-    pub(super) fn insert_combo(&mut self, c_idx: usize, guts: usize) {
+    pub(crate) fn insert_combo(&mut self, c_idx: usize, guts: usize) {
         if c_idx <= self.combos.len() {
             self.combos
                 .insert(c_idx, Combo::new(guts, self.buttons.len()));
         }
     }
-    pub(super) fn remove_combo(&mut self, c_idx: usize) {
+    pub(crate) fn remove_combo(&mut self, c_idx: usize) {
         if self.combos.len() > 0 && c_idx < self.combos.len() {
             self.combos.remove(c_idx);
         }
     }
-    pub(super) fn insert_gut(&mut self, g_idx: usize) {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         for c in 0..self.combos.len() {
             self.combos[c].insert_gut(g_idx);
-            self.tp_i_mem.insert(g_idx, 0i64);
-            self.tp_x_mem.insert(g_idx, 0.0f64);
+            self.i_mem.insert(g_idx, 0i64);
+            self.x_mem.insert(g_idx, 0.0f64);
         }
     }
-    pub(super) fn remove_gut(&mut self, g_idx: usize) {
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
         for c in 0..self.combos.len() {
             self.combos[c].remove_gut(g_idx);
-            self.tp_i_mem.remove(g_idx);
-            self.tp_x_mem.remove(g_idx);
+            self.i_mem.remove(g_idx);
+            self.x_mem.remove(g_idx);
         }
     }
-    pub(super) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
+    pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);
         }
@@ -379,61 +370,51 @@ impl ComboSet {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(super) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+    pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
                 self.buttons[btn_idx].togs.push(key_idx_val);
             }
         }
     }
-    pub(super) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
+    pub(crate) fn btn_remove_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(super) fn hold_insert_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
-        match h_kind {
-            HoldType::Sustain => {
-                if !self.holds.sustain.togs.contains(&key_idx_val) {
-                    self.holds.sustain.togs.push(key_idx_val)
-                }
-            }
-            HoldType::InvSustain => {
-                if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
-                    self.holds.inv_sustain.togs.push(key_idx_val)
-                }
-            }
-            HoldType::Sostenuto => {
-                if !self.holds.sostenuto.togs.contains(&key_idx_val) {
-                    self.holds.sostenuto.togs.push(key_idx_val)
-                }
-            }
-            HoldType::InvSostenuto => {
-                if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
-                    self.holds.inv_sostenuto.togs.push(key_idx_val)
-                }
-            }
-            
+    pub(crate) fn sustain_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.sustain.togs.contains(&key_idx_val) {
+            self.holds.sustain.togs.push(key_idx_val)
         }
     }
-    pub(super) fn hold_remove_key(&mut self, h_kind: HoldType, key_idx_val: usize) {
-        match h_kind {
-            HoldType::Sustain => self.holds.sustain.togs.retain(|&idx| idx != key_idx_val),
-            HoldType::InvSustain => self
-                .holds
-                .inv_sustain
-                .togs
-                .retain(|&idx| idx != key_idx_val),
-            HoldType::Sostenuto => self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val),
-            HoldType::InvSostenuto => self
-                .holds
-                .inv_sostenuto
-                .togs
-                .retain(|&idx| idx != key_idx_val),
-            
+    pub(crate) fn inv_sustain_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
+            self.holds.inv_sustain.togs.push(key_idx_val)
         }
     }
-    pub(super) fn trnsp_all_params(
+    pub(crate) fn sostenuto_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.sostenuto.togs.contains(&key_idx_val) {
+            self.holds.sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn inv_sostenuto_insert_key(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
+            self.holds.inv_sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn sustain_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.sustain.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
+        self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn trnsp_all_params(
         &mut self,
         trnsp_idx: usize,
         key_idx_vals: Vec<Option<usize>>,
@@ -442,7 +423,7 @@ impl ComboSet {
         guts: usize,
     ) {
         if trnsp_idx == self.trnsp_all.len() {
-            let mut tp: TrnspSet = TrnspSet::new(guts);
+            let mut tp: MultiTrnsp = MultiTrnsp::new(guts);
             for (_i, &key) in key_idx_vals.iter().enumerate() {
                 if let Some(k) = key {
                     tp.triggers.push(k);
@@ -487,19 +468,19 @@ impl ComboSet {
             }
         }
     }
-    pub(super) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
+    pub(crate) fn trnsp_all_remove_key(&mut self, trnsp_idx: usize, key_idx_val: usize) {
         if trnsp_idx < self.trnsp_all.len() {
             self.trnsp_all[trnsp_idx]
                 .triggers
                 .retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(super) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
+    pub(crate) fn trnsp_all_remove(&mut self, trnsp_idx: usize) {
         if trnsp_idx < self.trnsp_all.len() {
             self.trnsp_all.remove(trnsp_idx);
         }
     }
-    pub(super) fn trnsp_one_params(
+    pub(crate) fn trnsp_one_params(
         &mut self,
         c_idx: usize,
         trnsp_idx: usize,
@@ -511,7 +492,7 @@ impl ComboSet {
         if c_idx < self.combos.len() {
             if c_idx < self.buttons.len() {
                 if trnsp_idx == self.combos[c_idx].trnsp_one.len() {
-                    let mut tp: TrnspSet = TrnspSet::new(guts);
+                    let mut tp: MultiTrnsp = MultiTrnsp::new(guts);
                     for (_i, &key) in key_idx_vals.iter().enumerate() {
                         if let Some(k) = key {
                             tp.triggers.push(k);
@@ -561,7 +542,7 @@ impl ComboSet {
             }
         }
     }
-    pub(super) fn trnsp_one_remove_key(
+    pub(crate) fn trnsp_one_remove_key(
         &mut self,
         c_idx: usize,
         trnsp_idx: usize,
@@ -575,7 +556,7 @@ impl ComboSet {
             }
         }
     }
-    pub(super) fn trnsp_one_remove(&mut self, c_idx: usize, trnsp_idx: usize) {
+    pub(crate) fn trnsp_one_remove(&mut self, c_idx: usize, trnsp_idx: usize) {
         if c_idx < self.combos.len() {
             if trnsp_idx < self.combos[c_idx].trnsp_one.len() {
                 self.combos[c_idx].trnsp_one.remove(trnsp_idx);

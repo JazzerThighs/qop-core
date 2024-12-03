@@ -6,8 +6,6 @@ impl Qop<Edit> {
         if !self.key_codes.contains(&key_code) {
             self.key_codes.push(key_code)
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn kcs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
         // swaps only the keycode labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
@@ -24,8 +22,6 @@ impl Qop<Edit> {
             (self.key_codes[i1.unwrap()], self.key_codes[i2.unwrap()]) =
                 (self.key_codes[i2.unwrap()], self.key_codes[i1.unwrap()]);
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     fn kcs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
         for g in 0..self.guts.len() {
@@ -39,17 +35,17 @@ impl Qop<Edit> {
         operation(&mut self.gut_holds.sostenuto.togs);
         operation(&mut self.gut_holds.inv_sostenuto.togs);
 
-        for set in 0..self.valve_sets.len() {
-            self.valve_sets[set].all_key_idx_vecs(&operation);
+        for set in 0..self.v_multi.len() {
+            self.v_multi[set].all_key_idx_vecs(&operation);
         }
-        for set in 0..self.fret_sets.len() {
-            self.fret_sets[set].all_key_idx_vecs(&operation);
+        for set in 0..self.f_multi.len() {
+            self.f_multi[set].all_key_idx_vecs(&operation);
         }
-        for set in 0..self.radio_sets.len() {
-            self.radio_sets[set].all_key_idx_vecs(&operation);
+        for set in 0..self.r_multi.len() {
+            self.r_multi[set].all_key_idx_vecs(&operation);
         }
-        for set in 0..self.combo_sets.len() {
-            self.combo_sets[set].all_key_idx_vecs(&operation);
+        for set in 0..self.c_multi.len() {
+            self.c_multi[set].all_key_idx_vecs(&operation);
         }
     }
     pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
@@ -72,12 +68,9 @@ impl Qop<Edit> {
                 break;
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn kcs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
         // swaps the nodes of 2 existing keys in all of the plucks' and sets' various fields.
-
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
         for i in 0..self.key_codes.len() {
             if self.key_codes[i] == kc1 {
@@ -98,8 +91,6 @@ impl Qop<Edit> {
             };
             Qop::kcs_global_vec_manip(self, k_idxs_swap);
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn kcs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
@@ -122,7 +113,5 @@ impl Qop<Edit> {
             };
             Qop::kcs_global_vec_manip(self, k_idx_update);
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
 }

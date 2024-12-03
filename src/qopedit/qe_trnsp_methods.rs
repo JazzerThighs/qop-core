@@ -12,8 +12,8 @@ impl Qop<Edit> {
     ) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_all_params(
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_all_params(
                         trnsp_idx,
                         key_idx_vals,
                         i_del_vec,
@@ -23,8 +23,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_all_params(
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_all_params(
                         trnsp_idx,
                         key_idx_vals,
                         i_del_vec,
@@ -34,8 +34,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_all_params(
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_all_params(
                         trnsp_idx,
                         key_idx_vals,
                         i_del_vec,
@@ -45,8 +45,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_all_params(
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_all_params(
                         trnsp_idx,
                         key_idx_vals,
                         i_del_vec,
@@ -56,8 +56,6 @@ impl Qop<Edit> {
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn set_remove_trnsp_all_key(
         &mut self,
@@ -68,54 +66,50 @@ impl Qop<Edit> {
     ) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_all_remove_key(trnsp_idx, key_idx_val);
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn set_remove_trnsp_all(&mut self, set_kind: SetType, set_idx: usize, trnsp_idx: usize) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_all_remove(trnsp_idx);
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_all_remove(trnsp_idx);
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
 
     /* ********************************************************************* */
@@ -132,8 +126,8 @@ impl Qop<Edit> {
     ) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_one_params(
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_one_params(
                         btn_idx,
                         trnsp_idx,
                         key_idx_vals,
@@ -144,8 +138,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_one_params(
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_one_params(
                         btn_idx,
                         trnsp_idx,
                         key_idx_vals,
@@ -156,8 +150,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_one_params(
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_one_params(
                         btn_idx,
                         trnsp_idx,
                         key_idx_vals,
@@ -168,8 +162,8 @@ impl Qop<Edit> {
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_one_params(
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_one_params(
                         btn_idx,
                         trnsp_idx,
                         key_idx_vals,
@@ -180,8 +174,6 @@ impl Qop<Edit> {
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn set_remove_trnsp_one_key(
         &mut self,
@@ -193,28 +185,26 @@ impl Qop<Edit> {
     ) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_one_remove_key(btn_idx, trnsp_idx, key_idx_val);
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn set_remove_trnsp_one(
         &mut self,
@@ -225,27 +215,25 @@ impl Qop<Edit> {
     ) {
         match set_kind {
             SetType::ValveSet => {
-                if set_idx <= self.valve_sets.len() {
-                    self.valve_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                if set_idx <= self.v_multi.len() {
+                    self.v_multi[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
             SetType::FretSet => {
-                if set_idx <= self.fret_sets.len() {
-                    self.fret_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                if set_idx <= self.f_multi.len() {
+                    self.f_multi[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
             SetType::RadioSet => {
-                if set_idx <= self.radio_sets.len() {
-                    self.radio_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                if set_idx <= self.r_multi.len() {
+                    self.r_multi[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
             SetType::ComboSet => {
-                if set_idx <= self.combo_sets.len() {
-                    self.combo_sets[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
+                if set_idx <= self.c_multi.len() {
+                    self.c_multi[set_idx].trnsp_one_remove(btn_idx, trnsp_idx);
                 }
             }
         }
-        self.check_gutdelta_lengths();
-        self.check_digitalref_invariants();
     }
 }
