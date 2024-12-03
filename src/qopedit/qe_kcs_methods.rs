@@ -1,4 +1,4 @@
-use crate::{Edit, Qop};
+use crate::*;
 use winit::keyboard::KeyCode;
 
 impl Qop<Edit> {

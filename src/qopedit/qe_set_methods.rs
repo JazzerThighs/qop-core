@@ -1,4 +1,4 @@
-use crate::{ComboSet, Edit, HoldType, IndvSet, Qop, SetType};
+use crate::*;
 
 impl Qop<Edit> {
     pub fn set_insert_set(&mut self, set_kind: SetType, set_idx: usize) {

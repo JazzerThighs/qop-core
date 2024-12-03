@@ -1,4 +1,4 @@
-use crate::{Edit, Qop, SetType};
+use crate::*;
 
 impl Qop<Edit> {
     pub fn set_trnsp_all_params(

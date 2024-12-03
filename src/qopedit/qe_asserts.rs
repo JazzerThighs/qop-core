@@ -1,21 +1,32 @@
-use crate::{Qop, HoldBtns, IndvSet, ComboSet};
+use crate::*;
 
 impl Qop {
-    pub(super) fn check_gutdelta_lengths(&self) {
+    pub(super) fn check_gutdelta_lengths(&self){
         let message: &str = " does not have the same length as self.guts!";
-        for set in 0..self.valve_sets.len() {
-            self.valve_sets[set].check_gutdelta_lengths(format!("self.valve_sets[{set}]").as_str(), message, self.guts.len())
-        }
-        for set in 0..self.fret_sets.len() {
-            self.fret_sets[set].check_gutdelta_lengths(format!("self.fret_sets[{set}]").as_str(), message, self.guts.len())
-        }
-        for set in 0..self.radio_sets.len() {
-            self.radio_sets[set].check_gutdelta_lengths(format!("self.radio_sets[{set}]").as_str(), message, self.guts.len())
-        }
-        for set in 0..self.combo_sets.len() {
-            self.combo_sets[set].check_gutdelta_lengths(format!("self.combo_sets[{set}]").as_str(), message, self.guts.len())
-        }
+        operate_on_all_multi!(self, [v_multi, f_multi, r_multi, c_multi], {
+            field[set].check_gutdelta_lengths(
+                &format!("self.{}[{}]", field_name, set),
+                message,
+                self.guts.len(),
+            );
+        });
     }
+
+    // pub(super) fn check_gutdelta_lengths(&self) {
+    //     let message: &str = " does not have the same length as self.guts!";
+    //     for set in 0..self.v_multi.len() {
+    //         self.v_multi[set].check_gutdelta_lengths(format!("self.v_multi[{set}]").as_str(), message, self.guts.len())
+    //     }
+    //     for set in 0..self.f_multi.len() {
+    //         self.f_multi[set].check_gutdelta_lengths(format!("self.f_multi[{set}]").as_str(), message, self.guts.len())
+    //     }
+    //     for set in 0..self.r_multi.len() {
+    //         self.r_multi[set].check_gutdelta_lengths(format!("self.r_multi[{set}]").as_str(), message, self.guts.len())
+    //     }
+    //     for set in 0..self.c_multi.len() {
+    //         self.c_multi[set].check_gutdelta_lengths(format!("self.c_multi[{set}]").as_str(), message, self.guts.len())
+    //     }
+    // }
 
     pub(super) fn check_digitalref_invariants(&self) {
         let message: &str = " is an index to an OOB Digital Input!";
@@ -31,17 +42,17 @@ impl Qop {
         }
         self.gut_holds.check_digitalref_invariants("self.gutholds", message, self.key_codes.len());
 
-        for set in 0..self.valve_sets.len() {
-            self.valve_sets[set].check_digitalref_invariants(format!("self.valve_sets[{set}]").as_str(), message, self.key_codes.len())
+        for set in 0..self.v_multi.len() {
+            self.v_multi[set].check_digitalref_invariants(format!("self.v_multi[{set}]").as_str(), message, self.key_codes.len())
         }
-        for set in 0..self.fret_sets.len() {
-            self.fret_sets[set].check_digitalref_invariants(format!("self.fret_sets[{set}]").as_str(), message, self.key_codes.len())
+        for set in 0..self.f_multi.len() {
+            self.f_multi[set].check_digitalref_invariants(format!("self.f_multi[{set}]").as_str(), message, self.key_codes.len())
         }
-        for set in 0..self.radio_sets.len() {
-            self.radio_sets[set].check_digitalref_invariants(format!("self.radio_sets[{set}]").as_str(), message, self.key_codes.len())
+        for set in 0..self.r_multi.len() {
+            self.r_multi[set].check_digitalref_invariants(format!("self.r_multi[{set}]").as_str(), message, self.key_codes.len())
         }
-        for set in 0..self.combo_sets.len() {
-            self.combo_sets[set].check_digitalref_invariants(format!("self.combo_sets[{set}]").as_str(), message, self.key_codes.len())
+        for set in 0..self.c_multi.len() {
+            self.c_multi[set].check_digitalref_invariants(format!("self.c_multi[{set}]").as_str(), message, self.key_codes.len())
         }
     }
 }
@@ -63,7 +74,7 @@ impl HoldBtns {
     }
 }
 
-impl IndvSet {
+impl MultiSet {
     pub(super) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
         for b in 0..self.buttons.len() {
             assert_eq!(self.buttons[b].i_deltas.len(), gut_len, "{leading_str}.buttons[{b}].i_deltas{message}");
@@ -99,7 +110,7 @@ impl IndvSet {
     }
 }
 
-impl ComboSet {
+impl MultiComboSet {
     pub(super) fn check_gutdelta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
         for c in 0..self.combos.len() {
             assert_eq!(self.combos[c].i_deltas.len(), gut_len, "{leading_str}.combos[{c}].i_deltas{message}");

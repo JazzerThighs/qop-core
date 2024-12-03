@@ -1,4 +1,4 @@
-use crate::{TrnspSet, DeltaTog, IndvSet, BtnTog, Combo, ComboSet, HoldType};
+use crate::*;
 
 impl TrnspSet {
     pub(super) fn new(guts: usize) -> Self {

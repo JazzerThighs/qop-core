@@ -1,4 +1,4 @@
-use crate::{Edit, Gut, HoldType, Qop};
+use crate::*;
 
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
