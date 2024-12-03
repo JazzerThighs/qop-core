@@ -277,7 +277,7 @@ impl MultiSet {
     }
 }
 
-impl Combo {
+impl ComboOld {
     pub(crate) fn new(guts: usize, btns: usize) -> Self {
         Combo {
             combo: vec![false; btns],
