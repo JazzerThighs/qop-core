@@ -12,22 +12,9 @@ nest! {
         pub(crate) qop_mode: PhantomData<Mode>,
         pub(crate) n: 
             pub(crate) struct NewStuffPointers {
-                len_guts: usize,
-                dig_vec: Vec<KeyCode>,
-                v_one_indv_len: Vec<usize>,
-                f_one_indv_len: Vec<usize>,
-                r_one_indv_len: Vec<usize>,
-                c_one_btns_len: Vec<usize>,
-                c_one_comb_len: Vec<usize>,
-                v_multi_len: usize,
-                f_multi_len: usize,
-                r_multi_len: usize,
-                c_multi_len: usize,
-                v_multi_indv_len: Vec<usize>,
-                f_multi_indv_len: Vec<usize>,
-                r_multi_indv_len: Vec<usize>,
-                c_multi_btns_len: Vec<usize>,
-                c_multi_comb_len: Vec<usize>,
+                pub(crate) guts_len: usize,
+                pub(crate) dig_vec: Vec<KeyCode>,
+                pub(crate) c_btn_len: usize,
             },
         pub(crate) dig_inputs:  Vec<KeyCode>,
         pub(crate) guts: Vec<
@@ -86,8 +73,8 @@ nest! {
                         >,
                         pub(crate) holds: HoldBtns,
                         pub(crate) trnsp_all: Vec<Trnsp<T, U>>,
-                        pub(crate) i_mem: i64,
-                        pub(crate) x_mem: f64,
+                        pub(crate) i_mem: T,
+                        pub(crate) x_mem: U,
                     }||<i64, f64>>
             }
         >,
@@ -119,12 +106,8 @@ impl NewStuffPointers {
 impl Qop<Edit> {
     pub fn new() -> Qop<Edit> {
         let n: NewStuffPointers = NewStuffPointers {
-            len_guts: 1usize,
-            v_one_indv_len: vec![0usize],
-            f_one_indv_len: vec![0usize],
-            r_one_indv_len: vec![0usize],
-            c_one_btns_len: vec![0usize],
-            c_one_comb_len: vec![0usize],
+            guts_len: 1usize,
+            c_btn_len: 1usize,
             ..Default::default()
         };
         Qop {

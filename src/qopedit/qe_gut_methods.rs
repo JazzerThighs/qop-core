@@ -1,5 +1,81 @@
 use crate::*;
 
+impl VFRSet<Vec<i64>, Vec<f64>> {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        for btn in 0..self.buttons.len() {
+            self.buttons[btn].insert_gut(g_idx);
+            self.i_mem.insert(g_idx, 0i64);
+            self.x_mem.insert(g_idx, 0.0f64);
+
+            for to in 0..self.buttons[btn].trnsp_one.len() {
+                self.buttons[btn].trnsp_one[to].insert_gut(g_idx);
+            }
+        }
+    }
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        for btn in 0..self.buttons.len() {
+            self.buttons[btn].remove_gut(g_idx);
+            self.i_mem.remove(g_idx);
+            self.x_mem.remove(g_idx);
+
+            for to in 0..self.buttons[btn].trnsp_one.len() {
+                self.buttons[btn].trnsp_one[to].remove_gut(g_idx);
+            }
+        }
+    }
+}
+
+impl VFRIndv<Vec<i64>, Vec<f64>> {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        self.i_delta.insert(g_idx, 0i64);
+        self.x_delta.insert(g_idx, 0.0f64);
+        self.i_mem.insert(g_idx, 0i64);
+        self.x_mem.insert(g_idx, 0.0f64);
+    }
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        self.i_delta.remove(g_idx);
+        self.x_delta.remove(g_idx);
+        self.i_mem.remove(g_idx);
+        self.x_mem.remove(g_idx);
+    }
+}
+
+impl ComboSet<Vec<i64>, Vec<f64>> {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        for c in 0..self.combos.len() {
+            self.combos[c].insert_gut(g_idx);
+            self.i_mem.insert(g_idx, 0i64);
+            self.x_mem.insert(g_idx, 0.0f64);
+
+            for to in 0..self.combos[c].trnsp_one.len() {
+                self.combos[c].trnsp_one[to].insert_gut(g_idx);
+            }
+        }
+    }
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        for c in 0..self.combos.len() {
+            self.combos[c].remove_gut(g_idx);
+            self.i_mem.remove(g_idx);
+            self.x_mem.remove(g_idx);
+        }
+    }
+}
+
+impl Combo<Vec<i64>, Vec<f64>> {
+    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
+        self.i_delta.insert(g_idx, 0i64);
+        self.x_delta.insert(g_idx, 0.0f64);
+        self.i_mem.insert(g_idx, 0i64);
+        self.x_mem.insert(g_idx, 0.0f64);
+    }
+    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
+        self.i_delta.remove(g_idx);
+        self.x_delta.remove(g_idx);
+        self.i_mem.remove(g_idx);
+        self.x_mem.remove(g_idx);
+    }
+}
+
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
@@ -17,8 +93,6 @@ impl Qop<Edit> {
                 self.c_multi[set].insert_gut(g_idx);
             }
         }
-        self.check_multi_deltas_lengths();
-        self.check_digitalref_invariants();
     }
     pub fn gut_remove_g(&mut self, g_idx: usize) {
         if self.guts.len() > 1 && g_idx <= self.guts.len() {
@@ -38,14 +112,14 @@ impl Qop<Edit> {
         }
     }
     pub fn gut_insert_key(&mut self, g_idx: usize, key_idx_val: usize) {
-        if g_idx < self.guts.len() && key_idx_val < self.key_codes.len() {
+        if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
             if !self.guts[g_idx].gut_triggers.togs.contains(&key_idx_val) {
                 self.guts[g_idx].gut_triggers.togs.push(key_idx_val)
             };
         }
     }
     pub fn gut_remove_key(&mut self, g_idx: usize, key_idx_val: usize) {
-        if g_idx < self.guts.len() && key_idx_val < self.key_codes.len() {
+        if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
             self.guts[g_idx]
                 .gut_triggers
                 .togs
