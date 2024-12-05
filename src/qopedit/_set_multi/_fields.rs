@@ -1,33 +1,29 @@
 use crate::{*, qopedit::NewTrait};
+use duplicate::duplicate_item;
 
 impl Qop<Edit> {
-    pub fn v_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.n.guts_len = self.guts.len();
-        self.v_multi[set_idx].insert_btn(btn_idx, &mut self.n);
-    }
-    pub fn f_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.n.guts_len = self.guts.len();
-        self.f_multi[set_idx].insert_btn(btn_idx, &mut self.n);
-    }
-    pub fn r_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.n.guts_len = self.guts.len();
-        self.r_multi[set_idx].insert_btn(btn_idx, &mut self.n);
+    #[duplicate_item(
+        vfr_multi_insert_btn    field;
+        [v_multi_insert_btn]    [v_multi];
+        [f_multi_insert_btn]    [f_multi];
+        [r_multi_insert_btn]    [r_multi];
+    )]
+    pub fn vfr_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
+        self.field[set_idx].insert_btn(btn_idx, &mut self.n);
     }
     pub fn c_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.n.guts_len = self.guts.len();
         self.c_multi[set_idx].insert_btn(btn_idx);
     }
-    pub fn v_multi_remove_btn(&mut self, set_idx: usize, btn_idx: usize) {
+    
+    #[duplicate_item(
+        set_multi_remove_btn    field;
+        [v_multi_remove_btn]    [v_multi];
+        [f_multi_remove_btn]    [f_multi];
+        [r_multi_remove_btn]    [r_multi];
+        [c_multi_remove_btn]    [c_multi];
+    )]
+    pub fn set_multi_remove_btn(&mut self, set_idx: usize, btn_idx: usize) {
         self.v_multi[set_idx].remove_btn(btn_idx)
-    }
-    pub fn f_multi_remove_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.f_multi[set_idx].remove_btn(btn_idx)
-    }
-    pub fn r_multi_remove_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.r_multi[set_idx].remove_btn(btn_idx)
-    }
-    pub fn c_multi_remove_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.c_multi[set_idx].remove_btn(btn_idx)
     }
     
     pub fn c_multi_insert_combo(&mut self, set_idx: usize, c_idx: usize) {
@@ -43,64 +39,40 @@ impl Qop<Edit> {
         }
     }
     
-    pub fn v_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.v_multi.len() {
-                self.v_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
-            }
+    #[duplicate_item(
+        set_multi_insert_btn_dig    field;
+        [v_multi_insert_btn_dig]    [v_multi];
+        [f_multi_insert_btn_dig]    [f_multi];
+        [r_multi_insert_btn_dig]    [r_multi];
+        [c_multi_insert_btn_dig]    [c_multi];
+    )]
+    pub fn set_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+        if key_idx_val < self.dig_inputs.len() && set_idx < self.field.len() {
+            self.field[set_idx].btn_insert_dig(btn_idx, key_idx_val)
         }
     }
-    pub fn f_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.f_multi.len() {
-                self.f_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn r_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.r_multi.len() {
-                self.r_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn c_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.c_multi.len() {
-                self.c_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn v_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.v_multi.len() {
-                self.v_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn f_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.f_multi.len() {
-                self.f_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn r_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.r_multi.len() {
-                self.r_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
-            }
-        }
-    }
-    pub fn c_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() {
-            if set_idx < self.c_multi.len() {
-                self.c_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
-            }
+
+    #[duplicate_item(
+        set_multi_remove_btn_dig    field;
+        [v_multi_remove_btn_dig]    [v_multi];
+        [f_multi_remove_btn_dig]    [f_multi];
+        [r_multi_remove_btn_dig]    [r_multi];
+        [c_multi_remove_btn_dig]    [c_multi];
+    )]
+    pub fn set_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+        if key_idx_val < self.dig_inputs.len() && set_idx < self.field.len() {
+            self.field[set_idx].btn_remove_dig(btn_idx, key_idx_val)
         }
     }
     
-    pub fn v_multi_change_deltas(
+    #[duplicate_item(
+        set_multi_change_deltas     multifield  deltafield;
+        [v_multi_change_deltas]    [v_multi]   [buttons];
+        [f_multi_change_deltas]    [f_multi]   [buttons];
+        [r_multi_change_deltas]    [r_multi]   [buttons];
+        [c_multi_change_deltas]    [c_multi]   [combos];
+    )]
+    pub fn set_multi_change_deltas(
         &mut self,
         set_idx: usize,
         del_idx: usize,
@@ -110,87 +82,15 @@ impl Qop<Edit> {
         if del_idx < self.guts.len() {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if let Some(delta) = i_del {
-                    if set_idx < self.v_multi.len() {
-                        self.v_multi[set_idx].buttons[del_idx].i_delta[i] = delta
+                    if set_idx < self.multifield.len() {
+                        self.multifield[set_idx].deltafield[del_idx].i_delta[i] = delta
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if let Some(delta) = x_del {
-                    if set_idx < self.v_multi.len() {
-                        self.v_multi[set_idx].buttons[del_idx].x_delta[x] = delta
-                    }
-                }
-            }
-        }
-    }
-    pub fn f_multi_change_deltas(
-        &mut self,
-        set_idx: usize,
-        del_idx: usize,
-        i_del_vec: Vec<Option<i64>>,
-        x_del_vec: Vec<Option<f64>>,
-    ) {
-        if del_idx < self.guts.len() {
-            for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if let Some(delta) = i_del {
-                    if set_idx < self.f_multi.len() {
-                        self.f_multi[set_idx].buttons[del_idx].i_delta[i] = delta
-                    }
-                }
-            }
-            for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if let Some(delta) = x_del {
-                    if set_idx < self.f_multi.len() {
-                        self.f_multi[set_idx].buttons[del_idx].x_delta[x] = delta
-                    }
-                }
-            }
-        }
-    }
-    pub fn r_multi_change_deltas(
-        &mut self,
-        set_idx: usize,
-        del_idx: usize,
-        i_del_vec: Vec<Option<i64>>,
-        x_del_vec: Vec<Option<f64>>,
-    ) {
-        if del_idx < self.guts.len() {
-            for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if let Some(delta) = i_del {
-                    if set_idx < self.r_multi.len() {
-                        self.r_multi[set_idx].buttons[del_idx].i_delta[i] = delta
-                    }
-                }
-            }
-            for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if let Some(delta) = x_del {
-                    if set_idx < self.r_multi.len() {
-                        self.r_multi[set_idx].buttons[del_idx].x_delta[x] = delta
-                    }
-                }
-            }
-        }
-    }
-    pub fn c_multi_change_deltas(
-        &mut self,
-        set_idx: usize,
-        del_idx: usize,
-        i_del_vec: Vec<Option<i64>>,
-        x_del_vec: Vec<Option<f64>>,
-    ) {
-        if del_idx < self.guts.len() {
-            for (i, &i_del) in i_del_vec.iter().enumerate() {
-                if let Some(delta) = i_del {
-                    if set_idx < self.c_multi.len() {
-                        self.c_multi[set_idx].combos[del_idx].i_delta[i] = delta
-                    }
-                }
-            }
-            for (x, &x_del) in x_del_vec.iter().enumerate() {
-                if let Some(delta) = x_del {
-                    if set_idx < self.c_multi.len() {
-                        self.c_multi[set_idx].combos[del_idx].x_delta[x] = delta
+                    if set_idx < self.multifield.len() {
+                        self.multifield[set_idx].deltafield[del_idx].x_delta[x] = delta
                     }
                 }
             }

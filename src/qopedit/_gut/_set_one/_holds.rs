@@ -23,7 +23,7 @@ impl Qop<Edit> {
         [c_one_inv_sustain_insert_dig]    [c_one] [inv_sustain_insert_dig];
         [c_one_sostenuto_insert_dig]      [c_one] [sostenuto_insert_dig];
         [c_one_inv_sostenuto_insert_dig]  [c_one] [inv_sostenuto_insert_dig];
-      )]
+    )]
     pub fn one_hold_insert_dig_method(&mut self, g_idx: usize, set_idx: usize, key_idx_val: usize) {
         if key_idx_val < self.dig_inputs.len()
             && g_idx < self.guts.len()
@@ -54,7 +54,7 @@ impl Qop<Edit> {
         [c_one_inv_sustain_remove_dig]    [c_one] [inv_sustain_remove_dig];
         [c_one_sostenuto_remove_dig]      [c_one] [sostenuto_remove_dig];
         [c_one_inv_sostenuto_remove_dig]  [c_one] [inv_sostenuto_remove_dig];
-      )]
+    )]
     pub fn one_hold_remove_dig_method(&mut self, g_idx: usize, set_idx: usize, key_idx_val: usize) {
         if key_idx_val < self.dig_inputs.len()
             && g_idx < self.guts.len()

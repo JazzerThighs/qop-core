@@ -1,9 +1,11 @@
-use crate::*;
+use crate::{*, qopedit::NewTrait};
+use duplicate::duplicate_item;
 
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
-            self.guts.insert(g_idx, Gut::default());
+            self.guts.insert(g_idx, Gut::new(&mut self.n));
+            self.n.guts_len += 1;
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].insert_gut(g_idx);
             }
@@ -21,6 +23,7 @@ impl Qop<Edit> {
     pub fn gut_remove_g(&mut self, g_idx: usize) {
         if self.guts.len() > 1 && g_idx <= self.guts.len() {
             self.guts.remove(g_idx);
+            self.n.guts_len -= 1;
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].remove_gut(g_idx);
             }
@@ -37,16 +40,21 @@ impl Qop<Edit> {
     }
 }
 
-impl VFRSet<Vec<i64>, Vec<f64>> {
-    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].i_delta.insert(g_idx, 0i64);
-            self.buttons[btn].x_delta.insert(g_idx, 0.0f64);
-            self.buttons[btn].i_mem.insert(g_idx, 0i64);
-            self.buttons[btn].x_mem.insert(g_idx, 0.0f64);
-            for to in 0..self.buttons[btn].trnsp_one.len() {
-                self.buttons[btn].trnsp_one[to].i_delta.insert(g_idx, 0i64);
-                self.buttons[btn].trnsp_one[to].x_delta.insert(g_idx, 0.0f64);
+#[duplicate_item(
+    SetType     set_multi_insert_gut    set_multi_remove_gut    field;
+    [VFRSet]    [insert_gut]            [remove_gut]            [buttons];
+    [ComboSet]  [insert_gut]            [remove_gut]            [combos];
+)]
+impl SetType<Vec<i64>, Vec<f64>> {
+    pub(crate) fn set_multi_insert_gut(&mut self, g_idx: usize) {
+        for btn in 0..self.field.len() {
+            self.field[btn].i_delta.insert(g_idx, 0i64);
+            self.field[btn].x_delta.insert(g_idx, 0.0f64);
+            self.field[btn].i_mem.insert(g_idx, 0i64);
+            self.field[btn].x_mem.insert(g_idx, 0.0f64);
+            for to in 0..self.field[btn].trnsp_one.len() {
+                self.field[btn].trnsp_one[to].i_delta.insert(g_idx, 0i64);
+                self.field[btn].trnsp_one[to].x_delta.insert(g_idx, 0.0f64);
             }
         }
         self.i_mem.insert(g_idx, 0i64);
@@ -56,54 +64,15 @@ impl VFRSet<Vec<i64>, Vec<f64>> {
             self.trnsp_all[ta].x_delta.insert(g_idx, 0.0f64);
         }
     }
-    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
-        for btn in 0..self.buttons.len() {
-            self.buttons[btn].i_delta.remove(g_idx);
-            self.buttons[btn].x_delta.remove(g_idx);
-            self.buttons[btn].i_mem.remove(g_idx);
-            self.buttons[btn].x_mem.remove(g_idx);
-            for to in 0..self.buttons[btn].trnsp_one.len() {
-                self.buttons[btn].trnsp_one[to].i_delta.remove(g_idx);
-                self.buttons[btn].trnsp_one[to].x_delta.remove(g_idx);
-            }
-        }
-        self.i_mem.remove(g_idx);
-        self.x_mem.remove(g_idx);
-        for ta in 0..self.trnsp_all.len() {
-            self.trnsp_all[ta].i_delta.remove(g_idx);
-            self.trnsp_all[ta].x_delta.remove(g_idx);
-        }
-    }
-}
-
-impl ComboSet<Vec<i64>, Vec<f64>> {
-    pub(crate) fn insert_gut(&mut self, g_idx: usize) {
-        for c in 0..self.combos.len() {
-            self.combos[c].i_delta.insert(g_idx, 0i64);
-            self.combos[c].x_delta.insert(g_idx, 0.0f64);
-            self.combos[c].i_mem.insert(g_idx, 0i64);
-            self.combos[c].x_mem.insert(g_idx, 0.0f64);
-            for to in 0..self.combos[c].trnsp_one.len() {
-                self.combos[c].trnsp_one[to].i_delta.insert(g_idx, 0i64);
-                self.combos[c].trnsp_one[to].x_delta.insert(g_idx, 0.0f64);
-            }
-        }
-        self.i_mem.insert(g_idx, 0i64);
-        self.x_mem.insert(g_idx, 0.0f64);
-        for ta in 0..self.trnsp_all.len() {
-            self.trnsp_all[ta].i_delta.insert(g_idx, 0i64);
-            self.trnsp_all[ta].x_delta.insert(g_idx, 0.0f64);
-        }
-    }
-    pub(crate) fn remove_gut(&mut self, g_idx: usize) {
-        for c in 0..self.combos.len() {
-            self.combos[c].i_delta.remove(g_idx);
-            self.combos[c].x_delta.remove(g_idx);
-            self.combos[c].i_mem.remove(g_idx);
-            self.combos[c].x_mem.remove(g_idx);
-            for to in 0..self.combos[c].trnsp_one.len() {
-                self.combos[c].trnsp_one[to].i_delta.remove(g_idx);
-                self.combos[c].trnsp_one[to].x_delta.remove(g_idx);
+    pub(crate) fn set_multi_remove_gut(&mut self, g_idx: usize) {
+        for btn in 0..self.field.len() {
+            self.field[btn].i_delta.remove(g_idx);
+            self.field[btn].x_delta.remove(g_idx);
+            self.field[btn].i_mem.remove(g_idx);
+            self.field[btn].x_mem.remove(g_idx);
+            for to in 0..self.field[btn].trnsp_one.len() {
+                self.field[btn].trnsp_one[to].i_delta.remove(g_idx);
+                self.field[btn].trnsp_one[to].x_delta.remove(g_idx);
             }
         }
         self.i_mem.remove(g_idx);
