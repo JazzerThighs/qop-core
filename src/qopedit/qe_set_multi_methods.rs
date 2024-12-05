@@ -225,14 +225,14 @@ impl Qop<Edit> {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if let Some(delta) = i_del {
                     if set_idx < self.c_multi.len() {
-                        self.c_multi[set_idx].buttons[del_idx].i_delta[i] = delta
+                        self.c_multi[set_idx].combos[del_idx].i_delta[i] = delta
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if let Some(delta) = x_del {
                     if set_idx < self.c_multi.len() {
-                        self.c_multi[set_idx].buttons[del_idx].x_delta[x] = delta
+                        self.c_multi[set_idx].combos[del_idx].x_delta[x] = delta
                     }
                 }
             }
