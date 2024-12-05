@@ -27,49 +27,4 @@ impl Qop<Edit> {
             self.guts[g_idx].extra_out = x_del_val;
         }
     }
-
-    pub fn sustain_insert_key(&mut self, key_idx_val: usize) {
-        if !self.gut_holds.sustain.togs.contains(&key_idx_val) {
-            self.gut_holds.sustain.togs.push(key_idx_val)
-        }
-    }
-    pub fn inv_sustain_insert_key(&mut self, key_idx_val: usize) {
-        if !self.gut_holds.inv_sustain.togs.contains(&key_idx_val) {
-            self.gut_holds.inv_sustain.togs.push(key_idx_val)
-        }
-    }
-    pub fn sostenuto_insert_key(&mut self, key_idx_val: usize) {
-        if !self.gut_holds.sostenuto.togs.contains(&key_idx_val) {
-            self.gut_holds.sostenuto.togs.push(key_idx_val)
-        }
-    }
-    pub fn inv_sostenuto_insert_key(&mut self, key_idx_val: usize) {
-        if !self.gut_holds.inv_sostenuto.togs.contains(&key_idx_val) {
-            self.gut_holds.inv_sostenuto.togs.push(key_idx_val)
-        }
-    }
-    pub fn sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds
-            .sustain
-            .togs
-            .retain(|&idx| idx != key_idx_val)
-    }
-    pub fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds
-            .inv_sustain
-            .togs
-            .retain(|&idx| idx != key_idx_val)
-    }
-    pub fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds
-            .sostenuto
-            .togs
-            .retain(|&idx| idx != key_idx_val)
-    }
-    pub fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds
-            .inv_sostenuto
-            .togs
-            .retain(|&idx| idx != key_idx_val)
-    }
 }

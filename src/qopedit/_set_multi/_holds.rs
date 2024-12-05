@@ -1,4 +1,4 @@
-use crate::{*, qopedit::NewTrait};
+use crate::*;
 
 impl<T, U> VFRSet<T, U> {
     pub(crate) fn btn_insert_dig(&mut self, btn_idx: usize, key_idx_val: usize) {
