@@ -1,4 +1,5 @@
 use crate::*;
+use duplicate::duplicate_item;
 
 impl Qop {
     pub(crate) fn check_multi_delta_lengths(&self) {
@@ -60,6 +61,28 @@ impl Qop {
     }
 }
 
+#[duplicate_item(
+    SetType     field;
+    [VFRSet]    [buttons];
+    [ComboSet]  [combos];
+)]
+impl SetType<Vec<i64>, Vec<f64>> {
+    pub(crate) fn check_multi_delta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
+        for d in 0..self.field.len() {
+            assert_eq!(self.field[d].i_delta.len(), gut_len, "{leading_str}.deltafield[{d}].i_delta{message}");
+            assert_eq!(self.field[d].x_delta.len(), gut_len, "{leading_str}.deltafield[{d}].x_delta{message}");
+            for to in 0..self.field[d].trnsp_one.len() {
+                assert_eq!(self.field[d].trnsp_one[to].i_delta.len(), gut_len, "{leading_str}.deltafield[{d}].trnsp_one[{to}].i_delta{message}");
+                assert_eq!(self.field[d].trnsp_one[to].x_delta.len(), gut_len, "{leading_str}.deltafield[{d}].trnsp_one[{to}].x_delta{message}")
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            assert_eq!(self.trnsp_all[ta].i_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].i_delta{message}");
+            assert_eq!(self.trnsp_all[ta].x_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_delta{message}");
+        }
+    }
+}
+
 impl HoldBtns {
     pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
         for sus in 0..self.sustain.togs.len() {
@@ -73,23 +96,6 @@ impl HoldBtns {
         }
         for isos in 0..self.inv_sostenuto.togs.len() {
             assert!(self.inv_sostenuto.togs[isos] < dig_vec_len, "{leading_str}.inv_sostenuto.togs[{isos}]{message}")
-        }
-    }
-}
-
-impl VFRSet<Vec<i64>, Vec<f64>> {
-    pub(crate) fn check_multi_delta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
-        for b in 0..self.buttons.len() {
-            assert_eq!(self.buttons[b].i_delta.len(), gut_len, "{leading_str}.buttons[{b}].i_delta{message}");
-            assert_eq!(self.buttons[b].x_delta.len(), gut_len, "{leading_str}.buttons[{b}].x_delta{message}");
-            for to in 0..self.buttons[b].trnsp_one.len() {
-                assert_eq!(self.buttons[b].trnsp_one[to].i_delta.len(), gut_len, "{leading_str}.buttons[{b}].trnsp_one[{to}].i_delta{message}");
-                assert_eq!(self.buttons[b].trnsp_one[to].x_delta.len(), gut_len, "{leading_str}.buttons[{b}].trnsp_one[{to}].x_delta{message}")
-            }
-        }
-        for ta in 0..self.trnsp_all.len() {
-            assert_eq!(self.trnsp_all[ta].i_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].i_delta{message}");
-            assert_eq!(self.trnsp_all[ta].x_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_delta{message}");
         }
     }
 }
@@ -112,23 +118,6 @@ impl<T, U> VFRSet<T, U> {
             }
         }
         self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
-    }
-}
-
-impl ComboSet<Vec<i64>, Vec<f64>> {
-    pub(crate) fn check_multi_delta_lengths(&self, leading_str: &str, message: &str, gut_len: usize) {
-        for c in 0..self.combos.len() {
-            assert_eq!(self.combos[c].i_delta.len(), gut_len, "{leading_str}.combos[{c}].i_delta{message}");
-            assert_eq!(self.combos[c].x_delta.len(), gut_len, "{leading_str}.combos[{c}].x_delta{message}");
-            for to in 0..self.combos[c].trnsp_one.len() {
-                assert_eq!(self.combos[c].trnsp_one[to].i_delta.len(), gut_len, "{leading_str}.combos[{c}].trnsp_one[{to}].i_delta{message}");
-                assert_eq!(self.combos[c].trnsp_one[to].x_delta.len(), gut_len, "{leading_str}.combos[{c}].trnsp_one[{to}].x_delta{message}")
-            }
-        }
-        for ta in 0..self.trnsp_all.len() {
-            assert_eq!(self.trnsp_all[ta].i_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].i_delta{message}");
-            assert_eq!(self.trnsp_all[ta].x_delta.len(), gut_len, "{leading_str}.trnsp_all[{ta}].x_delta{message}")
-        }
     }
 }
 

@@ -10,3 +10,4 @@ authors = ["JazzerThighs <profenjb199@gmail.com>"]
 nestify = "0.3.3"
 serde = { version = "1.0.215", features = ["derive"] }
 winit = { version = "0.30.5", features = ["serde"] }
+duplicate = "2"
