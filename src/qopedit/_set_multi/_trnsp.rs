@@ -30,15 +30,15 @@ impl SetType<Vec<i64>, Vec<f64>> {
             self.deltafield[del_idx].trnsp_one.insert(trnsp_idx, Trnsp::new(n))
         }
     }
-    pub(crate) fn trnsp_one_remove_t(&mut self, del_idx: usize, trnsp_idx: usize) {
+    pub(crate) fn trnsp_one_remove_t(&mut self, trnsp_idx: usize, del_idx: usize) {
         if del_idx < self.deltafield.len() && trnsp_idx < self.deltafield[del_idx].trnsp_one.len() {
             self.deltafield[del_idx].trnsp_one.remove(trnsp_idx);
         }
     }
     pub(crate) fn trnsp_one_remove_dig(
         &mut self,
-        del_idx: usize,
         trnsp_idx: usize,
+        del_idx: usize,
         key_idx_val: usize,
     ) {
         if del_idx < self.deltafield.len() {

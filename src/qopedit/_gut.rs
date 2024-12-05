@@ -21,7 +21,7 @@ impl Qop<Edit> {
         }
     }
     pub fn gut_remove_g(&mut self, g_idx: usize) {
-        if self.guts.len() > 1 && g_idx <= self.guts.len() {
+        if self.guts.len() > 1 && g_idx < self.guts.len() {
             self.guts.remove(g_idx);
             self.n.guts_len -= 1;
             for set in 0..self.v_multi.len() {
