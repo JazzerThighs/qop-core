@@ -115,5 +115,7 @@ impl ComboSet<Vec<i64>, Vec<f64>> {
     }
 }
 
-mod qe_gut_field_methods;
-mod qe_set_one_methods;
+mod _fields;
+mod _set_one;
+mod _trnsp;
+mod _holds;

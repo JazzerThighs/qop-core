@@ -2,13 +2,13 @@ use crate::*;
 use winit::keyboard::KeyCode;
 
 impl Qop<Edit> {
-    pub fn kcs_insert_k(&mut self, key_code: KeyCode) {
+    pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
         if !self.dig_inputs.contains(&key_code) {
             self.dig_inputs.push(key_code)
         }
     }
-    pub fn kcs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
-        // swaps only the keycode labels for 2 existing keys, which leaves alone all of the nodes' usize values in the rest of the QopEdit.
+    pub fn dig_inputs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
+        // swaps only the digital input labels for 2 existing inputs, which leaves alone all of the nodes' usize values in the rest of the Qop.
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
         for i in 0..self.dig_inputs.len() {
             if self.dig_inputs[i] == kc1 {
@@ -22,7 +22,7 @@ impl Qop<Edit> {
                 (self.dig_inputs[i2.unwrap()], self.dig_inputs[i1.unwrap()]);
         }
     }
-    fn kcs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
+    fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
         for g in 0..self.guts.len() {
             operation(&mut self.guts[g].gut_triggers.togs);
             for tg in 0..self.guts[g].trnsp_gut.len() {
@@ -58,10 +58,10 @@ impl Qop<Edit> {
             self.c_multi[set].all_key_idx_vecs(&operation);
         }
     }
-    pub fn kcs_remove_k(&mut self, key_code: KeyCode) {
+    pub fn dig_inputs_purge_dig(&mut self, key_code: KeyCode) {
         for i in 0..self.dig_inputs.len() {
             if self.dig_inputs[i] == key_code {
-                let k_idx_remove = |key_idx_vec: &mut Vec<usize>| {
+                let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| {
                     key_idx_vec.retain_mut(|k: &mut usize| -> bool {
                         if *k < i {
                             return true;
@@ -73,13 +73,13 @@ impl Qop<Edit> {
                         }
                     })
                 };
-                Qop::kcs_global_vec_manip(self, k_idx_remove);
+                Qop::dig_inputs_global_vec_manip(self, dig_idx_purge);
                 self.dig_inputs.remove(i);
                 break;
             }
         }
     }
-    pub fn kcs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
+    pub fn dig_inputs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
         // swaps the nodes of 2 existing keys in all of the plucks' and sets' various fields.
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
         for i in 0..self.dig_inputs.len() {
@@ -99,10 +99,10 @@ impl Qop<Edit> {
                     }
                 });
             };
-            Qop::kcs_global_vec_manip(self, k_idxs_swap);
+            Qop::dig_inputs_global_vec_manip(self, k_idxs_swap);
         }
     }
-    pub fn kcs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
+    pub fn dig_inputs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
         for i in 0..self.dig_inputs.len() {
             if self.dig_inputs[i] == kc_old {
@@ -121,7 +121,7 @@ impl Qop<Edit> {
                 k_idx_vec.sort();
                 k_idx_vec.dedup();
             };
-            Qop::kcs_global_vec_manip(self, k_idx_update);
+            Qop::dig_inputs_global_vec_manip(self, k_idx_update);
         }
     }
 }

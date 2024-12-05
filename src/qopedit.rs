@@ -94,9 +94,9 @@ impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
     }
 }
 
-mod qe_asserts;
-mod qe_dig_inputs_methods;
-mod qe_gut_methods;
-mod qe_misc_btns;
-mod qe_set_multi_methods;
-mod qe_trnsp_methods;
+mod _asserts;
+mod _dig_inputs;
+mod _gut;
+mod _misc_btns;
+mod _set_multi;
+mod qe_trnsp;

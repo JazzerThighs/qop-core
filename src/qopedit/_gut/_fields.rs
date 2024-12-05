@@ -1,14 +1,14 @@
 use crate::*;
 
 impl Qop<Edit> {
-    pub fn gut_insert_key(&mut self, g_idx: usize, key_idx_val: usize) {
+    pub fn gut_insert_dig(&mut self, g_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
             if !self.guts[g_idx].gut_triggers.togs.contains(&key_idx_val) {
                 self.guts[g_idx].gut_triggers.togs.push(key_idx_val)
             };
         }
     }
-    pub fn gut_remove_tog_key(&mut self, g_idx: usize, key_idx_val: usize) {
+    pub fn gut_remove_dig(&mut self, g_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
             self.guts[g_idx]
                 .gut_triggers

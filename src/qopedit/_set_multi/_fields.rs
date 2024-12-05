@@ -1,48 +1,6 @@
 use crate::{*, qopedit::NewTrait};
 
 impl Qop<Edit> {
-    pub fn v_multi_insert_set(&mut self, set_idx: usize) {
-        if set_idx <= self.v_multi.len() {
-            self.v_multi.insert(set_idx, VFRSet::new(&mut self.n));
-        }
-    }
-    pub fn f_multi_insert_set(&mut self, set_idx: usize) {
-        if set_idx <= self.f_multi.len() {
-            self.f_multi.insert(set_idx, VFRSet::new(&mut self.n));
-        }
-    }
-    pub fn r_multi_insert_set(&mut self, set_idx: usize) {
-        if set_idx <= self.r_multi.len() {
-            self.r_multi.insert(set_idx, VFRSet::new(&mut self.n));
-        }
-    }
-    pub fn c_multi_insert_set(&mut self, set_idx: usize) {
-        if set_idx <= self.c_multi.len() {
-            self.c_multi
-                .insert(set_idx, ComboSet::new(&mut self.n));
-        }
-    }
-    pub fn v_multi_remove_set(&mut self, set_idx: usize) {
-        if self.v_multi.len() > 0 && self.v_multi.len() > set_idx {
-            self.v_multi.remove(set_idx);
-        }
-    }
-    pub fn f_multi_remove_set(&mut self, set_idx: usize) {
-        if self.f_multi.len() > 0 && self.f_multi.len() > set_idx {
-            self.f_multi.remove(set_idx);
-        }
-    }
-    pub fn r_multi_remove_set(&mut self, set_idx: usize) {
-        if self.r_multi.len() > 0 && self.r_multi.len() > set_idx {
-            self.r_multi.remove(set_idx);
-        }
-    }
-    pub fn c_multi_remove_set(&mut self, set_idx: usize) {
-        if self.c_multi.len() > 0 && self.c_multi.len() > set_idx {
-            self.c_multi.remove(set_idx);
-        }
-    }
-    
     pub fn v_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         self.n.guts_len = self.guts.len();
         self.v_multi[set_idx].insert_btn(btn_idx, &mut self.n);
@@ -85,59 +43,59 @@ impl Qop<Edit> {
         }
     }
     
-    pub fn v_multi_insert_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn v_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.v_multi.len() {
-                self.v_multi[set_idx].btn_insert_key(btn_idx, key_idx_val)
+                self.v_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn f_multi_insert_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn f_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.f_multi.len() {
-                self.f_multi[set_idx].btn_insert_key(btn_idx, key_idx_val)
+                self.f_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn r_multi_insert_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn r_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.r_multi.len() {
-                self.r_multi[set_idx].btn_insert_key(btn_idx, key_idx_val)
+                self.r_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn c_multi_insert_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn c_multi_insert_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.c_multi.len() {
-                self.c_multi[set_idx].btn_insert_key(btn_idx, key_idx_val)
+                self.c_multi[set_idx].btn_insert_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn v_multi_remove_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn v_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.v_multi.len() {
-                self.v_multi[set_idx].btn_remove_key(btn_idx, key_idx_val)
+                self.v_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn f_multi_remove_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn f_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.f_multi.len() {
-                self.f_multi[set_idx].btn_remove_key(btn_idx, key_idx_val)
+                self.f_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn r_multi_remove_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn r_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.r_multi.len() {
-                self.r_multi[set_idx].btn_remove_key(btn_idx, key_idx_val)
+                self.r_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
             }
         }
     }
-    pub fn c_multi_remove_btn_key(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
+    pub fn c_multi_remove_btn_dig(&mut self, set_idx: usize, btn_idx: usize, key_idx_val: usize) {
         if key_idx_val <= self.dig_inputs.len() {
             if set_idx < self.c_multi.len() {
-                self.c_multi[set_idx].btn_remove_key(btn_idx, key_idx_val)
+                self.c_multi[set_idx].btn_remove_dig(btn_idx, key_idx_val)
             }
         }
     }
@@ -295,61 +253,55 @@ where
     }
 }
 
-impl Qop<Edit> {
-//     pub fn set_insert_hold_btn_key(
-//         &mut self,
-//         set_idx: usize,
-//         h_kind: HoldType,
-//         key_idx_val: usize,
-//     ) {
-//         if key_idx_val <= self.dig_inputs.len() {
-//                     if set_idx < self.v_multi.len() {
-//                         self.v_multi[set_idx].hold_insert_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.f_multi.len() {
-//                         self.f_multi[set_idx].hold_insert_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.r_multi.len() {
-//                         self.r_multi[set_idx].hold_insert_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.c_multi.len() {
-//                         self.c_multi[set_idx].hold_insert_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//             }
-//         }
-//         self.check_gutdelta_lengths();
-//         self.check_digitalref_invariants();
-//     }
-//     pub fn set_remove_hold_btn_key(
-//         &mut self,
-//         set_idx: usize,
-//         h_kind: HoldType,
-//         key_idx_val: usize,
-//     ) {
-//         if key_idx_val <= self.dig_inputs.len() {
-//                     if set_idx < self.v_multi.len() {
-//                         self.v_multi[set_idx].hold_remove_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.f_multi.len() {
-//                         self.f_multi[set_idx].hold_remove_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.r_multi.len() {
-//                         self.r_multi[set_idx].hold_remove_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//                     if set_idx < self.c_multi.len() {
-//                         self.c_multi[set_idx].hold_remove_key(h_kind, key_idx_val)
-//                     }
-//                 }
-//             }
-//         }
-//         self.check_gutdelta_lengths();
-//         self.check_digitalref_invariants();
-//     }
+impl<T, U> ComboSet<T, U> {
+    pub(crate) fn btn_insert_dig(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
+                self.buttons[btn_idx].togs.push(key_idx_val);
+            }
+        }
+    }
+    pub(crate) fn btn_remove_dig(&mut self, btn_idx: usize, key_idx_val: usize) {
+        if btn_idx < self.buttons.len() {
+            self.buttons[btn_idx].togs.retain(|&idx| idx != key_idx_val);
+        }
+    }
+    pub(crate) fn sustain_insert_dig(&mut self, key_idx_val: usize) {
+        if !self.holds.sustain.togs.contains(&key_idx_val) {
+            self.holds.sustain.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn inv_sustain_insert_dig(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sustain.togs.contains(&key_idx_val) {
+            self.holds.inv_sustain.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn sostenuto_insert_dig(&mut self, key_idx_val: usize) {
+        if !self.holds.sostenuto.togs.contains(&key_idx_val) {
+            self.holds.sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn inv_sostenuto_insert_dig(&mut self, key_idx_val: usize) {
+        if !self.holds.inv_sostenuto.togs.contains(&key_idx_val) {
+            self.holds.inv_sostenuto.togs.push(key_idx_val)
+        }
+    }
+    pub(crate) fn sustain_remove_dig(&mut self, key_idx_val: usize) {
+        self.holds.sustain.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sustain_remove_dig(&mut self, key_idx_val: usize) {
+        self.holds
+            .inv_sustain
+            .togs
+            .retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn sostenuto_remove_dig(&mut self, key_idx_val: usize) {
+        self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
+    }
+    pub(crate) fn inv_sostenuto_remove_dig(&mut self, key_idx_val: usize) {
+        self.holds
+            .inv_sostenuto
+            .togs
+            .retain(|&idx| idx != key_idx_val)
+    }
 }
