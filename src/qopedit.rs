@@ -6,12 +6,17 @@ pub trait NewTrait: Default {
 
 impl NewTrait for Gut {
     fn new(n: &mut NewStuffPointers) -> Self {
-        n.guts_len += 1;
+        n.guts_len += 1usize;
         Gut::default()
     }
 }
 
-impl<T: Default, U: Default> NewTrait for VFRSet<T, U> where VFRIndv<T, U>: NewTrait {
+impl<T, U> NewTrait for VFRSet<T, U>
+where
+    T: Default,
+    U: Default,
+    VFRIndv<T, U>: NewTrait,
+{
     fn new(n: &mut NewStuffPointers) -> Self {
         VFRSet {
             buttons: vec![VFRIndv::new(n)],
@@ -32,6 +37,22 @@ impl NewTrait for VFRIndv<Vec<i64>, Vec<f64>> {
             x_delta: vec![0.0f64; n.guts_len],
             i_mem: vec![0i64; n.guts_len],
             x_mem: vec![0.0f64; n.guts_len],
+            ..Default::default()
+        }
+    }
+}
+
+impl<T, U> NewTrait for ComboSet<T, U>
+where
+    T: Default,
+    U: Default,
+    Combo<T, U>: NewTrait,
+{
+    fn new(n: &mut NewStuffPointers) -> Self {
+        n.c_btn_len = 1usize;
+        ComboSet {
+            buttons: vec![BtnTog::default()],
+            combos: vec![Combo::new(n)],
             ..Default::default()
         }
     }
@@ -74,8 +95,8 @@ impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
 }
 
 mod qe_asserts;
+mod qe_dig_inputs_methods;
 mod qe_gut_methods;
-mod qe_kcs_methods;
 mod qe_misc_btns;
-mod qe_set_methods;
+mod qe_set_multi_methods;
 mod qe_trnsp_methods;

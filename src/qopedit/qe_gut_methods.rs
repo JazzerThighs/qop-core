@@ -1,5 +1,42 @@
 use crate::*;
 
+impl Qop<Edit> {
+    pub fn gut_insert_g(&mut self, g_idx: usize) {
+        if g_idx <= self.guts.len() {
+            self.guts.insert(g_idx, Gut::default());
+            for set in 0..self.v_multi.len() {
+                self.v_multi[set].insert_gut(g_idx);
+            }
+            for set in 0..self.f_multi.len() {
+                self.f_multi[set].insert_gut(g_idx);
+            }
+            for set in 0..self.r_multi.len() {
+                self.r_multi[set].insert_gut(g_idx);
+            }
+            for set in 0..self.c_multi.len() {
+                self.c_multi[set].insert_gut(g_idx);
+            }
+        }
+    }
+    pub fn gut_remove_g(&mut self, g_idx: usize) {
+        if self.guts.len() > 1 && g_idx <= self.guts.len() {
+            self.guts.remove(g_idx);
+            for set in 0..self.v_multi.len() {
+                self.v_multi[set].remove_gut(g_idx);
+            }
+            for set in 0..self.f_multi.len() {
+                self.f_multi[set].remove_gut(g_idx);
+            }
+            for set in 0..self.r_multi.len() {
+                self.r_multi[set].remove_gut(g_idx);
+            }
+            for set in 0..self.c_multi.len() {
+                self.c_multi[set].remove_gut(g_idx);
+            }
+        }
+    }
+}
+
 impl VFRSet<Vec<i64>, Vec<f64>> {
     pub(crate) fn insert_gut(&mut self, g_idx: usize) {
         for btn in 0..self.buttons.len() {
@@ -78,42 +115,5 @@ impl ComboSet<Vec<i64>, Vec<f64>> {
     }
 }
 
-impl Qop<Edit> {
-    pub fn gut_insert_g(&mut self, g_idx: usize) {
-        if g_idx <= self.guts.len() {
-            self.guts.insert(g_idx, Gut::default());
-            for set in 0..self.v_multi.len() {
-                self.v_multi[set].insert_gut(g_idx);
-            }
-            for set in 0..self.f_multi.len() {
-                self.f_multi[set].insert_gut(g_idx);
-            }
-            for set in 0..self.r_multi.len() {
-                self.r_multi[set].insert_gut(g_idx);
-            }
-            for set in 0..self.c_multi.len() {
-                self.c_multi[set].insert_gut(g_idx);
-            }
-        }
-    }
-    pub fn gut_remove_g(&mut self, g_idx: usize) {
-        if self.guts.len() > 1 && g_idx <= self.guts.len() {
-            self.guts.remove(g_idx);
-            for set in 0..self.v_multi.len() {
-                self.v_multi[set].remove_gut(g_idx);
-            }
-            for set in 0..self.f_multi.len() {
-                self.f_multi[set].remove_gut(g_idx);
-            }
-            for set in 0..self.r_multi.len() {
-                self.r_multi[set].remove_gut(g_idx);
-            }
-            for set in 0..self.c_multi.len() {
-                self.c_multi[set].remove_gut(g_idx);
-            }
-        }
-    }
-}
-
-mod gut_field_methods;
-mod set_one_methods;
+mod qe_gut_field_methods;
+mod qe_set_one_methods;

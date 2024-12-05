@@ -1,17 +1,7 @@
+use qopedit::NewTrait;
 use crate::*;
 
-impl MultiSet {
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize, guts: usize) {
-        if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, MultiTog::new(guts));
-        }
-    }
-    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
-        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
-            self.buttons.remove(btn_idx);
-        }
-    }
-    
+impl<T, U> VFRSet<T, U> {
     pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
@@ -48,15 +38,23 @@ impl MultiSet {
         self.holds.sustain.togs.retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val)
+        self.holds
+            .inv_sustain
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
         self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val)
+        self.holds
+            .inv_sostenuto
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
+}
 
+impl<T, U> VFRSet<T, U> {
     pub(crate) fn trnsp_all_params(
         &mut self,
         trnsp_idx: usize,
@@ -66,7 +64,7 @@ impl MultiSet {
         guts: usize,
     ) {
         if trnsp_idx == self.trnsp_all.len() {
-            let mut tp: Trnsp = Trnsp::new(guts);
+            let mut tp: Trnsp<T, U> = Trnsp::new(guts);
             for (_i, &key) in key_idx_vals.iter().enumerate() {
                 if let Some(k) = key {
                     tp.triggers.push(k);
@@ -75,14 +73,14 @@ impl MultiSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        tp.i_deltas[i] = delta;
+                        tp.i_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        tp.x_deltas[x] = delta;
+                        tp.x_delta[x] = delta;
                     }
                 }
             }
@@ -98,14 +96,14 @@ impl MultiSet {
             for (i, &i_del) in i_del_vec.iter().enumerate() {
                 if i < guts {
                     if let Some(delta) = i_del {
-                        self.trnsp_all[trnsp_idx].i_deltas[i] = delta;
+                        self.trnsp_all[trnsp_idx].i_delta[i] = delta;
                     }
                 }
             }
             for (x, &x_del) in x_del_vec.iter().enumerate() {
                 if x < guts {
                     if let Some(delta) = x_del {
-                        self.trnsp_all[trnsp_idx].x_deltas[x] = delta;
+                        self.trnsp_all[trnsp_idx].x_delta[x] = delta;
                     }
                 }
             }
@@ -134,7 +132,7 @@ impl MultiSet {
     ) {
         if btn_idx < self.buttons.len() {
             if trnsp_idx == self.buttons[btn_idx].trnsp_one.len() {
-                let mut tp: Trnsp = Trnsp::new(guts);
+                let mut tp: Trnsp<T, U> = Trnsp::new(guts);
                 for (_i, &key) in key_idx_vals.iter().enumerate() {
                     if let Some(k) = key {
                         tp.triggers.push(k);
@@ -169,14 +167,14 @@ impl MultiSet {
                 for (i, &i_del) in i_del_vec.iter().enumerate() {
                     if i < guts {
                         if let Some(delta) = i_del {
-                            self.buttons[btn_idx].trnsp_one[trnsp_idx].i_deltas[i] = delta;
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].i_delta[i] = delta;
                         }
                     }
                 }
                 for (x, &x_del) in x_del_vec.iter().enumerate() {
                     if x < guts {
                         if let Some(delta) = x_del {
-                            self.buttons[btn_idx].trnsp_one[trnsp_idx].x_deltas[x] = delta;
+                            self.buttons[btn_idx].trnsp_one[trnsp_idx].x_delta[x] = delta;
                         }
                     }
                 }
@@ -206,36 +204,7 @@ impl MultiSet {
     }
 }
 
-impl Combo {
-    
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
-        if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, BtnTog::default());
-            for c in 0..self.combos.len() {
-                self.combos[c].combo.insert(btn_idx, false);
-            }
-        }
-    }
-    pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
-        if self.buttons.len() > 0 && btn_idx < self.buttons.len() {
-            self.buttons.remove(btn_idx);
-            for c in 0..self.combos.len() {
-                self.combos[c].combo.remove(btn_idx);
-            }
-        }
-    }
-    pub(crate) fn insert_combo(&mut self, c_idx: usize, guts: usize) {
-        if c_idx <= self.combos.len() {
-            self.combos
-                .insert(c_idx, Combo::new(guts, self.buttons.len()));
-        }
-    }
-    pub(crate) fn remove_combo(&mut self, c_idx: usize) {
-        if self.combos.len() > 0 && c_idx < self.combos.len() {
-            self.combos.remove(c_idx);
-        }
-    }
-    
+impl<T, U> ComboSet<T, U> {
     pub(crate) fn btn_insert_key(&mut self, btn_idx: usize, key_idx_val: usize) {
         if btn_idx < self.buttons.len() {
             if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
@@ -272,13 +241,19 @@ impl Combo {
         self.holds.sustain.togs.retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val)
+        self.holds
+            .inv_sustain
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
         self.holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val)
+        self.holds
+            .inv_sostenuto
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub(crate) fn trnsp_all_params(
         &mut self,

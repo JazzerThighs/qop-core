@@ -49,15 +49,27 @@ impl Qop<Edit> {
         }
     }
     pub fn sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds.sustain.togs.retain(|&idx| idx != key_idx_val)
+        self.gut_holds
+            .sustain
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub fn inv_sustain_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds.inv_sustain.togs.retain(|&idx| idx != key_idx_val)
+        self.gut_holds
+            .inv_sustain
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub fn sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds.sostenuto.togs.retain(|&idx| idx != key_idx_val)
+        self.gut_holds
+            .sostenuto
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
     pub fn inv_sostenuto_remove_key(&mut self, key_idx_val: usize) {
-        self.gut_holds.inv_sostenuto.togs.retain(|&idx| idx != key_idx_val)
+        self.gut_holds
+            .inv_sostenuto
+            .togs
+            .retain(|&idx| idx != key_idx_val)
     }
 }
