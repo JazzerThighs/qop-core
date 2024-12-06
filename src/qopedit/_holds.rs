@@ -50,7 +50,6 @@ impl Qop<Edit> {
             self.guts[g_idx].onefield[set_idx].hold_insert_dig(key_idx_val)
         }
     }
-    
     pub fn one_hold_remove_dig(&mut self, g_idx: usize, set_idx: usize, key_idx_val: usize) {
         if key_idx_val < self.dig_inputs.len()
             && g_idx < self.guts.len()

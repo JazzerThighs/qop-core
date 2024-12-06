@@ -10,6 +10,7 @@ nest! {
     #[derive(Default)]*
     pub struct Qop<Mode = Edit> {
         pub(crate) qop_mode: PhantomData<Mode>,
+        #[serde(skip_serializing)]
         pub(crate) n: 
             pub(crate) struct NewStuffPointers {
                 pub(crate) guts_len: usize,
@@ -33,8 +34,10 @@ nest! {
                         pub(crate) x_delta: U,
                     } ||<i64, f64>
                 >,
-                pub(crate) x_mem: f64,
+                #[serde(skip_serializing)]
                 pub(crate) i_mem: i64,
+                #[serde(skip_serializing)]
+                pub(crate) x_mem: f64,
                 pub(crate) v_one: Vec<
                     pub(crate) struct VFRSet<T, U> {
                         pub(crate) buttons: Vec<
@@ -44,12 +47,16 @@ nest! {
                                 pub(crate) i_delta: T,
                                 pub(crate) x_delta: U,
                                 pub(crate) trnsp_one: Vec<Trnsp<T, U>>,
+                                #[serde(skip_serializing)]
                                 pub(crate) i_mem: T,
+                                #[serde(skip_serializing)]
                                 pub(crate) x_mem: U,
                             } ||<T, U>
                         >,
                         pub(crate) trnsp_all: Vec<Trnsp<T, U>>,
+                        #[serde(skip_serializing)]
                         pub(crate) i_mem: T,
+                        #[serde(skip_serializing)]
                         pub(crate) x_mem: U,
                         pub(crate) holds: HoldBtns,
                         pub(crate) max_pressed: usize,
@@ -67,13 +74,17 @@ nest! {
                                 pub(crate) i_delta: T,
                                 pub(crate) x_delta: U,
                                 pub(crate) trnsp_one: Vec<Trnsp<T, U>>,
+                                #[serde(skip_serializing)]
                                 pub(crate) i_mem: T,
+                                #[serde(skip_serializing)]
                                 pub(crate) x_mem: U,
                             } ||<T, U>
                         >,
                         pub(crate) holds: HoldBtns,
                         pub(crate) trnsp_all: Vec<Trnsp<T, U>>,
+                        #[serde(skip_serializing)]
                         pub(crate) i_mem: T,
+                        #[serde(skip_serializing)]
                         pub(crate) x_mem: U,
                     }||<i64, f64>>
             }

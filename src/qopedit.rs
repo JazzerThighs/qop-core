@@ -17,15 +17,20 @@ impl NewTrait for ForType {
     }
 }
 
-impl<T, U> NewTrait for VFRSet<T, U>
-where
-    T: Default,
-    U: Default,
-    VFRIndv<T, U>: NewTrait,
-{
+impl NewTrait for VFRSet<i64, f64> {
     fn new(n: &mut NewStuffPointers) -> Self {
         VFRSet {
             buttons: vec![VFRIndv::new(n)],
+            ..Default::default()
+        }
+    }
+}
+impl NewTrait for VFRSet<Vec<i64>, Vec<f64>> {
+    fn new(n: &mut NewStuffPointers) -> Self {
+        VFRSet {
+            buttons: vec![VFRIndv::new(n)],
+            i_mem: vec![0i64; n.guts_len],
+            x_mem: vec![0.0f64; n.guts_len],
             ..Default::default()
         }
     }
@@ -43,17 +48,24 @@ impl NewTrait for VFRIndv<Vec<i64>, Vec<f64>> {
     }
 }
 
-impl<T, U> NewTrait for ComboSet<T, U>
-where
-    T: Default,
-    U: Default,
-    Combo<T, U>: NewTrait,
-{
+impl NewTrait for ComboSet<i64, f64> {
     fn new(n: &mut NewStuffPointers) -> Self {
         n.c_btn_len = 1usize;
         ComboSet {
             buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(n)],
+            ..Default::default()
+        }
+    }
+}
+impl NewTrait for ComboSet<Vec<i64>, Vec<f64>> {
+    fn new(n: &mut NewStuffPointers) -> Self {
+        n.c_btn_len = 1usize;
+        ComboSet {
+            buttons: vec![BtnTog::default()],
+            combos: vec![Combo::new(n)],
+            i_mem: vec![0i64; n.guts_len],
+            x_mem: vec![0.0f64; n.guts_len],
             ..Default::default()
         }
     }
@@ -93,5 +105,5 @@ impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
 mod _dig_inputs;
 mod _gut;
 mod _holds;
-mod _vfrc_sets;
 mod _trnsp;
+mod _vfrc_sets;
