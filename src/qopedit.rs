@@ -90,8 +90,8 @@ impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
     }
 }
 
-mod _asserts;
 mod _dig_inputs;
 mod _gut;
-mod _set_multi;
+mod _holds;
+mod _vfrc_sets;
 mod _trnsp;

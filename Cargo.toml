@@ -7,7 +7,7 @@ authors = ["JazzerThighs <profenjb199@gmail.com>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nestify = "0.3.3"
-serde = { version = "1.0.215", features = ["derive"] }
-winit = { version = "0.30.5", features = ["serde"] }
+nestify = "0.3"
+serde = { version = "1", features = ["derive"] }
+winit = { version = "0.30", features = ["serde"] }
 duplicate = "2"

@@ -124,6 +124,47 @@ impl Qop<Edit> {
             Qop::dig_inputs_global_vec_manip(self, k_idx_update);
         }
     }
+    pub(crate) fn check_digitalref_invariants(&self) {
+        let message: &str = " is an index to an OOB Digital Input!";
+        for g in 0..self.guts.len() {
+            for t in 0..self.guts[g].gut_triggers.togs.len() {
+                assert!(self.guts[g].gut_triggers.togs[t] < self.dig_inputs.len(), "self.guts[{g}].gut_triggers.togs[{t}]{message}")
+            }
+            for tg in 0..self.guts[g].trnsp_gut.len() {
+                for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {
+                    assert!(self.guts[g].trnsp_gut[tg].triggers[t] < self.dig_inputs.len(), "self.guts[{g}].trnsp_gut[{tg}].triggers[{t}]{message}")
+                }
+            }
+
+            for set in 0..self.guts[g].v_one.len() {
+                self.guts[g].v_one[set].check_digitalref_invariants(format!("self.guts[{g}].v_one[{set}]").as_str(), message, self.dig_inputs.len())
+            }
+            for set in 0..self.guts[g].f_one.len() {
+                self.guts[g].f_one[set].check_digitalref_invariants(format!("self.guts[{g}].f_one[{set}]").as_str(), message, self.dig_inputs.len())
+            }
+            for set in 0..self.guts[g].r_one.len() {
+                self.guts[g].r_one[set].check_digitalref_invariants(format!("self.guts[{g}].r_one[{set}]").as_str(), message, self.dig_inputs.len())
+            }
+            for set in 0..self.guts[g].c_one.len() {
+                self.guts[g].c_one[set].check_digitalref_invariants(format!("self.guts[{g}].c_one[{set}]").as_str(), message, self.dig_inputs.len())
+            }
+        }
+        
+        self.gut_holds.check_digitalref_invariants("self.gutholds", message, self.dig_inputs.len());
+
+        for set in 0..self.v_multi.len() {
+            self.v_multi[set].check_digitalref_invariants(format!("self.v_multi[{set}]").as_str(), message, self.dig_inputs.len())
+        }
+        for set in 0..self.f_multi.len() {
+            self.f_multi[set].check_digitalref_invariants(format!("self.f_multi[{set}]").as_str(), message, self.dig_inputs.len())
+        }
+        for set in 0..self.r_multi.len() {
+            self.r_multi[set].check_digitalref_invariants(format!("self.r_multi[{set}]").as_str(), message, self.dig_inputs.len())
+        }
+        for set in 0..self.c_multi.len() {
+            self.c_multi[set].check_digitalref_invariants(format!("self.c_multi[{set}]").as_str(), message, self.dig_inputs.len())
+        }
+    }
 }
 
 impl<T, U> VFRSet<T, U> {
@@ -141,6 +182,24 @@ impl<T, U> VFRSet<T, U> {
         vec_closure(&mut self.holds.inv_sustain.togs);
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
+    }
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+        for b in 0..self.buttons.len() {
+            for t in 0..self.buttons[b].togs.len() {
+                assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
+            }
+            for to in 0..self.buttons[b].trnsp_one.len() {
+                for t in 0..self.buttons[b].trnsp_one[to].triggers.len() {
+                    assert!(self.buttons[b].trnsp_one[to].triggers[t] < dig_vec_len, "{leading_str}.buttons[{b}].trnsp_one[{to}].triggers[{t}]{message}");
+                }
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            for t in 0..self.trnsp_all[ta].triggers.len() {
+                assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}");
+            }
+        }
+        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
     }
 }
 
@@ -161,5 +220,42 @@ impl<T, U> ComboSet<T, U> {
         vec_closure(&mut self.holds.inv_sustain.togs);
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
+    }
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+        for b in 0..self.buttons.len() {
+            for t in 0..self.buttons[b].togs.len() {
+                assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
+            }
+        }
+        for c in 0..self.combos.len() {
+            for to in 0..self.combos[c].trnsp_one.len() {
+                for t in 0..self.combos[c].trnsp_one[to].triggers.len() {
+                    assert!(self.combos[c].trnsp_one[to].triggers[t] < dig_vec_len, "{leading_str}.combos[{c}].trnsp_one[{to}].triggers[{t}]{message}")
+                }
+            }
+        }
+        for ta in 0..self.trnsp_all.len() {
+            for t in 0..self.trnsp_all[ta].triggers.len() {
+                assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}")
+            }
+        }
+        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
+    }
+}
+
+impl HoldBtns {
+    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+        for sus in 0..self.sustain.togs.len() {
+            assert!(self.sustain.togs[sus] < dig_vec_len, "{leading_str}.sustain.togs[{sus}]{message}")
+        }
+        for isus in 0..self.inv_sustain.togs.len() {
+            assert!(self.inv_sustain.togs[isus] < dig_vec_len, "{leading_str}.inv_sustain.togs[{isus}]{message}")
+        }
+        for sos in 0..self.sostenuto.togs.len() {
+            assert!(self.sostenuto.togs[sos] < dig_vec_len, "{leading_str}.sostenuto.togs[{sos}]{message}")
+        }
+        for isos in 0..self.inv_sostenuto.togs.len() {
+            assert!(self.inv_sostenuto.togs[isos] < dig_vec_len, "{leading_str}.inv_sostenuto.togs[{isos}]{message}")
+        }
     }
 }
