@@ -93,7 +93,6 @@ nest! {
 }
 
 #[derive(Default)]
-
 struct Edit;
 struct Play;
 
