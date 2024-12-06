@@ -2,7 +2,7 @@ use crate::{*, qopedit::NewTrait};
 use duplicate::duplicate_item;
 
 #[duplicate_item(
-    setfield    deltafield  multi_insert_trnsp_all_t        multi_remove_trnsp_all_t        multi_remove_trnsp_all_dig      multi_trnsp_all_change_deltas       multi_insert_trnsp_one_t        multi_remove_trnsp_one_t        multi_remove_trnsp_one_dig      multi_trnsp_one_change_deltas;
+    setfield    deltafield multi_insert_trnsp_all_t        multi_remove_trnsp_all_t        multi_remove_trnsp_all_dig      multi_trnsp_all_change_deltas       multi_insert_trnsp_one_t        multi_remove_trnsp_one_t        multi_remove_trnsp_one_dig      multi_trnsp_one_change_deltas;
     [v_multi]   [buttons]  [v_multi_insert_trnsp_all_t]    [v_multi_remove_trnsp_all_t]    [v_multi_remove_trnsp_all_dig]  [v_multi_trnsp_all_change_deltas]   [v_multi_insert_trnsp_one_t]    [v_multi_remove_trnsp_one_t]    [v_multi_remove_trnsp_one_dig]  [v_multi_trnsp_one_change_deltas];
     [f_multi]   [buttons]  [f_multi_insert_trnsp_all_t]    [f_multi_remove_trnsp_all_t]    [f_multi_remove_trnsp_all_dig]  [f_multi_trnsp_all_change_deltas]   [f_multi_insert_trnsp_one_t]    [f_multi_remove_trnsp_one_t]    [f_multi_remove_trnsp_one_dig]  [f_multi_trnsp_one_change_deltas];
     [r_multi]   [buttons]  [r_multi_insert_trnsp_all_t]    [r_multi_remove_trnsp_all_t]    [r_multi_remove_trnsp_all_dig]  [r_multi_trnsp_all_change_deltas]   [r_multi_insert_trnsp_one_t]    [r_multi_remove_trnsp_one_t]    [r_multi_remove_trnsp_one_dig]  [r_multi_trnsp_one_change_deltas];
