@@ -2,15 +2,16 @@ use crate::{*, qopedit::NewTrait};
 use duplicate::duplicate_item;
 
 #[duplicate_item(
-    multi_insert_set        multi_remove_set        SetType     multifield;
-    [v_multi_insert_set]    [v_multi_remove_set]    [VFRSet]    [v_multi];
-    [f_multi_insert_set]    [f_multi_remove_set]    [VFRSet]    [f_multi];
-    [r_multi_insert_set]    [r_multi_remove_set]    [VFRSet]    [r_multi];
-    [c_multi_insert_set]    [c_multi_remove_set]    [ComboSet]  [c_multi];
+    multi_insert_set        multi_remove_set        SetType     multifield  radionum;
+    [v_multi_insert_set]    [v_multi_remove_set]    [VFRSet]    [v_multi]   [0];
+    [f_multi_insert_set]    [f_multi_remove_set]    [VFRSet]    [f_multi]   [0];
+    [r_multi_insert_set]    [r_multi_remove_set]    [VFRSet]    [r_multi]   [1];
+    [c_multi_insert_set]    [c_multi_remove_set]    [ComboSet]  [c_multi]   [0];
 )]
 impl Qop<Edit> {
     pub fn multi_insert_set(&mut self, set_idx: usize) {
         if set_idx <= self.multifield.len() {
+            self.n.radio_num = radionum;
             self.multifield.insert(set_idx, SetType::new(&mut self.n));
         }
     }
@@ -21,16 +22,19 @@ impl Qop<Edit> {
     }
 }
 
-impl Qop<Edit> {
-    #[duplicate_item(
-        vfr_multi_insert_btn    setfield;
-        [v_multi_insert_btn]    [v_multi];
-        [f_multi_insert_btn]    [f_multi];
-        [r_multi_insert_btn]    [r_multi];
-    )]
+#[duplicate_item(
+    multifield  vfr_multi_insert_btn;
+    [v_multi]   [v_multi_insert_btn];
+    [f_multi]   [f_multi_insert_btn];
+    [r_multi]   [r_multi_insert_btn];
+)]
+impl Qop<Edit> {  
     pub fn vfr_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
-        self.setfield[set_idx].insert_btn(btn_idx, &mut self.n);
+        self.multifield[set_idx].insert_btn(btn_idx, &mut self.n);
     }
+}
+
+impl Qop<Edit> {
     pub fn c_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         self.c_multi[set_idx].insert_btn(btn_idx);
     }
@@ -44,6 +48,30 @@ impl Qop<Edit> {
     pub fn c_multi_remove_combo(&mut self, set_idx: usize, c_idx: usize) {
         if set_idx <= self.c_multi.len() {
             self.c_multi[set_idx].remove_combo(c_idx);
+        }
+    }
+}
+
+#[duplicate_item(
+    multifield  onefield    minmaxpressed   vfr_multi_change_minmax_pressed vfr_one_change_minmax_pressed;
+    [v_multi]   [v_one]     [min_pressed]   [v_multi_change_min_pressed]    [v_one_change_min_pressed];
+    [f_multi]   [f_one]     [min_pressed]   [f_multi_change_min_pressed]    [f_one_change_min_pressed];
+    [r_multi]   [r_one]     [min_pressed]   [r_multi_change_min_pressed]    [r_one_change_min_pressed];
+    [v_multi]   [v_one]     [max_pressed]   [v_multi_change_max_pressed]    [v_one_change_max_pressed];
+    [f_multi]   [f_one]     [max_pressed]   [f_multi_change_max_pressed]    [f_one_change_max_pressed];
+    [r_multi]   [r_one]     [max_pressed]   [r_multi_change_max_pressed]    [r_one_change_max_pressed];
+)]
+impl Qop<Edit> {  
+    pub fn vfr_multi_change_minmax_pressed(&mut self, set_idx: usize, max_val: usize) {
+        if set_idx < self.multifield.len() {
+            self.multifield[set_idx].minmaxpressed = max_val
+        }
+    }
+    pub fn vfr_one_change_minmax_pressed(&mut self, g_idx: usize, set_idx: usize, max_val: usize) {
+        if g_idx < self.guts.len()
+            && set_idx < self.guts[g_idx].onefield.len() 
+        {
+            self.guts[g_idx].onefield[set_idx].minmaxpressed = max_val;
         }
     }
 }
@@ -97,11 +125,11 @@ impl Qop<Edit> {
 
 impl<T, U> VFRSet<T, U>
 where
-    VFRIndv<T, U>: NewTrait,
+    VFRBtn<T, U>: NewTrait,
 {
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, n: &mut NewStuffPointers) {
         if btn_idx <= self.buttons.len() {
-            self.buttons.insert(btn_idx, VFRIndv::new(n));
+            self.buttons.insert(btn_idx, VFRBtn::new(n));
         }
     }
     pub(crate) fn remove_btn(&mut self, btn_idx: usize) {

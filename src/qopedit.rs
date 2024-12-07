@@ -8,7 +8,7 @@ pub(crate) trait NewTrait: Default {
 #[duplicate_item(
     ForType             ConstructType;
     [Gut]               [Gut];
-    [VFRIndv<i64, f64>] [VFRIndv];
+    [VFRBtn<i64, f64>] [VFRBtn];
     [Trnsp<i64, f64>]   [Trnsp];
 )]
 impl NewTrait for ForType {
@@ -20,7 +20,8 @@ impl NewTrait for ForType {
 impl NewTrait for VFRSet<i64, f64> {
     fn new(n: &mut NewStuffPointers) -> Self {
         VFRSet {
-            buttons: vec![VFRIndv::new(n)],
+            buttons: vec![VFRBtn::new(n)],
+            max_pressed: n.radio_num,
             ..Default::default()
         }
     }
@@ -28,17 +29,18 @@ impl NewTrait for VFRSet<i64, f64> {
 impl NewTrait for VFRSet<Vec<i64>, Vec<f64>> {
     fn new(n: &mut NewStuffPointers) -> Self {
         VFRSet {
-            buttons: vec![VFRIndv::new(n)],
+            buttons: vec![VFRBtn::new(n)],
             i_mem: vec![0i64; n.guts_len],
             x_mem: vec![0.0f64; n.guts_len],
+            max_pressed: n.radio_num,
             ..Default::default()
         }
     }
 }
 
-impl NewTrait for VFRIndv<Vec<i64>, Vec<f64>> {
+impl NewTrait for VFRBtn<Vec<i64>, Vec<f64>> {
     fn new(n: &mut NewStuffPointers) -> Self {
-        VFRIndv {
+        VFRBtn {
             i_delta: vec![0i64; n.guts_len],
             x_delta: vec![0.0f64; n.guts_len],
             i_mem: vec![0i64; n.guts_len],

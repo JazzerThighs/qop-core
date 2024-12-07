@@ -15,6 +15,7 @@ nest! {
             pub(crate) struct NewStuffPointers {
                 pub(crate) guts_len: usize,
                 pub(crate) dig_vec: Vec<KeyCode>,
+                pub(crate) radio_num: usize,
                 pub(crate) c_btn_len: usize,
             },
         pub(crate) dig_inputs:  Vec<KeyCode>,
@@ -41,7 +42,7 @@ nest! {
                 pub(crate) v_one: Vec<
                     pub(crate) struct VFRSet<T, U> {
                         pub(crate) buttons: Vec<
-                            pub(crate) struct VFRIndv<T, U> {
+                            pub(crate) struct VFRBtn<T, U> {
                                 pub(crate) togs: Vec<usize>,
                                 pub(crate) pressed: bool,
                                 pub(crate) i_delta: T,
