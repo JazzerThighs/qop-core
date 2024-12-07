@@ -59,12 +59,12 @@ impl Qop<Edit> {
         }
     }
     pub fn multi_hold_insert_dig(&mut self, set_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() && set_idx < self.multifield.len() {
+        if key_idx_val < self.dig_inputs.len() && set_idx < self.multifield.len() {
             self.multifield[set_idx].hold_insert_dig(key_idx_val)
         }
     }
     pub fn multi_hold_remove_dig(&mut self, set_idx: usize, key_idx_val: usize) {
-        if key_idx_val <= self.dig_inputs.len() && set_idx < self.multifield.len() {
+        if key_idx_val < self.dig_inputs.len() && set_idx < self.multifield.len() {
             self.multifield[set_idx].hold_remove_dig(key_idx_val)
         }
     }
