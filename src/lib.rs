@@ -87,7 +87,8 @@ nest! {
                         pub(crate) i_mem: T,
                         #[serde(skip_serializing)]
                         pub(crate) x_mem: U,
-                    }||<i64, f64>>
+                    }||<i64, f64>
+                >
             }
         >,
         pub(crate) gut_holds: 
