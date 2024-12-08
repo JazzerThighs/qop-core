@@ -1,6 +1,20 @@
 use crate::*;
 use duplicate::duplicate_item;
 
+macro_rules! assert_eq_expr {
+    ($left:expr, $right:expr) => {
+        if $left != $right {
+            panic!(
+                "Assertion failed: `{}` == `{}`\n(left: `{:?}`, right: `{:?}`)",
+                stringify!($left),
+                stringify!($right),
+                $left,
+                $right
+            );
+        }
+    };
+}
+
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
@@ -51,27 +65,20 @@ impl Qop<Edit> {
         self.gut_radio_mode = !self.gut_radio_mode;
     }
     pub(crate) fn check_multi_delta_lengths(&self) {
-        let message: &str = " does not have the same length as self.guts!";
+        // #[duplicate_item(
+        //     multifield deltafield;
+        //     [v_multi]  [buttons];
+        //     [f_multi]  [buttons];
+        //     [c_multi]  [combos];
+        // )]
         for set in 0..self.v_multi.len() {
-            self.v_multi[set].check_multi_delta_lengths(
-                format!("self.v_multi[{set}]").as_str(),
-                message,
-                self.guts.len(),
-            )
+            self.v_multi[set].check_multi_delta_lengths(self.guts.len())
         }
         for set in 0..self.f_multi.len() {
-            self.f_multi[set].check_multi_delta_lengths(
-                format!("self.f_multi[{set}]").as_str(),
-                message,
-                self.guts.len(),
-            )
+            self.f_multi[set].check_multi_delta_lengths(self.guts.len())
         }
         for set in 0..self.c_multi.len() {
-            self.c_multi[set].check_multi_delta_lengths(
-                format!("self.c_multi[{set}]").as_str(),
-                message,
-                self.guts.len(),
-            )
+            self.c_multi[set].check_multi_delta_lengths(self.guts.len())
         }
     }
 }
@@ -134,44 +141,36 @@ impl SetType<Vec<i64>, Vec<f64>> {
 impl SetType<Vec<i64>, Vec<f64>> {
     pub(crate) fn check_multi_delta_lengths(
         &self,
-        leading_str: &str,
-        message: &str,
-        gut_len: usize,
+        guts_len: usize,
     ) {
         for d in 0..self.field.len() {
-            assert_eq!(
+            assert_eq_expr!(
                 self.field[d].i_delta.len(),
-                gut_len,
-                "{leading_str}.deltafield[{d}].i_delta{message}"
+                guts_len
             );
-            assert_eq!(
+            assert_eq_expr!(
                 self.field[d].x_delta.len(),
-                gut_len,
-                "{leading_str}.deltafield[{d}].x_delta{message}"
+                guts_len
             );
             for to in 0..self.field[d].trnsp_one.len() {
-                assert_eq!(
+                assert_eq_expr!(
                     self.field[d].trnsp_one[to].i_delta.len(),
-                    gut_len,
-                    "{leading_str}.deltafield[{d}].trnsp_one[{to}].i_delta{message}"
+                    guts_len
                 );
-                assert_eq!(
+                assert_eq_expr!(
                     self.field[d].trnsp_one[to].x_delta.len(),
-                    gut_len,
-                    "{leading_str}.deltafield[{d}].trnsp_one[{to}].x_delta{message}"
-                )
+                    guts_len
+                );
             }
         }
         for ta in 0..self.trnsp_all.len() {
-            assert_eq!(
+            assert_eq_expr!(
                 self.trnsp_all[ta].i_delta.len(),
-                gut_len,
-                "{leading_str}.trnsp_all[{ta}].i_delta{message}"
+                guts_len
             );
-            assert_eq!(
+            assert_eq_expr!(
                 self.trnsp_all[ta].x_delta.len(),
-                gut_len,
-                "{leading_str}.trnsp_all[{ta}].x_delta{message}"
+                guts_len
             );
         }
     }
