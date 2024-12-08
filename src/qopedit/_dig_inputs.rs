@@ -7,21 +7,6 @@ impl Qop<Edit> {
             self.dig_inputs.push(key_code)
         }
     }
-    pub fn dig_inputs_swap_labels(&mut self, kc1: KeyCode, kc2: KeyCode) {
-        // swaps only the digital input labels for 2 existing inputs, which leaves alone all of the nodes' usize values in the rest of the Qop.
-        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
-        for i in 0..self.dig_inputs.len() {
-            if self.dig_inputs[i] == kc1 {
-                i1 = Some(i);
-            } else if self.dig_inputs[i] == kc2 {
-                i2 = Some(i);
-            }
-        }
-        if i1.is_some() && i2.is_some() {
-            (self.dig_inputs[i1.unwrap()], self.dig_inputs[i2.unwrap()]) =
-                (self.dig_inputs[i2.unwrap()], self.dig_inputs[i1.unwrap()]);
-        }
-    }
     fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
         for g in 0..self.guts.len() {
             operation(&mut self.guts[g].gut_triggers.togs);
@@ -33,9 +18,6 @@ impl Qop<Edit> {
             }
             for set in 0..self.guts[g].f_one.len() {
                 self.guts[g].f_one[set].all_key_idx_vecs(&operation);
-            }
-            for set in 0..self.guts[g].r_one.len() {
-                self.guts[g].r_one[set].all_key_idx_vecs(&operation);
             }
             for set in 0..self.guts[g].c_one.len() {
                 self.guts[g].c_one[set].all_key_idx_vecs(&operation);
@@ -50,9 +32,6 @@ impl Qop<Edit> {
         }
         for set in 0..self.f_multi.len() {
             self.f_multi[set].all_key_idx_vecs(&operation);
-        }
-        for set in 0..self.r_multi.len() {
-            self.r_multi[set].all_key_idx_vecs(&operation);
         }
         for set in 0..self.c_multi.len() {
             self.c_multi[set].all_key_idx_vecs(&operation);
@@ -79,8 +58,10 @@ impl Qop<Edit> {
             }
         }
     }
-    pub fn dig_inputs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode) {
-        // swaps the nodes of 2 existing keys in all of the plucks' and sets' various fields.
+    pub fn dig_inputs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode, swap_all_fields: bool) {
+        // This function swaps 2 digital input values for 2 existing inputs in the dig_inputs field.
+        // swap_all_fields == true -> swaps the nodes of 2 existing keys in all of rest of the Qop's fields,  so all of those affected usize values would be now pointing to the same keys as before.
+        // swap_all_fields == false -> leaves all of the rest of the Qop's fields alone, so all of those affected usize values would be now pointing to swapped keys.
         let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
         for i in 0..self.dig_inputs.len() {
             if self.dig_inputs[i] == kc1 {
@@ -90,16 +71,20 @@ impl Qop<Edit> {
             }
         }
         if i1.is_some() && i2.is_some() {
-            let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| {
-                k_idx_vec.iter_mut().for_each(|k: &mut usize| {
-                    if *k == i1.unwrap() {
-                        *k = i2.unwrap();
-                    } else if *k == i2.unwrap() {
-                        *k = i1.unwrap();
-                    }
-                });
-            };
-            Qop::dig_inputs_global_vec_manip(self, k_idxs_swap);
+            (self.dig_inputs[i1.unwrap()], self.dig_inputs[i2.unwrap()]) =
+                (self.dig_inputs[i2.unwrap()], self.dig_inputs[i1.unwrap()]);
+            if swap_all_fields {
+                let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| {
+                    k_idx_vec.iter_mut().for_each(|k: &mut usize| {
+                        if *k == i1.unwrap() {
+                            *k = i2.unwrap();
+                        } else if *k == i2.unwrap() {
+                            *k = i1.unwrap();
+                        }
+                    });
+                };
+                Qop::dig_inputs_global_vec_manip(self, k_idxs_swap);
+            }
         }
     }
     pub fn dig_inputs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
@@ -128,46 +113,71 @@ impl Qop<Edit> {
         let message: &str = " is an index to an OOB Digital Input!";
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].gut_triggers.togs.len() {
-                assert!(self.guts[g].gut_triggers.togs[t] < self.dig_inputs.len(), "self.guts[{g}].gut_triggers.togs[{t}]{message}")
+                assert!(
+                    self.guts[g].gut_triggers.togs[t] < self.dig_inputs.len(),
+                    "self.guts[{g}].gut_triggers.togs[{t}]{message}"
+                )
             }
             for tg in 0..self.guts[g].trnsp_gut.len() {
                 for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {
-                    assert!(self.guts[g].trnsp_gut[tg].triggers[t] < self.dig_inputs.len(), "self.guts[{g}].trnsp_gut[{tg}].triggers[{t}]{message}")
+                    assert!(
+                        self.guts[g].trnsp_gut[tg].triggers[t] < self.dig_inputs.len(),
+                        "self.guts[{g}].trnsp_gut[{tg}].triggers[{t}]{message}"
+                    )
                 }
             }
 
             for set in 0..self.guts[g].v_one.len() {
-                self.guts[g].v_one[set].check_digitalref_invariants(format!("self.guts[{g}].v_one[{set}]").as_str(), message, self.dig_inputs.len())
+                self.guts[g].v_one[set].check_digitalref_invariants(
+                    format!("self.guts[{g}].v_one[{set}]").as_str(),
+                    message,
+                    self.dig_inputs.len(),
+                )
             }
             for set in 0..self.guts[g].f_one.len() {
-                self.guts[g].f_one[set].check_digitalref_invariants(format!("self.guts[{g}].f_one[{set}]").as_str(), message, self.dig_inputs.len())
-            }
-            for set in 0..self.guts[g].r_one.len() {
-                self.guts[g].r_one[set].check_digitalref_invariants(format!("self.guts[{g}].r_one[{set}]").as_str(), message, self.dig_inputs.len())
+                self.guts[g].f_one[set].check_digitalref_invariants(
+                    format!("self.guts[{g}].f_one[{set}]").as_str(),
+                    message,
+                    self.dig_inputs.len(),
+                )
             }
             for set in 0..self.guts[g].c_one.len() {
-                self.guts[g].c_one[set].check_digitalref_invariants(format!("self.guts[{g}].c_one[{set}]").as_str(), message, self.dig_inputs.len())
+                self.guts[g].c_one[set].check_digitalref_invariants(
+                    format!("self.guts[{g}].c_one[{set}]").as_str(),
+                    message,
+                    self.dig_inputs.len(),
+                )
             }
         }
-        
-        self.gut_holds.check_digitalref_invariants("self.gutholds", message, self.dig_inputs.len());
+
+        self.gut_holds
+            .check_digitalref_invariants("self.gutholds", message, self.dig_inputs.len());
 
         for set in 0..self.v_multi.len() {
-            self.v_multi[set].check_digitalref_invariants(format!("self.v_multi[{set}]").as_str(), message, self.dig_inputs.len())
+            self.v_multi[set].check_digitalref_invariants(
+                format!("self.v_multi[{set}]").as_str(),
+                message,
+                self.dig_inputs.len(),
+            )
         }
         for set in 0..self.f_multi.len() {
-            self.f_multi[set].check_digitalref_invariants(format!("self.f_multi[{set}]").as_str(), message, self.dig_inputs.len())
-        }
-        for set in 0..self.r_multi.len() {
-            self.r_multi[set].check_digitalref_invariants(format!("self.r_multi[{set}]").as_str(), message, self.dig_inputs.len())
+            self.f_multi[set].check_digitalref_invariants(
+                format!("self.f_multi[{set}]").as_str(),
+                message,
+                self.dig_inputs.len(),
+            )
         }
         for set in 0..self.c_multi.len() {
-            self.c_multi[set].check_digitalref_invariants(format!("self.c_multi[{set}]").as_str(), message, self.dig_inputs.len())
+            self.c_multi[set].check_digitalref_invariants(
+                format!("self.c_multi[{set}]").as_str(),
+                message,
+                self.dig_inputs.len(),
+            )
         }
     }
 }
 
-impl<T, U> VFRSet<T, U> {
+impl<T, U> VFSet<T, U> {
     pub(crate) fn all_key_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);
@@ -183,23 +193,41 @@ impl<T, U> VFRSet<T, U> {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(crate) fn check_digitalref_invariants(
+        &self,
+        leading_str: &str,
+        message: &str,
+        dig_vec_len: usize,
+    ) {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
-                assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
+                assert!(
+                    self.buttons[b].togs[t] < dig_vec_len,
+                    "{leading_str}.buttons[{b}].togs[{t}]{message}"
+                )
             }
             for to in 0..self.buttons[b].trnsp_one.len() {
                 for t in 0..self.buttons[b].trnsp_one[to].triggers.len() {
-                    assert!(self.buttons[b].trnsp_one[to].triggers[t] < dig_vec_len, "{leading_str}.buttons[{b}].trnsp_one[{to}].triggers[{t}]{message}");
+                    assert!(
+                        self.buttons[b].trnsp_one[to].triggers[t] < dig_vec_len,
+                        "{leading_str}.buttons[{b}].trnsp_one[{to}].triggers[{t}]{message}"
+                    );
                 }
             }
         }
         for ta in 0..self.trnsp_all.len() {
             for t in 0..self.trnsp_all[ta].triggers.len() {
-                assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}");
+                assert!(
+                    self.trnsp_all[ta].triggers[t] < dig_vec_len,
+                    "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}"
+                );
             }
         }
-        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
+        self.holds.check_digitalref_invariants(
+            format!("{leading_str}.holds").as_str(),
+            message,
+            dig_vec_len,
+        )
     }
 }
 
@@ -221,41 +249,76 @@ impl<T, U> ComboSet<T, U> {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(crate) fn check_digitalref_invariants(
+        &self,
+        leading_str: &str,
+        message: &str,
+        dig_vec_len: usize,
+    ) {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
-                assert!(self.buttons[b].togs[t] < dig_vec_len, "{leading_str}.buttons[{b}].togs[{t}]{message}")
+                assert!(
+                    self.buttons[b].togs[t] < dig_vec_len,
+                    "{leading_str}.buttons[{b}].togs[{t}]{message}"
+                )
             }
         }
         for c in 0..self.combos.len() {
             for to in 0..self.combos[c].trnsp_one.len() {
                 for t in 0..self.combos[c].trnsp_one[to].triggers.len() {
-                    assert!(self.combos[c].trnsp_one[to].triggers[t] < dig_vec_len, "{leading_str}.combos[{c}].trnsp_one[{to}].triggers[{t}]{message}")
+                    assert!(
+                        self.combos[c].trnsp_one[to].triggers[t] < dig_vec_len,
+                        "{leading_str}.combos[{c}].trnsp_one[{to}].triggers[{t}]{message}"
+                    )
                 }
             }
         }
         for ta in 0..self.trnsp_all.len() {
             for t in 0..self.trnsp_all[ta].triggers.len() {
-                assert!(self.trnsp_all[ta].triggers[t] < dig_vec_len, "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}")
+                assert!(
+                    self.trnsp_all[ta].triggers[t] < dig_vec_len,
+                    "{leading_str}.trnsp_all[{ta}].triggers[{t}]{message}"
+                )
             }
         }
-        self.holds.check_digitalref_invariants(format!("{leading_str}.holds").as_str(), message, dig_vec_len)
+        self.holds.check_digitalref_invariants(
+            format!("{leading_str}.holds").as_str(),
+            message,
+            dig_vec_len,
+        )
     }
 }
 
 impl HoldBtns {
-    pub(crate) fn check_digitalref_invariants(&self, leading_str: &str, message: &str, dig_vec_len: usize) {
+    pub(crate) fn check_digitalref_invariants(
+        &self,
+        leading_str: &str,
+        message: &str,
+        dig_vec_len: usize,
+    ) {
         for sus in 0..self.sustain.togs.len() {
-            assert!(self.sustain.togs[sus] < dig_vec_len, "{leading_str}.sustain.togs[{sus}]{message}")
+            assert!(
+                self.sustain.togs[sus] < dig_vec_len,
+                "{leading_str}.sustain.togs[{sus}]{message}"
+            )
         }
         for isus in 0..self.inv_sustain.togs.len() {
-            assert!(self.inv_sustain.togs[isus] < dig_vec_len, "{leading_str}.inv_sustain.togs[{isus}]{message}")
+            assert!(
+                self.inv_sustain.togs[isus] < dig_vec_len,
+                "{leading_str}.inv_sustain.togs[{isus}]{message}"
+            )
         }
         for sos in 0..self.sostenuto.togs.len() {
-            assert!(self.sostenuto.togs[sos] < dig_vec_len, "{leading_str}.sostenuto.togs[{sos}]{message}")
+            assert!(
+                self.sostenuto.togs[sos] < dig_vec_len,
+                "{leading_str}.sostenuto.togs[{sos}]{message}"
+            )
         }
         for isos in 0..self.inv_sostenuto.togs.len() {
-            assert!(self.inv_sostenuto.togs[isos] < dig_vec_len, "{leading_str}.inv_sostenuto.togs[{isos}]{message}")
+            assert!(
+                self.inv_sostenuto.togs[isos] < dig_vec_len,
+                "{leading_str}.inv_sostenuto.togs[{isos}]{message}"
+            )
         }
     }
 }

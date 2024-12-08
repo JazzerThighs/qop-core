@@ -15,7 +15,6 @@ nest! {
             pub(crate) struct NewStuffPointers {
                 pub(crate) guts_len: usize,
                 pub(crate) dig_vec: Vec<KeyCode>,
-                pub(crate) radio_num: usize,
                 pub(crate) c_btn_len: usize,
             },
         pub(crate) dig_inputs:  Vec<KeyCode>,
@@ -40,9 +39,9 @@ nest! {
                 #[serde(skip_serializing)]
                 pub(crate) x_mem: f64,
                 pub(crate) v_one: Vec<
-                    pub(crate) struct VFRSet<T, U> {
+                    pub(crate) struct VFSet<T, U> {
                         pub(crate) buttons: Vec<
-                            pub(crate) struct VFRBtn<T, U> {
+                            pub(crate) struct VFBtn<T, U> {
                                 pub(crate) togs: Vec<usize>,
                                 pub(crate) pressed: bool,
                                 pub(crate) i_delta: T,
@@ -62,10 +61,10 @@ nest! {
                         pub(crate) holds: HoldBtns,
                         pub(crate) max_pressed: usize,
                         pub(crate) min_pressed: usize,
+                        pub(crate) radio_mode: bool,
                     } ||<i64, f64>
                 >,
-                pub(crate) f_one: Vec<VFRSet<i64, f64>>,
-                pub(crate) r_one: Vec<VFRSet<i64, f64>>,
+                pub(crate) f_one: Vec<VFSet<i64, f64>>,
                 pub(crate) c_one: Vec<
                     pub(crate) struct ComboSet<T,U> {
                         pub(crate) buttons: Vec<BtnTog>,
@@ -87,10 +86,16 @@ nest! {
                         pub(crate) i_mem: T,
                         #[serde(skip_serializing)]
                         pub(crate) x_mem: U,
+                        pub(crate) max_pressed: usize,
+                        pub(crate) min_pressed: usize,
+                        pub(crate) radio_mode: bool,
                     }||<i64, f64>
                 >
             }
         >,
+        pub(crate) gut_max_pressed: usize,
+        pub(crate) gut_min_pressed: usize,
+        pub(crate) gut_radio_mode: bool,
         pub(crate) gut_holds: 
             pub(crate) struct HoldBtns {
                 pub(crate) sustain: BtnTog,
@@ -98,9 +103,8 @@ nest! {
                 pub(crate) sostenuto: BtnTog,
                 pub(crate) inv_sostenuto: BtnTog,
             },
-        pub(crate) v_multi: Vec<VFRSet<Vec<i64>, Vec<f64>>>,
-        pub(crate) f_multi: Vec<VFRSet<Vec<i64>, Vec<f64>>>,
-        pub(crate) r_multi: Vec<VFRSet<Vec<i64>, Vec<f64>>>,
+        pub(crate) v_multi: Vec<VFSet<Vec<i64>, Vec<f64>>>,
+        pub(crate) f_multi: Vec<VFSet<Vec<i64>, Vec<f64>>>,
         pub(crate) c_multi: Vec<ComboSet<Vec<i64>, Vec<f64>>>,
     }
 }
