@@ -239,11 +239,9 @@ impl Qop<Edit> {
             && set_idx < self.guts[g_idx].onefield.len()
             && trnsp_idx < self.guts[g_idx].onefield[set_idx].trnsp_all.len()
         {
-            self.guts[g_idx].onefield[set_idx]
-                .trnsp_all_change_deltas(trnsp_idx, d_del_val);
+            self.guts[g_idx].onefield[set_idx].trnsp_all_change_deltas(trnsp_idx, d_del_val);
         }
     }
-
     pub fn one_trnsp_one_change_deltas(
         &mut self,
         g_idx: usize,
@@ -290,8 +288,7 @@ impl Qop<Edit> {
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
             && d_del_vec.len() == self.guts.len()
         {
-            self.multifield[set_idx]
-                .trnsp_one_change_deltas(trnsp_idx, del_idx, d_del_vec);
+            self.multifield[set_idx].trnsp_one_change_deltas(trnsp_idx, del_idx, d_del_vec);
         }
     }
 }
@@ -370,11 +367,7 @@ where
     [ComboSet] [combos]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Option<f64>];
 )]
 impl SetType<i64, f64> {
-    pub(crate) fn trnsp_all_change_deltas(
-        &mut self,
-        trnsp_idx: usize,
-        d_del_val: del_type,
-    ) {
+    pub(crate) fn trnsp_all_change_deltas(&mut self, trnsp_idx: usize, d_del_val: del_type) {
         if let Some(d_val) = d_del_val {
             self.trnsp_all[trnsp_idx].d_field = d_val;
         }
@@ -384,7 +377,7 @@ impl SetType<i64, f64> {
         &mut self,
         trnsp_idx: usize,
         del_idx: usize,
-        d_del_val: del_type
+        d_del_val: del_type,
     ) {
         if let Some(i_val) = d_del_val {
             self.deltafield[del_idx].trnsp_one[trnsp_idx].d_field = i_val;
@@ -400,11 +393,7 @@ impl SetType<i64, f64> {
     [ComboSet] [combos]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Vec<Option<f64>>];
 )]
 impl SetType<Vec<i64>, Vec<f64>> {
-    pub(crate) fn trnsp_all_change_deltas(
-        &mut self,
-        trnsp_idx: usize,
-        d_del_vec: del_type,
-    ) {
+    pub(crate) fn trnsp_all_change_deltas(&mut self, trnsp_idx: usize, d_del_vec: del_type) {
         for d in 0..d_del_vec.len() {
             if let Some(i_val) = d_del_vec[d] {
                 self.trnsp_all[trnsp_idx].d_field[d] = i_val;

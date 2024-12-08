@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 use nestify::nest;
 use serde::{Deserialize, Serialize};
-use winit::keyboard::KeyCode;
 use std::marker::PhantomData;
+use winit::keyboard::KeyCode;
 
 nest! {
     #[repr(C)]*
@@ -11,7 +11,7 @@ nest! {
     pub struct Qop<Mode = Edit> {
         pub(crate) qop_mode: PhantomData<Mode>,
         #[serde(skip_serializing)]
-        pub(crate) n: 
+        pub(crate) n:
             pub(crate) struct NewStuffPointers {
                 pub(crate) guts_len: usize,
                 pub(crate) dig_vec: Vec<KeyCode>,
@@ -20,7 +20,7 @@ nest! {
         pub(crate) dig_inputs:  Vec<KeyCode>,
         pub(crate) guts: Vec<
             pub(crate) struct Gut {
-                pub(crate) gut_triggers: 
+                pub(crate) gut_triggers:
                     pub(crate) struct BtnTog {
                         pub(crate) togs: Vec<usize>,
                         pub(crate) pressed: bool,
@@ -96,7 +96,7 @@ nest! {
         pub(crate) gut_max_pressed: usize,
         pub(crate) gut_min_pressed: usize,
         pub(crate) gut_radio_mode: bool,
-        pub(crate) gut_holds: 
+        pub(crate) gut_holds:
             pub(crate) struct HoldBtns {
                 pub(crate) sustain: BtnTog,
                 pub(crate) inv_sustain: BtnTog,
