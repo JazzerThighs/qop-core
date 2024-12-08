@@ -1,10 +1,10 @@
-use crate::{qopedit::NewTrait, *};
+use crate::*;
 use duplicate::duplicate_item;
 
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
-            self.guts.insert(g_idx, Gut::new(&mut self.n));
+            self.guts.insert(g_idx, Gut::default());
             self.n.guts_len += 1;
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].insert_gut(g_idx);
@@ -47,6 +47,9 @@ impl Qop<Edit> {
                 .retain(|&idx| idx != key_idx_val);
         }
     }
+    pub fn gut_toggle_radio_mode(&mut self) {
+        self.gut_radio_mode = !self.gut_radio_mode;
+    }
     pub(crate) fn check_multi_delta_lengths(&self) {
         let message: &str = " does not have the same length as self.guts!";
         for set in 0..self.v_multi.len() {
@@ -71,13 +74,12 @@ impl Qop<Edit> {
             )
         }
     }
-
 }
 
 #[duplicate_item(
-    gut_change_delta_out         d_out         d_del_val   del_type gut_change_minmax           minmaxval   minmax_field        iscomparedto;
-    [gut_change_index_delta_out] [index_out]   [i_del_val] [usize]  [gut_change_min_pressed]    [min_val]   [gut_min_pressed]   [le(&self.gut_max_pressed)];
-    [gut_change_extra_delta_out] [extra_out]   [x_del_val] [f64]    [gut_change_max_pressed]    [max_val]   [gut_max_pressed]   [ge(&self.gut_max_pressed)];
+    gut_change_delta_out         d_out       d_del_val   del_type gut_change_minmax        minmaxval minmax_field      iscomparedto;
+    [gut_change_index_delta_out] [index_out] [i_del_val] [usize]  [gut_change_min_pressed] [min_val] [gut_min_pressed] [le(&self.gut_max_pressed)];
+    [gut_change_extra_delta_out] [extra_out] [x_del_val] [f64]    [gut_change_max_pressed] [max_val] [gut_max_pressed] [ge(&self.gut_max_pressed)];
 )]
 impl Qop<Edit> {
     pub fn gut_change_delta_out(&mut self, g_idx: usize, d_del_val: del_type) {
@@ -93,11 +95,11 @@ impl Qop<Edit> {
 }
 
 #[duplicate_item(
-    SetType     multi_insertremove_gut  insertremove_i          insertremove_x          deltafield;
-    [VFSet]     [insert_gut]            [insert(g_idx, 0i64)]   [insert(g_idx, 0.0f64)] [buttons];
-    [VFSet]     [remove_gut]            [remove(g_idx)]         [remove(g_idx)]         [buttons];
-    [ComboSet]  [insert_gut]            [insert(g_idx, 0i64)]   [insert(g_idx, 0.0f64)] [combos];
-    [ComboSet]  [remove_gut]            [remove(g_idx)]         [remove(g_idx)]         [combos];
+    SetType    multi_insertremove_gut insertremove_i        insertremove_x          deltafield;
+    [VFSet]    [insert_gut]           [insert(g_idx, 0i64)] [insert(g_idx, 0.0f64)] [buttons];
+    [VFSet]    [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [buttons];
+    [ComboSet] [insert_gut]           [insert(g_idx, 0i64)] [insert(g_idx, 0.0f64)] [combos];
+    [ComboSet] [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [combos];
 )]
 impl SetType<Vec<i64>, Vec<f64>> {
     pub(crate) fn multi_insertremove_gut(&mut self, g_idx: usize) {
@@ -125,9 +127,9 @@ impl SetType<Vec<i64>, Vec<f64>> {
 }
 
 #[duplicate_item(
-    SetType     field;
-    [VFSet]     [buttons];
-    [ComboSet]  [combos];
+    SetType    field;
+    [VFSet]    [buttons];
+    [ComboSet] [combos];
 )]
 impl SetType<Vec<i64>, Vec<f64>> {
     pub(crate) fn check_multi_delta_lengths(

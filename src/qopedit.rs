@@ -1,20 +1,7 @@
 use crate::*;
-use duplicate::duplicate_item;
 
 pub(crate) trait NewTrait: Default {
     fn new(n: &mut NewStuffPointers) -> Self;
-}
-
-#[duplicate_item(
-    ForType             ConstructType;
-    [Gut]               [Gut];
-    [VFBtn<i64, f64>]   [VFBtn];
-    [Trnsp<i64, f64>]   [Trnsp];
-)]
-impl NewTrait for ForType {
-    fn new(_n: &mut NewStuffPointers) -> Self {
-        ConstructType::default()
-    }
 }
 
 impl NewTrait for VFSet<i64, f64> {
@@ -36,6 +23,11 @@ impl NewTrait for VFSet<Vec<i64>, Vec<f64>> {
     }
 }
 
+impl NewTrait for VFBtn<i64, f64> {
+    fn new(_n: &mut NewStuffPointers) -> Self {
+        VFBtn::default()
+    }
+}
 impl NewTrait for VFBtn<Vec<i64>, Vec<f64>> {
     fn new(n: &mut NewStuffPointers) -> Self {
         VFBtn {
@@ -92,6 +84,11 @@ impl NewTrait for Combo<Vec<i64>, Vec<f64>> {
     }
 }
 
+impl NewTrait for Trnsp<i64, f64> {
+    fn new(_n: &mut NewStuffPointers) -> Self {
+        Trnsp::default()
+    }
+}
 impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
     fn new(n: &mut NewStuffPointers) -> Self {
         Trnsp {

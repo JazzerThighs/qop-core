@@ -2,10 +2,10 @@ use crate::{qopedit::NewTrait, *};
 use duplicate::duplicate_item;
 
 #[duplicate_item(
-    onefield  deltafield one_insert_trnsp_all_t        one_remove_trnsp_all_t        one_insert_trnsp_all_dig       one_remove_trnsp_all_dig      one_trnsp_all_change_deltas       one_insert_trnsp_one_t        one_remove_trnsp_one_t        one_insert_trnsp_one_dig        one_remove_trnsp_one_dig      one_trnsp_one_change_deltas;
-    [v_one]   [buttons]  [v_one_insert_trnsp_all_t]    [v_one_remove_trnsp_all_t]    [v_one_insert_trnsp_all_dig]   [v_one_remove_trnsp_all_dig]  [v_one_trnsp_all_change_deltas]   [v_one_insert_trnsp_one_t]    [v_one_remove_trnsp_one_t]    [v_one_insert_trnsp_one_dig]    [v_one_remove_trnsp_one_dig]  [v_one_trnsp_one_change_deltas];
-    [f_one]   [buttons]  [f_one_insert_trnsp_all_t]    [f_one_remove_trnsp_all_t]    [f_one_insert_trnsp_all_dig]   [f_one_remove_trnsp_all_dig]  [f_one_trnsp_all_change_deltas]   [f_one_insert_trnsp_one_t]    [f_one_remove_trnsp_one_t]    [f_one_insert_trnsp_one_dig]    [f_one_remove_trnsp_one_dig]  [f_one_trnsp_one_change_deltas];
-    [c_one]   [combos]   [c_one_insert_trnsp_all_t]    [c_one_remove_trnsp_all_t]    [c_one_insert_trnsp_all_dig]   [c_one_remove_trnsp_all_dig]  [c_one_trnsp_all_change_deltas]   [c_one_insert_trnsp_one_t]    [c_one_remove_trnsp_one_t]    [c_one_insert_trnsp_one_dig]    [c_one_remove_trnsp_one_dig]  [c_one_trnsp_one_change_deltas];
+    onefield deltafield one_insert_trnsp_all_t     one_remove_trnsp_all_t     one_insert_trnsp_all_dig     one_remove_trnsp_all_dig     one_trnsp_all_change_deltas     one_insert_trnsp_one_t     one_remove_trnsp_one_t     one_insert_trnsp_one_dig     one_remove_trnsp_one_dig     one_trnsp_one_change_deltas;
+    [v_one]  [buttons]  [v_one_insert_trnsp_all_t] [v_one_remove_trnsp_all_t] [v_one_insert_trnsp_all_dig] [v_one_remove_trnsp_all_dig] [v_one_trnsp_all_change_deltas] [v_one_insert_trnsp_one_t] [v_one_remove_trnsp_one_t] [v_one_insert_trnsp_one_dig] [v_one_remove_trnsp_one_dig] [v_one_trnsp_one_change_deltas];
+    [f_one]  [buttons]  [f_one_insert_trnsp_all_t] [f_one_remove_trnsp_all_t] [f_one_insert_trnsp_all_dig] [f_one_remove_trnsp_all_dig] [f_one_trnsp_all_change_deltas] [f_one_insert_trnsp_one_t] [f_one_remove_trnsp_one_t] [f_one_insert_trnsp_one_dig] [f_one_remove_trnsp_one_dig] [f_one_trnsp_one_change_deltas];
+    [c_one]  [combos]   [c_one_insert_trnsp_all_t] [c_one_remove_trnsp_all_t] [c_one_insert_trnsp_all_dig] [c_one_remove_trnsp_all_dig] [c_one_trnsp_all_change_deltas] [c_one_insert_trnsp_one_t] [c_one_remove_trnsp_one_t] [c_one_insert_trnsp_one_dig] [c_one_remove_trnsp_one_dig] [c_one_trnsp_one_change_deltas];
 )]
 impl Qop<Edit> {
     pub fn one_insert_trnsp_all_t(&mut self, g_idx: usize, set_idx: usize, trnsp_idx: usize) {
@@ -138,10 +138,10 @@ impl Qop<Edit> {
 }
 
 #[duplicate_item(
-    multifield  deltafield multi_insert_trnsp_all_t        multi_remove_trnsp_all_t        multi_insert_trnsp_all_dig       multi_remove_trnsp_all_dig      multi_insert_trnsp_one_t        multi_remove_trnsp_one_t        multi_insert_trnsp_one_dig      multi_remove_trnsp_one_dig;
-    [v_multi]   [buttons]  [v_multi_insert_trnsp_all_t]    [v_multi_remove_trnsp_all_t]    [v_multi_insert_trnsp_all_dig]   [v_multi_remove_trnsp_all_dig]  [v_multi_insert_trnsp_one_t]    [v_multi_remove_trnsp_one_t]    [v_multi_insert_trnsp_one_dig]  [v_multi_remove_trnsp_one_dig];
-    [f_multi]   [buttons]  [f_multi_insert_trnsp_all_t]    [f_multi_remove_trnsp_all_t]    [f_multi_insert_trnsp_all_dig]   [f_multi_remove_trnsp_all_dig]  [f_multi_insert_trnsp_one_t]    [f_multi_remove_trnsp_one_t]    [f_multi_insert_trnsp_one_dig]  [f_multi_remove_trnsp_one_dig];
-    [c_multi]   [combos]   [c_multi_insert_trnsp_all_t]    [c_multi_remove_trnsp_all_t]    [c_multi_insert_trnsp_all_dig]   [c_multi_remove_trnsp_all_dig]  [c_multi_insert_trnsp_one_t]    [c_multi_remove_trnsp_one_t]    [c_multi_insert_trnsp_one_dig]  [c_multi_remove_trnsp_one_dig];
+    multifield deltafield multi_insert_trnsp_all_t     multi_remove_trnsp_all_t     multi_insert_trnsp_all_dig     multi_remove_trnsp_all_dig     multi_insert_trnsp_one_t     multi_remove_trnsp_one_t     multi_insert_trnsp_one_dig     multi_remove_trnsp_one_dig;
+    [v_multi]  [buttons]  [v_multi_insert_trnsp_all_t] [v_multi_remove_trnsp_all_t] [v_multi_insert_trnsp_all_dig] [v_multi_remove_trnsp_all_dig] [v_multi_insert_trnsp_one_t] [v_multi_remove_trnsp_one_t] [v_multi_insert_trnsp_one_dig] [v_multi_remove_trnsp_one_dig];
+    [f_multi]  [buttons]  [f_multi_insert_trnsp_all_t] [f_multi_remove_trnsp_all_t] [f_multi_insert_trnsp_all_dig] [f_multi_remove_trnsp_all_dig] [f_multi_insert_trnsp_one_t] [f_multi_remove_trnsp_one_t] [f_multi_insert_trnsp_one_dig] [f_multi_remove_trnsp_one_dig];
+    [c_multi]  [combos]   [c_multi_insert_trnsp_all_t] [c_multi_remove_trnsp_all_t] [c_multi_insert_trnsp_all_dig] [c_multi_remove_trnsp_all_dig] [c_multi_insert_trnsp_one_t] [c_multi_remove_trnsp_one_t] [c_multi_insert_trnsp_one_dig] [c_multi_remove_trnsp_one_dig];
 )]
 impl Qop<Edit> {
     pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
@@ -219,13 +219,13 @@ impl Qop<Edit> {
 }
 
 #[duplicate_item(
-    onefield    multifield  deltafield  d_del_val   del_type        d_del_vec   del_type_vec        one_trnsp_all_change_deltas         one_trnsp_one_change_deltas         multi_trnsp_all_change_deltas       multi_trnsp_one_change_deltas       trnsp_all_change_deltas     trnsp_one_change_deltas;
-    [v_one]     [v_multi]   [buttons]   [i_del_val] [Option<i64>]   [i_del_vec] [Vec<Option<i64>>]  [v_one_trnsp_all_change_i_deltas]   [v_one_trnsp_one_change_i_deltas]   [v_multi_trnsp_all_change_i_deltas] [v_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
-    [f_one]     [f_multi]   [buttons]   [i_del_val] [Option<i64>]   [i_del_vec] [Vec<Option<i64>>]  [f_one_trnsp_all_change_i_deltas]   [f_one_trnsp_one_change_i_deltas]   [f_multi_trnsp_all_change_i_deltas] [f_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
-    [c_one]     [c_multi]   [combos]    [i_del_val] [Option<i64>]   [i_del_vec] [Vec<Option<i64>>]  [c_one_trnsp_all_change_i_deltas]   [c_one_trnsp_one_change_i_deltas]   [c_multi_trnsp_all_change_i_deltas] [c_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
-    [v_one]     [v_multi]   [buttons]   [x_del_val] [Option<f64>]   [x_del_vec] [Vec<Option<f64>>]  [v_one_trnsp_all_change_x_deltas]   [v_one_trnsp_one_change_x_deltas]   [v_multi_trnsp_all_change_x_deltas] [v_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
-    [f_one]     [f_multi]   [buttons]   [x_del_val] [Option<f64>]   [x_del_vec] [Vec<Option<f64>>]  [f_one_trnsp_all_change_x_deltas]   [f_one_trnsp_one_change_x_deltas]   [f_multi_trnsp_all_change_x_deltas] [f_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
-    [c_one]     [c_multi]   [combos]    [x_del_val] [Option<f64>]   [x_del_vec] [Vec<Option<f64>>]  [c_one_trnsp_all_change_x_deltas]   [c_one_trnsp_one_change_x_deltas]   [c_multi_trnsp_all_change_x_deltas] [c_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
+    onefield multifield deltafield d_del_val   del_type      d_del_vec   del_type_vec       one_trnsp_all_change_deltas       one_trnsp_one_change_deltas       multi_trnsp_all_change_deltas       multi_trnsp_one_change_deltas       trnsp_all_change_deltas     trnsp_one_change_deltas;
+    [v_one]  [v_multi]  [buttons]  [i_del_val] [Option<i64>] [i_del_vec] [Vec<Option<i64>>] [v_one_trnsp_all_change_i_deltas] [v_one_trnsp_one_change_i_deltas] [v_multi_trnsp_all_change_i_deltas] [v_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
+    [f_one]  [f_multi]  [buttons]  [i_del_val] [Option<i64>] [i_del_vec] [Vec<Option<i64>>] [f_one_trnsp_all_change_i_deltas] [f_one_trnsp_one_change_i_deltas] [f_multi_trnsp_all_change_i_deltas] [f_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
+    [c_one]  [c_multi]  [combos]   [i_del_val] [Option<i64>] [i_del_vec] [Vec<Option<i64>>] [c_one_trnsp_all_change_i_deltas] [c_one_trnsp_one_change_i_deltas] [c_multi_trnsp_all_change_i_deltas] [c_multi_trnsp_one_change_i_deltas] [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas];
+    [v_one]  [v_multi]  [buttons]  [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>] [v_one_trnsp_all_change_x_deltas] [v_one_trnsp_one_change_x_deltas] [v_multi_trnsp_all_change_x_deltas] [v_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
+    [f_one]  [f_multi]  [buttons]  [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>] [f_one_trnsp_all_change_x_deltas] [f_one_trnsp_one_change_x_deltas] [f_multi_trnsp_all_change_x_deltas] [f_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
+    [c_one]  [c_multi]  [combos]   [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>] [c_one_trnsp_all_change_x_deltas] [c_one_trnsp_one_change_x_deltas] [c_multi_trnsp_all_change_x_deltas] [c_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
 )]
 impl Qop<Edit> {
     pub fn one_trnsp_all_change_deltas(
@@ -297,9 +297,9 @@ impl Qop<Edit> {
 }
 
 #[duplicate_item(
-    SetType     deltafield;
-    [VFSet]     [buttons];
-    [ComboSet]  [combos];
+    SetType    deltafield;
+    [VFSet]    [buttons];
+    [ComboSet] [combos];
 )]
 impl<T, U> SetType<T, U>
 where
@@ -363,11 +363,11 @@ where
 }
 
 #[duplicate_item(
-    SetType     deltafield  trnsp_all_change_deltas     trnsp_one_change_deltas      d_field     d_del_val   del_type;
-    [VFSet]     [buttons]   [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas]  [i_delta]   [i_del_val] [Option<i64>];
-    [VFSet]     [buttons]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas]  [x_delta]   [x_del_val] [Option<f64>];
-    [ComboSet]  [combos]    [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas]  [i_delta]   [i_del_val] [Option<i64>];
-    [ComboSet]  [combos]    [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas]  [x_delta]   [x_del_val] [Option<f64>];
+    SetType    deltafield trnsp_all_change_deltas     trnsp_one_change_deltas     d_field   d_del_val   del_type;
+    [VFSet]    [buttons]  [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas] [i_delta] [i_del_val] [Option<i64>];
+    [VFSet]    [buttons]  [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Option<f64>];
+    [ComboSet] [combos]   [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas] [i_delta] [i_del_val] [Option<i64>];
+    [ComboSet] [combos]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Option<f64>];
 )]
 impl SetType<i64, f64> {
     pub(crate) fn trnsp_all_change_deltas(
@@ -393,11 +393,11 @@ impl SetType<i64, f64> {
 }
 
 #[duplicate_item(
-    SetType     deltafield  trnsp_all_change_deltas     trnsp_one_change_deltas      d_field     d_del_val   del_type;
-    [VFSet]     [buttons]   [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas]  [i_delta]   [i_del_val] [Vec<Option<i64>>];
-    [VFSet]     [buttons]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas]  [x_delta]   [x_del_val] [Vec<Option<f64>>];
-    [ComboSet]  [combos]    [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas]  [i_delta]   [i_del_val] [Vec<Option<i64>>];
-    [ComboSet]  [combos]    [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas]  [x_delta]   [x_del_val] [Vec<Option<f64>>];
+    SetType    deltafield trnsp_all_change_deltas     trnsp_one_change_deltas     d_field   d_del_val   del_type;
+    [VFSet]    [buttons]  [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas] [i_delta] [i_del_val] [Vec<Option<i64>>];
+    [VFSet]    [buttons]  [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Vec<Option<f64>>];
+    [ComboSet] [combos]   [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas] [i_delta] [i_del_val] [Vec<Option<i64>>];
+    [ComboSet] [combos]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Vec<Option<f64>>];
 )]
 impl SetType<Vec<i64>, Vec<f64>> {
     pub(crate) fn trnsp_all_change_deltas(
