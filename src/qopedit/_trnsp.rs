@@ -57,8 +57,8 @@ impl Qop<Edit> {
         &mut self,
         g_idx: usize,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
     ) {
         if g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
@@ -68,15 +68,15 @@ impl Qop<Edit> {
                     .trnsp_one
                     .len()
         {
-            self.guts[g_idx].onefield[set_idx].trnsp_one_insert_t(trnsp_idx, del_idx, &mut self.n);
+            self.guts[g_idx].onefield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut self.n);
         }
     }
     pub fn one_remove_trnsp_one_t(
         &mut self,
         g_idx: usize,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
     ) {
         if g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
@@ -86,15 +86,15 @@ impl Qop<Edit> {
                     .trnsp_one
                     .len()
         {
-            self.guts[g_idx].onefield[set_idx].trnsp_one_remove_t(trnsp_idx, del_idx);
+            self.guts[g_idx].onefield[set_idx].trnsp_one_remove_t(del_idx, trnsp_idx);
         }
     }
     pub fn one_insert_trnsp_one_dig(
         &mut self,
         g_idx: usize,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         if g_idx < self.guts.len()
@@ -106,8 +106,8 @@ impl Qop<Edit> {
                     .len()
         {
             self.guts[g_idx].onefield[set_idx].trnsp_one_insert_dig(
-                trnsp_idx,
                 del_idx,
+                trnsp_idx,
                 key_idx_val,
             );
         }
@@ -116,8 +116,8 @@ impl Qop<Edit> {
         &mut self,
         g_idx: usize,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         if g_idx < self.guts.len()
@@ -129,8 +129,8 @@ impl Qop<Edit> {
                     .len()
         {
             self.guts[g_idx].onefield[set_idx].trnsp_one_remove_dig(
-                trnsp_idx,
                 del_idx,
+                trnsp_idx,
                 key_idx_val,
             );
         }
@@ -175,45 +175,45 @@ impl Qop<Edit> {
         }
     }
 
-    pub fn multi_insert_trnsp_one_t(&mut self, set_idx: usize, trnsp_idx: usize, del_idx: usize) {
+    pub fn multi_insert_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx <= self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
-            self.multifield[set_idx].trnsp_one_insert_t(trnsp_idx, del_idx, &mut self.n);
+            self.multifield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut self.n);
         }
     }
-    pub fn multi_remove_trnsp_one_t(&mut self, set_idx: usize, trnsp_idx: usize, del_idx: usize) {
+    pub fn multi_remove_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) {
         if set_idx < self.multifield.len() {
-            self.multifield[set_idx].trnsp_one_remove_t(trnsp_idx, del_idx);
+            self.multifield[set_idx].trnsp_one_remove_t(del_idx, trnsp_idx);
         }
     }
     pub fn multi_insert_trnsp_one_dig(
         &mut self,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
-            self.multifield[set_idx].trnsp_one_insert_dig(trnsp_idx, del_idx, key_idx_val);
+            self.multifield[set_idx].trnsp_one_insert_dig(del_idx, trnsp_idx, key_idx_val);
         }
     }
     pub fn multi_remove_trnsp_one_dig(
         &mut self,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
-            self.multifield[set_idx].trnsp_one_remove_dig(trnsp_idx, del_idx, key_idx_val);
+            self.multifield[set_idx].trnsp_one_remove_dig(del_idx, trnsp_idx, key_idx_val);
         }
     }
 }
@@ -246,8 +246,8 @@ impl Qop<Edit> {
         &mut self,
         g_idx: usize,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         d_del_val: del_type,
     ) {
         if g_idx < self.guts.len()
@@ -259,7 +259,7 @@ impl Qop<Edit> {
                     .len()
         {
             self.guts[g_idx].onefield[set_idx]
-                .trnsp_one_change_deltas(trnsp_idx, del_idx, d_del_val);
+                .trnsp_one_change_deltas(del_idx, trnsp_idx, d_del_val);
         }
     }
 
@@ -279,8 +279,8 @@ impl Qop<Edit> {
     pub fn multi_trnsp_one_change_deltas(
         &mut self,
         set_idx: usize,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         d_del_vec: del_type_vec,
     ) {
         if set_idx < self.multifield.len()
@@ -288,7 +288,7 @@ impl Qop<Edit> {
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
             && d_del_vec.len() == self.guts.len()
         {
-            self.multifield[set_idx].trnsp_one_change_deltas(trnsp_idx, del_idx, d_del_vec);
+            self.multifield[set_idx].trnsp_one_change_deltas(del_idx, trnsp_idx, d_del_vec);
         }
     }
 }
@@ -321,21 +321,21 @@ where
 
     pub(crate) fn trnsp_one_insert_t(
         &mut self,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         n: &mut NewStuffPointers,
     ) {
         self.deltafield[del_idx]
             .trnsp_one
             .insert(trnsp_idx, Trnsp::new(n))
     }
-    pub(crate) fn trnsp_one_remove_t(&mut self, trnsp_idx: usize, del_idx: usize) {
+    pub(crate) fn trnsp_one_remove_t(&mut self, del_idx: usize, trnsp_idx: usize) {
         self.deltafield[del_idx].trnsp_one.remove(trnsp_idx);
     }
     pub(crate) fn trnsp_one_insert_dig(
         &mut self,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         if !self.deltafield[del_idx].trnsp_one[trnsp_idx]
@@ -349,8 +349,8 @@ where
     }
     pub(crate) fn trnsp_one_remove_dig(
         &mut self,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         key_idx_val: usize,
     ) {
         self.deltafield[del_idx].trnsp_one[trnsp_idx]
@@ -375,8 +375,8 @@ impl SetType<i64, f64> {
 
     pub(crate) fn trnsp_one_change_deltas(
         &mut self,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         d_del_val: del_type,
     ) {
         if let Some(i_val) = d_del_val {
@@ -403,8 +403,8 @@ impl SetType<Vec<i64>, Vec<f64>> {
 
     pub(crate) fn trnsp_one_change_deltas(
         &mut self,
-        trnsp_idx: usize,
         del_idx: usize,
+        trnsp_idx: usize,
         d_del_vec: del_type,
     ) {
         for d in 0..d_del_vec.len() {
