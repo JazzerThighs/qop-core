@@ -1,8 +1,9 @@
 #![allow(dead_code)]
-use nestify::nest;
-use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 use winit::keyboard::KeyCode;
+use better_default::Default;
+use serde::{Deserialize, Serialize};
+use nestify::nest;
 
 nest! {
     #[repr(C)]*
@@ -13,11 +14,13 @@ nest! {
         #[serde(skip_serializing)]
         pub(crate) n:
             pub(crate) struct NewStuffPointers {
+                #[default(1)]
                 pub(crate) guts_len: usize,
-                pub(crate) dig_vec: Vec<KeyCode>,
+                #[default(1)]
                 pub(crate) c_btn_len: usize,
             },
         pub(crate) dig_inputs:  Vec<KeyCode>,
+        #[default(vec![Gut::default()])]
         pub(crate) guts: Vec<
             pub(crate) struct Gut {
                 pub(crate) gut_triggers:
@@ -28,7 +31,7 @@ nest! {
                 pub(crate) index_out: usize,
                 pub(crate) extra_out: f64,
                 pub(crate) trnsp_gut: Vec<
-                    pub(crate) struct Trnsp<T, U> {
+                    pub(crate) struct Trnsp<T: Default, U: Default> {
                         pub(crate) triggers: Vec<usize>,
                         pub(crate) i_delta: T,
                         pub(crate) x_delta: U,
@@ -39,9 +42,9 @@ nest! {
                 #[serde(skip_serializing)]
                 pub(crate) x_mem: f64,
                 pub(crate) v_one: Vec<
-                    pub(crate) struct VFSet<T, U> {
+                    pub(crate) struct VFSet<T: Default, U: Default> {
                         pub(crate) buttons: Vec<
-                            pub(crate) struct VFBtn<T, U> {
+                            pub(crate) struct VFBtn<T: Default, U: Default> {
                                 pub(crate) togs: Vec<usize>,
                                 pub(crate) pressed: bool,
                                 pub(crate) i_delta: T,
@@ -66,10 +69,10 @@ nest! {
                 >,
                 pub(crate) f_one: Vec<VFSet<i64, f64>>,
                 pub(crate) c_one: Vec<
-                    pub(crate) struct ComboSet<T,U> {
+                    pub(crate) struct ComboSet<T: Default, U: Default> {
                         pub(crate) buttons: Vec<BtnTog>,
                         pub(crate) combos: Vec<
-                            pub(crate) struct Combo<T, U> {
+                            pub(crate) struct Combo<T: Default, U: Default> {
                                 pub(crate) combo: Vec<bool>,
                                 pub(crate) i_delta: T,
                                 pub(crate) x_delta: U,
@@ -110,29 +113,11 @@ nest! {
 }
 
 #[derive(Default)]
-struct Edit;
+pub struct Edit;
 struct Play;
 
-impl NewStuffPointers {
-    fn refresh_fields(&mut self, _q: &Qop) {
-        todo!()
-    }
-}
-
 impl Qop<Edit> {
-    pub fn new() -> Qop<Edit> {
-        let n: NewStuffPointers = NewStuffPointers {
-            guts_len: 1usize,
-            c_btn_len: 1usize,
-            ..Default::default()
-        };
-        Qop {
-            n,
-            guts: vec![Gut::default()],
-            ..Default::default()
-        }
-    }
-
+    #[allow(private_interfaces)]
     pub fn to_play(&self) -> Qop<Play> {
         todo!()
         // Qop {

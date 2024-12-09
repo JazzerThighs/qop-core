@@ -242,7 +242,7 @@ impl Qop<Edit> {
     }
 }
 
-impl<T, U> VFSet<T, U>
+impl<T: Default, U: Default> VFSet<T, U>
 where
     VFBtn<T, U>: NewTrait,
 {
@@ -254,7 +254,7 @@ where
     }
 }
 
-impl<T, U> ComboSet<T, U>
+impl<T: Default, U: Default> ComboSet<T, U>
 where
     Combo<T, U>: NewTrait,
 {
@@ -283,7 +283,7 @@ where
     [VFSet];
     [ComboSet];
 )]
-impl<T, U> SetType<T, U> {
+impl<T: Default, U: Default> SetType<T, U> {
     pub(crate) fn btn_insert_dig(&mut self, btn_idx: usize, key_idx_val: usize) {
         if !self.buttons[btn_idx].togs.contains(&key_idx_val) {
             self.buttons[btn_idx].togs.push(key_idx_val);

@@ -298,7 +298,7 @@ impl Qop<Edit> {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl<T, U> SetType<T, U>
+impl<T: Default, U: Default> SetType<T, U>
 where
     Trnsp<T, U>: NewTrait,
 {

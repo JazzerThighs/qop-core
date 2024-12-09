@@ -1,20 +1,6 @@
 use crate::*;
 use duplicate::duplicate_item;
 
-macro_rules! assert_eq_expr {
-    ($left:expr, $right:expr) => {
-        if $left != $right {
-            panic!(
-                "Assertion failed: `{}` == `{}`\n(left: `{:?}`, right: `{:?}`)",
-                stringify!($left),
-                stringify!($right),
-                $left,
-                $right
-            );
-        }
-    };
-}
-
 impl Qop<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
@@ -65,12 +51,6 @@ impl Qop<Edit> {
         self.gut_radio_mode = !self.gut_radio_mode;
     }
     pub(crate) fn check_multi_delta_lengths(&self) {
-        // #[duplicate_item(
-        //     multifield deltafield;
-        //     [v_multi]  [buttons];
-        //     [f_multi]  [buttons];
-        //     [c_multi]  [combos];
-        // )]
         for set in 0..self.v_multi.len() {
             self.v_multi[set].check_multi_delta_lengths(self.guts.len())
         }
@@ -133,6 +113,20 @@ impl SetType<Vec<i64>, Vec<f64>> {
     }
 }
 
+macro_rules! assert_eq_expr {
+    ($left:expr, $right:expr) => {
+        if $left != $right {
+            panic!(
+                "Assertion failed: `{}` == `{}`\n(left: `{:?}`, right: `{:?}`)",
+                stringify!($left),
+                stringify!($right),
+                $left,
+                $right
+            );
+        }
+    };
+}
+
 #[duplicate_item(
     SetType    field;
     [VFSet]    [buttons];
@@ -152,6 +146,14 @@ impl SetType<Vec<i64>, Vec<f64>> {
                 self.field[d].x_delta.len(),
                 guts_len
             );
+            assert_eq_expr!(
+                self.field[d].i_mem.len(),
+                guts_len
+            );
+            assert_eq_expr!(
+                self.field[d].x_mem.len(),
+                guts_len
+            );
             for to in 0..self.field[d].trnsp_one.len() {
                 assert_eq_expr!(
                     self.field[d].trnsp_one[to].i_delta.len(),
@@ -163,6 +165,14 @@ impl SetType<Vec<i64>, Vec<f64>> {
                 );
             }
         }
+        assert_eq_expr!(
+            self.i_mem.len(),
+            guts_len
+        );
+        assert_eq_expr!(
+            self.x_mem.len(),
+            guts_len
+        );
         for ta in 0..self.trnsp_all.len() {
             assert_eq_expr!(
                 self.trnsp_all[ta].i_delta.len(),
