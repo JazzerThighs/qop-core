@@ -44,7 +44,6 @@ impl NewTrait for ComboSet<i64, f64> {
     fn new(n: &mut NewStuffPointers) -> Self {
         n.c_btn_len = 1usize;
         ComboSet {
-            buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(n)],
             ..Default::default()
         }
@@ -54,7 +53,6 @@ impl NewTrait for ComboSet<Vec<i64>, Vec<f64>> {
     fn new(n: &mut NewStuffPointers) -> Self {
         n.c_btn_len = 1usize;
         ComboSet {
-            buttons: vec![BtnTog::default()],
             combos: vec![Combo::new(n)],
             i_mem: vec![0i64; n.guts_len],
             x_mem: vec![0.0f64; n.guts_len],

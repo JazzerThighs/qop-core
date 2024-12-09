@@ -70,6 +70,7 @@ nest! {
                 pub(crate) f_one: Vec<VFSet<i64, f64>>,
                 pub(crate) c_one: Vec<
                     pub(crate) struct ComboSet<T: Default, U: Default> {
+                        #[default(vec![BtnTog::default()])]
                         pub(crate) buttons: Vec<BtnTog>,
                         pub(crate) combos: Vec<
                             pub(crate) struct Combo<T: Default, U: Default> {
