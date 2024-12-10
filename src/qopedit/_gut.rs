@@ -5,8 +5,6 @@ impl Engine<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
             self.guts.insert(g_idx, Gut::default());
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].insert_gut(g_idx);
             }

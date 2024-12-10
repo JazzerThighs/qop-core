@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-
+mod old_crap_for_reuse;
 mod qopedit;
 mod qopplay;
 mod scale;
@@ -21,12 +21,21 @@ pub(crate) struct NewStuffPointers {
     pub(crate) c_btn_len: usize,
 
     // Scale Parts
-    new_reference_note: usize,
-    new_tuning_hz: f64,
-    new_octave_divisions: usize,
-    new_note_class_set: Vec<String>,
-    octave: usize,
-    note_amount: usize,
+    pub(crate) new_reference_note: usize,
+    pub(crate) new_tuning_hz: f64,
+    pub(crate) new_octave_divisions: usize,
+    pub(crate) new_note_class_set: Vec<String>,
+    pub(crate) octave: usize,
+    pub(crate) note_amount: usize,
+}
+
+impl NewStuffPointers {
+    pub(crate) fn new(engine: &Engine) -> Self {
+        NewStuffPointers {
+            guts_len: engine.guts.len(),
+            ..Default::default()
+        }
+    }
 }
 
 nest! {
