@@ -248,9 +248,11 @@ where
 {
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, n: &mut NewStuffPointers) {
         self.buttons.insert(btn_idx, VFBtn::new(n));
+        self.pressed.insert(btn_idx, false);
     }
     pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
         self.buttons.remove(btn_idx);
+        self.pressed.remove(btn_idx);
     }
 }
 
@@ -259,13 +261,15 @@ where
     Combo<T, U>: NewTrait,
 {
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
-        self.buttons.insert(btn_idx, BtnTog::default());
+        self.buttons.insert(btn_idx, ComboTog::default());
+        self.pressed.insert(btn_idx, false);
         for c in 0..self.combos.len() {
             self.combos[c].combo.insert(btn_idx, false);
         }
     }
     pub(crate) fn remove_btn(&mut self, btn_idx: usize) {
         self.buttons.remove(btn_idx);
+        self.pressed.remove(btn_idx);
         for c in 0..self.combos.len() {
             self.combos[c].combo.remove(btn_idx);
         }

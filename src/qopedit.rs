@@ -1,3 +1,9 @@
+mod _dig_inputs;
+mod _gut;
+mod _holds;
+mod _trnsp;
+mod _vfc_sets;
+
 use crate::*;
 
 pub(crate) trait NewTrait: Default {
@@ -96,9 +102,3 @@ impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
         }
     }
 }
-
-mod _dig_inputs;
-mod _gut;
-mod _holds;
-mod _trnsp;
-mod _vfc_sets;

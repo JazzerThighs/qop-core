@@ -18,7 +18,7 @@ impl Qop<Edit> {
     }
     fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
         for g in 0..self.guts.len() {
-            operation(&mut self.guts[g].gut_triggers.togs);
+            operation(&mut self.guts[g].togs);
             for tg in 0..self.guts[g].trnsp_gut.len() {
                 operation(&mut self.guts[g].trnsp_gut[tg].triggers);
             }
@@ -120,8 +120,8 @@ impl Qop<Edit> {
     }
     pub(crate) fn check_digitalref_invariants(&self) {
         for g in 0..self.guts.len() {
-            for t in 0..self.guts[g].gut_triggers.togs.len() {
-                assert_bool_custom!(self.guts[g].gut_triggers.togs[t] < self.dig_inputs.len())
+            for t in 0..self.guts[g].togs.len() {
+                assert_bool_custom!(self.guts[g].togs[t] < self.dig_inputs.len())
             }
             for tg in 0..self.guts[g].trnsp_gut.len() {
                 for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {

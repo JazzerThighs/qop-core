@@ -34,17 +34,15 @@ impl Qop<Edit> {
     }
     pub fn gut_insert_dig(&mut self, g_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
-            if !self.guts[g_idx].gut_triggers.togs.contains(&key_idx_val) {
-                self.guts[g_idx].gut_triggers.togs.push(key_idx_val)
+            if !self.guts[g_idx].togs.contains(&key_idx_val) {
+                self.guts[g_idx].togs.push(key_idx_val)
             };
         }
     }
     pub fn gut_remove_dig(&mut self, g_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len() && key_idx_val < self.dig_inputs.len() {
             self.guts[g_idx]
-                .gut_triggers
-                .togs
-                .retain(|&idx| idx != key_idx_val);
+                .togs.retain(|&idx| idx != key_idx_val);
         }
     }
     pub fn gut_toggle_radio_mode(&mut self) {
