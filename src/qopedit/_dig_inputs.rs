@@ -10,7 +10,7 @@ macro_rules! assert_bool_custom {
     };
 }
 
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
         if !self.dig_inputs.contains(&key_code) {
             self.dig_inputs.push(key_code)
@@ -61,7 +61,7 @@ impl Qop<Edit> {
                         }
                     })
                 };
-                Qop::dig_inputs_global_vec_manip(self, dig_idx_purge);
+                Engine::dig_inputs_global_vec_manip(self, dig_idx_purge);
                 self.dig_inputs.remove(i);
                 break;
             }
@@ -92,7 +92,7 @@ impl Qop<Edit> {
                         }
                     });
                 };
-                Qop::dig_inputs_global_vec_manip(self, k_idxs_swap);
+                Engine::dig_inputs_global_vec_manip(self, k_idxs_swap);
             }
         }
     }
@@ -115,7 +115,7 @@ impl Qop<Edit> {
                 k_idx_vec.sort();
                 k_idx_vec.dedup();
             };
-            Qop::dig_inputs_global_vec_manip(self, k_idx_update);
+            Engine::dig_inputs_global_vec_manip(self, k_idx_update);
         }
     }
     pub(crate) fn check_digitalref_invariants(&self) {

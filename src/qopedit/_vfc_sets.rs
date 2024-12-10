@@ -7,10 +7,13 @@ use duplicate::duplicate_item;
     [VFSet]    [f_multi]  [f_one]  [f_multi_insert_set] [f_multi_remove_set] [f_multi_remove_btn] [f_multi_insert_btn_dig] [f_multi_remove_btn_dig] [f_multi_toggle_radio_mode] [f_multi_change_min_pressed] [f_multi_change_max_pressed] [f_one_insert_set] [f_one_remove_set] [f_one_remove_btn] [f_one_insert_btn_dig] [f_one_remove_btn_dig] [f_one_toggle_radio_mode] [f_one_change_min_pressed] [f_one_change_max_pressed];        
     [ComboSet] [c_multi]  [c_one]  [c_multi_insert_set] [c_multi_remove_set] [c_multi_remove_btn] [c_multi_insert_btn_dig] [c_multi_remove_btn_dig] [c_multi_toggle_radio_mode] [c_multi_change_min_pressed] [c_multi_change_max_pressed] [c_one_insert_set] [c_one_remove_set] [c_one_remove_btn] [c_one_insert_btn_dig] [c_one_remove_btn_dig] [c_one_toggle_radio_mode] [c_one_change_min_pressed] [c_one_change_max_pressed];        
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn multi_insert_set(&mut self, set_idx: usize) {
         if set_idx <= self.multifield.len() {
-            self.multifield.insert(set_idx, SetType::new(&mut self.n));
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            n.c_btn_len = 1;
+            self.multifield.insert(set_idx, SetType::new(&mut n));
         }
     }
     pub fn multi_remove_set(&mut self, set_idx: usize) {
@@ -67,6 +70,9 @@ impl Qop<Edit> {
         if g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
         {
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            n.c_btn_len = 1;
             self.guts[g_idx].onefield.insert(set_idx, SetType::new(&mut self.n));
         }
     }
@@ -134,7 +140,7 @@ impl Qop<Edit> {
     [v_multi]  [v_one]  [v_multi_insert_btn] [v_one_insert_btn];
     [f_multi]  [f_one]  [f_multi_insert_btn] [f_one_insert_btn];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn vf_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         if set_idx < self.multifield.len() && btn_idx < self.multifield[set_idx].buttons.len() {
             self.multifield[set_idx].buttons.insert(btn_idx, VFBtn::new(&mut self.n));
@@ -149,7 +155,7 @@ impl Qop<Edit> {
         }
     }
 }
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn c_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         if set_idx < self.c_multi.len()
             && btn_idx <= self.c_multi[set_idx].buttons.len()
@@ -207,7 +213,7 @@ impl Qop<Edit> {
     [f_multi]  [f_one]  [buttons]  [f_multi_change_x_deltas] [f_one_change_x_deltas] [x_delta] [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>];
     [c_multi]  [c_one]  [combos]   [c_multi_change_x_deltas] [c_one_change_x_deltas] [x_delta] [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn multi_change_deltas(&mut self, set_idx: usize, del_idx: usize, d_del_vec: del_type_vec) {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()

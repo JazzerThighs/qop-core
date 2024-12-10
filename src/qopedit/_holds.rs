@@ -8,7 +8,7 @@ use duplicate::duplicate_item;
     [sostenuto]     [gut_sostenuto_insert_dig]     [gut_sostenuto_remove_dig];
     [inv_sostenuto] [gut_inv_sostenuto_insert_dig] [gut_inv_sostenuto_remove_dig];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn gut_hold_insert_dig(&mut self, key_idx_val: usize) {
         if !self.gut_holds.holdfield.togs.contains(&key_idx_val) {
             self.gut_holds.holdfield.togs.push(key_idx_val)
@@ -37,7 +37,7 @@ impl Qop<Edit> {
     [c_one]  [c_multi]  [sostenuto]     [c_one_sostenuto_insert_dig]     [c_one_sostenuto_remove_dig]     [c_multi_sostenuto_insert_dig]     [c_multi_sostenuto_remove_dig];
     [c_one]  [c_multi]  [inv_sostenuto] [c_one_inv_sostenuto_insert_dig] [c_one_inv_sostenuto_remove_dig] [c_multi_inv_sostenuto_insert_dig] [c_multi_inv_sostenuto_remove_dig];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn one_hold_insert_dig(&mut self, g_idx: usize, set_idx: usize, key_idx_val: usize) {
         if key_idx_val < self.dig_inputs.len()
             && g_idx < self.guts.len()

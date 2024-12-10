@@ -7,13 +7,15 @@ use duplicate::duplicate_item;
     [f_one]  [buttons]  [f_one_insert_trnsp_all_t] [f_one_remove_trnsp_all_t] [f_one_insert_trnsp_all_dig] [f_one_remove_trnsp_all_dig] [f_one_trnsp_all_change_deltas] [f_one_insert_trnsp_one_t] [f_one_remove_trnsp_one_t] [f_one_insert_trnsp_one_dig] [f_one_remove_trnsp_one_dig] [f_one_trnsp_one_change_deltas];
     [c_one]  [combos]   [c_one_insert_trnsp_all_t] [c_one_remove_trnsp_all_t] [c_one_insert_trnsp_all_dig] [c_one_remove_trnsp_all_dig] [c_one_trnsp_all_change_deltas] [c_one_insert_trnsp_one_t] [c_one_remove_trnsp_one_t] [c_one_insert_trnsp_one_dig] [c_one_remove_trnsp_one_dig] [c_one_trnsp_one_change_deltas];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn one_insert_trnsp_all_t(&mut self, g_idx: usize, set_idx: usize, trnsp_idx: usize) {
         if g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
             && trnsp_idx <= self.guts[g_idx].onefield[set_idx].trnsp_all.len()
         {
-            self.guts[g_idx].onefield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut self.n);
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            self.guts[g_idx].onefield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut n);
         }
     }
     pub fn one_remove_trnsp_all_t(&mut self, g_idx: usize, set_idx: usize, trnsp_idx: usize) {
@@ -68,7 +70,9 @@ impl Qop<Edit> {
                     .trnsp_one
                     .len()
         {
-            self.guts[g_idx].onefield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut self.n);
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            self.guts[g_idx].onefield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut n);
         }
     }
     pub fn one_remove_trnsp_one_t(
@@ -143,10 +147,12 @@ impl Qop<Edit> {
     [f_multi]  [buttons]  [f_multi_insert_trnsp_all_t] [f_multi_remove_trnsp_all_t] [f_multi_insert_trnsp_all_dig] [f_multi_remove_trnsp_all_dig] [f_multi_insert_trnsp_one_t] [f_multi_remove_trnsp_one_t] [f_multi_insert_trnsp_one_dig] [f_multi_remove_trnsp_one_dig];
     [c_multi]  [combos]   [c_multi_insert_trnsp_all_t] [c_multi_remove_trnsp_all_t] [c_multi_insert_trnsp_all_dig] [c_multi_remove_trnsp_all_dig] [c_multi_insert_trnsp_one_t] [c_multi_remove_trnsp_one_t] [c_multi_insert_trnsp_one_dig] [c_multi_remove_trnsp_one_dig];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
         if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
-            self.multifield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut self.n);
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            self.multifield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut n);
         }
     }
     pub fn multi_remove_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
@@ -180,7 +186,9 @@ impl Qop<Edit> {
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx <= self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
-            self.multifield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut self.n);
+            let mut n = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
+            self.multifield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut n);
         }
     }
     pub fn multi_remove_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) {
@@ -227,7 +235,7 @@ impl Qop<Edit> {
     [f_one]  [f_multi]  [buttons]  [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>] [f_one_trnsp_all_change_x_deltas] [f_one_trnsp_one_change_x_deltas] [f_multi_trnsp_all_change_x_deltas] [f_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
     [c_one]  [c_multi]  [combos]   [x_del_val] [Option<f64>] [x_del_vec] [Vec<Option<f64>>] [c_one_trnsp_all_change_x_deltas] [c_one_trnsp_one_change_x_deltas] [c_multi_trnsp_all_change_x_deltas] [c_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn one_trnsp_all_change_deltas(
         &mut self,
         g_idx: usize,

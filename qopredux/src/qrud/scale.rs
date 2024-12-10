@@ -65,7 +65,6 @@ pub enum ScaleType {
     Hijaz,
     ShonaMbira,
     BohlenPierce,
-    
 }
 impl Scale {
     pub fn new(scale_type: ScaleType) -> Self {

@@ -1,11 +1,12 @@
 use crate::*;
 use duplicate::duplicate_item;
 
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
             self.guts.insert(g_idx, Gut::default());
-            self.n.guts_len += 1;
+            let mut n: NewStuffPointers = NewStuffPointers::default();
+            n.guts_len = self.guts.len();
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].insert_gut(g_idx);
             }
@@ -20,7 +21,6 @@ impl Qop<Edit> {
     pub fn gut_remove_g(&mut self, g_idx: usize) {
         if self.guts.len() > 1 && g_idx < self.guts.len() {
             self.guts.remove(g_idx);
-            self.n.guts_len -= 1;
             for set in 0..self.v_multi.len() {
                 self.v_multi[set].remove_gut(g_idx);
             }
@@ -66,7 +66,7 @@ impl Qop<Edit> {
     [gut_change_index_delta_out] [index_out] [i_del_val] [usize]  [gut_change_min_pressed] [min_val] [gut_min_pressed] [le(&self.gut_max_pressed)];
     [gut_change_extra_delta_out] [extra_out] [x_del_val] [f64]    [gut_change_max_pressed] [max_val] [gut_max_pressed] [ge(&self.gut_max_pressed)];
 )]
-impl Qop<Edit> {
+impl Engine<Edit> {
     pub fn gut_change_delta_out(&mut self, g_idx: usize, d_del_val: del_type) {
         if g_idx < self.guts.len() {
             self.guts[g_idx].d_out = d_del_val;
