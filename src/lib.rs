@@ -43,7 +43,7 @@ nest! {
     #[derive(Debug, Clone, Serialize, Deserialize)]*
     #[derive(Default)]*
     pub struct Qop {
-        pub(crate) engine: 
+        pub(crate) engine:
             pub(crate) struct Engine<Mode = Edit> {
                 pub(crate) _engine_mode: PhantomData<Mode>,
                 pub name: String,
