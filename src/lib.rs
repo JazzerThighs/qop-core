@@ -10,8 +10,10 @@ use better_default::Default;
 use serde::{Deserialize, Serialize};
 use nestify::nest;
 
+#[repr(C)]
 #[derive(Debug, Clone)]
 pub(crate) struct Edit;
+#[repr(C)]
 pub(crate) struct Play;
 
 #[derive(Default, Clone)]
