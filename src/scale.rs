@@ -94,6 +94,7 @@ impl Scale<Edit> {
     pub(crate) fn swap_notes(&mut self, n1: usize, n2: usize) {
         if n1 < self.notes.len() && n2 < self.notes.len() {
             self.notes.swap(n1, n2);
+            self.refresh_note_nums();
         }
     }
 

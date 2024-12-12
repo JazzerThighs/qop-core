@@ -1,4 +1,4 @@
-use crate::{qopedit::{NewTrait, NewEnginePartParams}, *};
+use crate::{engineedit::{NewTrait, NewEnginePartParams}, *};
 use duplicate::duplicate_item;
 
 impl Engine<Edit> {

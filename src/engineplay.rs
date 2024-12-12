@@ -21,6 +21,8 @@ impl Engine<Edit> {
             v_multi: self.v_multi.clone(),
             f_multi: self.f_multi.clone(),
             c_multi: self.c_multi.clone(),
+            index_delta_bool: self.index_delta_bool.clone(),
+            extra_delta_bool: self.extra_delta_bool.clone(),
         }
     }
 }
