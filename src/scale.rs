@@ -1,5 +1,6 @@
 use crate::*;
 use better_default::Default;
+use duplicate::duplicate_item;
 
 #[rustfmt::skip]
 #[derive(Default)]
@@ -16,8 +17,8 @@ pub(crate) struct NewScaleParams {
                          note_class_set: Vec<String>,
 }
 
-impl Scale {
-    pub(crate) fn new(mut n: NewScaleParams) -> Self {
+impl Scale<Edit> {
+    pub(crate) fn new(mut n: NewScaleParams) -> Scale<Edit> {
         let mut new_scale: Scale = Scale {
             name: if let Some(some_name) = n.name {
                 some_name
@@ -35,7 +36,9 @@ impl Scale {
             octave_divisions: n.octave_divisions,
             note_class_set: n.note_class_set.clone(),
             notes: vec![Note::default(); n.note_amount],
+            ..Default::default()
         };
+        let mut new_scale_name: String = String::default();
         match n.scale_type {
             ScaleType::EqualTemperament => {
                 if n.octave_divisions != 0 {
@@ -57,12 +60,10 @@ impl Scale {
                         }
                     }
 
-                    if new_scale.name.is_empty() {
-                        new_scale.name = format!(
-                            "{}hz {}-Tone Equal Temperament Scale",
-                            n.tuning_hz, n.octave_divisions
-                        );
-                    }
+                    new_scale_name = format!(
+                        "{}hz {}-Tone Equal Temperament Scale",
+                        n.tuning_hz, n.octave_divisions
+                    );
                 }
             }
             ScaleType::Arbitrary => new_scale.name = String::from("Arbitrary Scale"),
@@ -79,31 +80,58 @@ impl Scale {
             ScaleType::ShonaMbira => todo!(),
             ScaleType::BohlenPierce => todo!(),
         }
+        if new_scale.name.is_empty() {
+            new_scale.name = new_scale_name;
+        }
         new_scale
     }
 
-    
-    pub fn change_scale_name(&mut self, new_scale_name: String) {
-        self.name = new_scale_name;
-    }
     pub(crate) fn refresh_note_nums(&mut self) {
         for (i, note) in self.notes.iter_mut().enumerate() {
             note.note_num = i;
         }
     }
-    pub fn swap_notes(&mut self, n1: usize, n2: usize) {
+    pub(crate) fn swap_notes(&mut self, n1: usize, n2: usize) {
         if n1 < self.notes.len() && n2 < self.notes.len() {
             self.notes.swap(n1, n2);
-        } 
-    }
-    pub fn change_note_frequency(&mut self, n_idx: usize, new_frequency: f64) {
-        if n_idx < self.notes.len() {
-            self.notes[n_idx].frequency = new_frequency;
         }
     }
-    pub fn change_note_color(&mut self, n_idx: usize, new_color: String) {
-        if n_idx < self.notes.len() {
-            self.notes[n_idx].color = new_color;
+
+    pub fn to_play(&self) -> Scale<Play> {
+        Scale {
+            _scale_mode: PhantomData,
+            name: self.name.clone(),
+            description: self.description.clone(),
+            scale_type: self.scale_type.clone(),
+            reference_note: self.reference_note.clone(),
+            tuning_hz: self.tuning_hz.clone(),
+            octave_divisions: self.octave_divisions.clone(),
+            note_class_set: self.note_class_set.clone(),
+            notes: self.notes.clone(),
         }
+    }
+}
+
+#[duplicate_item(
+    change_note_param         new_note_param    param_type note_param;
+    [change_note_name]        [new_name]        [String]   [name];
+    [change_note_description] [new_description] [String]   [description];
+    [change_note_color]       [new_color]       [String]   [color];
+    [change_note_frequency]   [new_frequency]   [f64]      [frequency];
+)]
+impl Scale<Edit> {
+    pub(crate) fn change_note_param(&mut self, n_idx: usize, new_note_param: param_type) {
+        if n_idx < self.notes.len() {
+            self.notes[n_idx].note_param = new_note_param;
+        }
+    }
+}
+
+impl Scale<Edit> {
+    pub fn insert_note(&mut self, note_idx: usize) {
+        if note_idx <= self.notes.len() {
+            self.notes.insert(note_idx, Note::default());
+        }
+        self.refresh_note_nums();             
     }
 }

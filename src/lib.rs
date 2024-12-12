@@ -1,7 +1,6 @@
 #![allow(dead_code)]
-mod old_crap_for_reuse;
-mod qopedit;
-mod qopplay;
+mod engineedit;
+mod engineplay;
 mod scale;
 
 use std::marker::PhantomData;
@@ -9,6 +8,7 @@ use winit::keyboard::KeyCode;
 use better_default::Default;
 use serde::{Deserialize, Serialize};
 use nestify::nest;
+use duplicate::duplicate_item;
 use scale::NewScaleParams;
 
 #[repr(C)]
@@ -22,12 +22,16 @@ nest! {
     #[derive(Debug, Clone, Serialize, Deserialize)]*
     #[derive(Default)]*
     pub struct Qop {
+        pub(crate) name: String,
+        pub(crate) description: String,
         pub(crate) engine:
             pub(crate) struct Engine<Mode = Edit> {
                 pub(crate) _engine_mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
                 pub(crate) dig_inputs:  Vec<KeyCode>,
+                pub(crate) index_delta_bool: bool,
+                pub(crate) extra_delta_bool: bool,
                 pub(crate) gut_max_pressed: usize,
                 pub(crate) gut_min_pressed: usize,
                 pub(crate) gut_radio_mode: bool,
@@ -133,7 +137,8 @@ nest! {
             },
         #[default(Scale::new(NewScaleParams::default()))]
         pub(crate) scale:
-            pub(crate) struct Scale {
+            pub(crate) struct Scale<Mode = Edit> {
+                pub(crate) _scale_mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
                 pub(crate) scale_type: 
@@ -167,6 +172,22 @@ nest! {
                         pub(crate) frequency: f64,
                     }
                 >,
-            }
+            },
+    }
+}
+
+#[duplicate_item(
+    change_string_param         new_string_param         string_param;
+    [change_qop_name]           [new_qop_name]           [name];
+    [change_qop_description]    [new_qop_description]    [description];
+    [change_scale_name]         [new_scale_name]         [scale.name];
+    [change_scale_description]  [new_scale_description]  [scale.description];
+    [change_engine_name]        [new_engine_name]        [engine.name];
+    [change_engine_description] [new_engine_description] [engine.description];
+    
+)]
+impl Qop {   
+    pub fn change_string_param(&mut self, new_string_param: String) {
+        self.string_param = new_string_param;
     }
 }

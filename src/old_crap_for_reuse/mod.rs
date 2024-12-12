@@ -1,2 +1,0 @@
-mod midi;
-mod scale;

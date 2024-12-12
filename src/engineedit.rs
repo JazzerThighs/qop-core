@@ -16,6 +16,7 @@ pub(crate) struct NewEnginePartParams {
     pub(crate) trnsp_idx: usize,
     pub(crate) c_btn_len: usize,
 }
+
 impl NewEnginePartParams {
     pub(crate) fn new(engine: &Engine) -> Self {
         NewEnginePartParams {
