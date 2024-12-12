@@ -1,4 +1,4 @@
-use crate::{qopedit::NewTrait, *};
+use crate::{qopedit::{NewTrait, NewEnginePartParams}, *};
 use duplicate::duplicate_item;
 
 #[duplicate_item(
@@ -13,7 +13,7 @@ impl Engine<Edit> {
             && set_idx < self.guts[g_idx].onefield.len()
             && trnsp_idx <= self.guts[g_idx].onefield[set_idx].trnsp_all.len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx].onefield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut n);
         }
     }
@@ -69,7 +69,7 @@ impl Engine<Edit> {
                     .trnsp_one
                     .len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx].onefield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut n);
         }
     }
@@ -148,7 +148,7 @@ impl Engine<Edit> {
 impl Engine<Edit> {
     pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
         if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
-            let mut n: NewStuffPointers = NewStuffPointers::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut n);
         }
     }
@@ -183,7 +183,7 @@ impl Engine<Edit> {
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx <= self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut n);
         }
     }
@@ -306,7 +306,7 @@ impl<T: Default, U: Default> SetType<T, U>
 where
     Trnsp<T, U>: NewTrait,
 {
-    pub(crate) fn trnsp_all_insert_t(&mut self, trnsp_idx: usize, n: &mut NewStuffPointers) {
+    pub(crate) fn trnsp_all_insert_t(&mut self, trnsp_idx: usize, n: &mut NewEnginePartParams) {
         self.trnsp_all.insert(trnsp_idx, Trnsp::new(n))
     }
     pub(crate) fn trnsp_all_remove_t(&mut self, trnsp_idx: usize) {
@@ -327,7 +327,7 @@ where
         &mut self,
         del_idx: usize,
         trnsp_idx: usize,
-        n: &mut NewStuffPointers,
+        n: &mut NewEnginePartParams,
     ) {
         self.deltafield[del_idx]
             .trnsp_one

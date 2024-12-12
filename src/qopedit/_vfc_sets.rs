@@ -1,4 +1,4 @@
-use crate::{qopedit::NewTrait, *};
+use crate::{qopedit::{NewTrait, NewEnginePartParams}, *};
 use duplicate::duplicate_item;
 
 #[duplicate_item(
@@ -10,9 +10,7 @@ use duplicate::duplicate_item;
 impl Engine<Edit> {
     pub fn multi_insert_set(&mut self, set_idx: usize) {
         if set_idx <= self.multifield.len() {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
-            n.c_btn_len = 1;
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield.insert(set_idx, SetType::new(&mut n));
         }
     }
@@ -70,9 +68,7 @@ impl Engine<Edit> {
         if g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
-            n.c_btn_len = 1;
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx].onefield.insert(set_idx, SetType::new(&mut n));
         }
     }
@@ -143,8 +139,7 @@ impl Engine<Edit> {
 impl Engine<Edit> {
     pub fn vf_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         if set_idx < self.multifield.len() && btn_idx < self.multifield[set_idx].buttons.len() {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield[set_idx].buttons.insert(btn_idx, VFBtn::new(&mut n));
         }
     }
@@ -153,7 +148,7 @@ impl Engine<Edit> {
             && set_idx < self.guts[g_idx].onefield.len()
             && btn_idx < self.guts[g_idx].onefield[set_idx].buttons.len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx].onefield[set_idx].buttons.insert(btn_idx, VFBtn::new(&mut n));
         }
     }
@@ -170,8 +165,7 @@ impl Engine<Edit> {
         if set_idx < self.c_multi.len()
             && c_idx <= self.c_multi[set_idx].combos.len() 
         {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             n.c_btn_len = self.c_multi[set_idx].buttons.len();
             self.c_multi[set_idx].insert_combo(c_idx, &mut n);
         }
@@ -195,8 +189,7 @@ impl Engine<Edit> {
         if set_idx < self.c_multi.len()
             && c_idx <= self.c_multi[set_idx].combos.len()
         {
-            let mut n: NewStuffPointers = NewStuffPointers::default();
-            n.guts_len = self.guts.len();
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             n.c_btn_len = self.c_multi[set_idx].buttons.len();
             self.guts[g_idx].c_one[set_idx].insert_combo(c_idx, &mut n);
         }
@@ -257,7 +250,7 @@ impl<T: Default, U: Default> VFSet<T, U>
 where
     VFBtn<T, U>: NewTrait,
 {
-    pub(crate) fn insert_btn(&mut self, btn_idx: usize, n: &mut NewStuffPointers) {
+    pub(crate) fn insert_btn(&mut self, btn_idx: usize, n: &mut NewEnginePartParams) {
         self.buttons.insert(btn_idx, VFBtn::new(n));
         self.pressed.insert(btn_idx, false);
     }
@@ -285,7 +278,7 @@ where
             self.combos[c].combo.remove(btn_idx);
         }
     }
-    pub(crate) fn insert_combo(&mut self, c_idx: usize, n: &mut NewStuffPointers) {
+    pub(crate) fn insert_combo(&mut self, c_idx: usize, n: &mut NewEnginePartParams) {
         self.combos.insert(c_idx, Combo::new(n));
     }
     pub(crate) fn remove_combo(&mut self, c_idx: usize) {

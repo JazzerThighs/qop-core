@@ -9,36 +9,13 @@ use winit::keyboard::KeyCode;
 use better_default::Default;
 use serde::{Deserialize, Serialize};
 use nestify::nest;
+use scale::NewScaleParams;
 
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub(crate) struct Edit;
 #[repr(C)]
 pub(crate) struct Play;
-
-#[derive(Default, Clone)]
-pub(crate) struct NewStuffPointers {
-    // Engine Parts
-    pub(crate) guts_len: usize,
-    pub(crate) c_btn_len: usize,
-
-    // Scale Parts
-    pub(crate) new_reference_note: usize,
-    pub(crate) new_tuning_hz: f64,
-    pub(crate) new_octave_divisions: usize,
-    pub(crate) new_note_class_set: Vec<String>,
-    pub(crate) octave: usize,
-    pub(crate) note_amount: usize,
-}
-
-impl NewStuffPointers {
-    pub(crate) fn new(engine: &Engine) -> Self {
-        NewStuffPointers {
-            guts_len: engine.guts.len(),
-            ..Default::default()
-        }
-    }
-}
 
 nest! {
     #[repr(C)]*
@@ -154,15 +131,16 @@ nest! {
                 pub(crate) f_multi: Vec<VFSet<Vec<i64>, Vec<f64>>>,
                 pub(crate) c_multi: Vec<ComboSet<Vec<i64>, Vec<f64>>>,
             },
+        #[default(Scale::new(NewScaleParams::default()))]
         pub(crate) scale:
             pub(crate) struct Scale {
                 pub name: String,
                 pub description: String,
                 pub(crate) scale_type: 
                     pub(crate) enum ScaleType {
-                        Arbitrary,
                         #[default]
                         EqualTemperament,
+                        Arbitrary,
                         JustIntonation,
                         Pythagorean5Limit,
                         Werckmeister,
@@ -176,20 +154,17 @@ nest! {
                         ShonaMbira,
                         BohlenPierce,
                     },
-                #[default(69)]
                 pub(crate) reference_note: usize,
-                #[default(440.0f64)]
                 pub(crate) tuning_hz: f64,
-                #[default(12)]
                 pub(crate) octave_divisions: usize,
-                #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
                 pub(crate) note_class_set: Vec<String>,
                 pub(crate) notes: Vec<
                     pub(crate) struct Note {
                         pub name: String,
                         pub description: String,
-                        pub frequency: f64,
+                        pub(crate) note_num: usize,
                         pub color: String,
+                        pub(crate) frequency: f64,
                     }
                 >,
             }

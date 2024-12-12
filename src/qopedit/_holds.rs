@@ -42,7 +42,7 @@ impl Engine<Edit> {
         if key_idx_val < self.dig_inputs.len()
             && g_idx < self.guts.len()
             && set_idx < self.guts[g_idx].onefield.len()
-            && self.guts[g_idx].onefield[set_idx]
+            && !self.guts[g_idx].onefield[set_idx]
                 .holds
                 .holdfield
                 .togs
@@ -70,7 +70,7 @@ impl Engine<Edit> {
     pub fn multi_hold_insert_dig(&mut self, set_idx: usize, key_idx_val: usize) {
         if key_idx_val < self.dig_inputs.len()
             && set_idx < self.multifield.len()
-            && self.multifield[set_idx]
+            && !self.multifield[set_idx]
                 .holds
                 .holdfield
                 .togs

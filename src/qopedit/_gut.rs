@@ -1,4 +1,4 @@
-use crate::{qopedit::NewTrait, *};
+use crate::{qopedit::{NewTrait, NewEnginePartParams}, *};
 use duplicate::duplicate_item;
 
 impl Engine<Edit> {
@@ -47,7 +47,7 @@ impl Engine<Edit> {
     }
     pub fn gut_insert_trnsp_t(&mut self, g_idx: usize, trnsp_idx: usize) {
         if g_idx < self.guts.len() && trnsp_idx <= self.guts[g_idx].trnsp_gut.len() {
-            let mut n: NewStuffPointers = NewStuffPointers::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx]
                 .trnsp_gut
                 .insert(trnsp_idx, Trnsp::new(&mut n));
@@ -61,7 +61,7 @@ impl Engine<Edit> {
     pub fn gut_insert_trnsp_dig(&mut self, g_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len()
             && trnsp_idx < self.guts[g_idx].trnsp_gut.len()
-            && self.guts[g_idx].trnsp_gut[trnsp_idx]
+            && !self.guts[g_idx].trnsp_gut[trnsp_idx]
                 .triggers
                 .contains(&key_idx_val)
         {
