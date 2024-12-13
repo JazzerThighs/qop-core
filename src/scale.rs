@@ -128,10 +128,15 @@ impl Scale<Edit> {
     }
 }
 
+#[duplicate_item( 
+    insertremove_note insertremove_idx;
+    [insert_note]     [insert(n_idx, Note::default())];
+    [remove_note]     [remove(n_idx)];
+)]
 impl Scale<Edit> {
-    pub fn insert_note(&mut self, note_idx: usize) {
-        if note_idx <= self.notes.len() {
-            self.notes.insert(note_idx, Note::default());
+    pub fn insertremove_note(&mut self, n_idx: usize) {
+        if n_idx <= self.notes.len() {
+            self.notes.insertremove_idx;
         }
         self.refresh_note_nums();             
     }
