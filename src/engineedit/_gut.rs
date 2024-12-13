@@ -1,33 +1,36 @@
-use crate::{engineedit::{NewTrait, NewEnginePartParams}, *};
+use crate::{
+    engineedit::{NewEnginePartParams, NewTrait},
+    *,
+};
 use duplicate::duplicate_item;
 
 impl Engine<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
             self.guts.insert(g_idx, Gut::default());
-            for set in 0..self.v_multi.len() {
-                self.v_multi[set].insert_gut(g_idx);
-            }
-            for set in 0..self.f_multi.len() {
-                self.f_multi[set].insert_gut(g_idx);
-            }
-            for set in 0..self.c_multi.len() {
-                self.c_multi[set].insert_gut(g_idx);
-            }
+            self.v_multi
+                .iter_mut()
+                .for_each(|element| element.insert_gut(g_idx));
+            self.f_multi
+                .iter_mut()
+                .for_each(|element| element.insert_gut(g_idx));
+            self.c_multi
+                .iter_mut()
+                .for_each(|element| element.insert_gut(g_idx));
         }
     }
     pub fn gut_remove_g(&mut self, g_idx: usize) {
         if self.guts.len() > 1 && g_idx < self.guts.len() {
             self.guts.remove(g_idx);
-            for set in 0..self.v_multi.len() {
-                self.v_multi[set].remove_gut(g_idx);
-            }
-            for set in 0..self.f_multi.len() {
-                self.f_multi[set].remove_gut(g_idx);
-            }
-            for set in 0..self.c_multi.len() {
-                self.c_multi[set].remove_gut(g_idx);
-            }
+            self.v_multi
+                .iter_mut()
+                .for_each(|element| element.remove_gut(g_idx));
+            self.f_multi
+                .iter_mut()
+                .for_each(|element| element.remove_gut(g_idx));
+            self.c_multi
+                .iter_mut()
+                .for_each(|element| element.remove_gut(g_idx));
         }
     }
     pub fn gut_insert_dig(&mut self, g_idx: usize, key_idx_val: usize) {
@@ -78,15 +81,15 @@ impl Engine<Edit> {
         }
     }
     pub(crate) fn check_multi_delta_lengths(&self) {
-        for set in 0..self.v_multi.len() {
-            self.v_multi[set].check_multi_delta_lengths(self.guts.len())
-        }
-        for set in 0..self.f_multi.len() {
-            self.f_multi[set].check_multi_delta_lengths(self.guts.len())
-        }
-        for set in 0..self.c_multi.len() {
-            self.c_multi[set].check_multi_delta_lengths(self.guts.len())
-        }
+        self.v_multi
+            .iter()
+            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
+        self.f_multi
+            .iter()
+            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
+        self.c_multi
+            .iter()
+            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
     }
 }
 
@@ -107,9 +110,7 @@ impl Engine<Edit> {
         }
     }
     pub fn gut_trnsp_change_deltas(&mut self, g_idx: usize, trnsp_idx: usize, d_del_val: d_type) {
-        if g_idx < self.guts.len()
-            && trnsp_idx < self.guts[g_idx].trnsp_gut.len()
-        {
+        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_gut.len() {
             self.guts[g_idx].trnsp_gut[trnsp_idx].d_field = d_del_val;
         }
     }

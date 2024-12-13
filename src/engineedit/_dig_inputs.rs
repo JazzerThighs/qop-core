@@ -1,5 +1,6 @@
 use crate::*;
 use duplicate::duplicate_item;
+use std::cmp::Ordering::{Equal, Greater, Less};
 use winit::keyboard::KeyCode;
 
 macro_rules! assert_bool_custom {
@@ -47,48 +48,36 @@ impl Engine<Edit> {
         }
     }
     pub fn dig_inputs_purge_dig(&mut self, key_code: KeyCode) {
-        for i in 0..self.dig_inputs.len() {
-            if self.dig_inputs[i] == key_code {
-                let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| {
-                    key_idx_vec.retain_mut(|k: &mut usize| -> bool {
-                        if *k < i {
-                            return true;
-                        } else if *k == i {
-                            return false;
-                        } else {
-                            *k -= 1;
-                            return true;
-                        }
-                    })
-                };
-                Engine::dig_inputs_global_vec_manip(self, dig_idx_purge);
-                self.dig_inputs.remove(i);
-                break;
-            }
+        if let Some(i) = self.dig_inputs.iter().position(|&key| key == key_code) {
+            let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| {
+                key_idx_vec.retain_mut(|k: &mut usize| match (*k).cmp(&i) {
+                    Less => true,
+                    Equal => false,
+                    Greater => {
+                        *k -= 1;
+                        true
+                    }
+                })
+            };
+            Engine::dig_inputs_global_vec_manip(self, dig_idx_purge);
+            self.dig_inputs.remove(i);
         }
     }
     pub fn dig_inputs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode, swap_all_fields: bool) {
         // This function swaps 2 digital input values for 2 existing inputs in the dig_inputs field.
         // swap_all_fields == true -> swaps the nodes of 2 existing keys in all of rest of the Qop's fields,  so all of those affected usize values would be now pointing to the same keys as before.
         // swap_all_fields == false -> leaves all of the rest of the Qop's fields alone, so all of those affected usize values would be now pointing to swapped keys.
-        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
-        for i in 0..self.dig_inputs.len() {
-            if self.dig_inputs[i] == kc1 {
-                i1 = Some(i);
-            } else if self.dig_inputs[i] == kc2 {
-                i2 = Some(i);
-            }
-        }
-        if i1.is_some() && i2.is_some() {
-            (self.dig_inputs[i1.unwrap()], self.dig_inputs[i2.unwrap()]) =
-                (self.dig_inputs[i2.unwrap()], self.dig_inputs[i1.unwrap()]);
+        let i1 = self.dig_inputs.iter().position(|&key| key == kc1);
+        let i2 = self.dig_inputs.iter().position(|&key| key == kc2);
+        if let (Some(i1), Some(i2)) = (i1, i2) {
+            self.dig_inputs.swap(i1, i2);
             if swap_all_fields {
                 let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| {
                     k_idx_vec.iter_mut().for_each(|k: &mut usize| {
-                        if *k == i1.unwrap() {
-                            *k = i2.unwrap();
-                        } else if *k == i2.unwrap() {
-                            *k = i1.unwrap();
+                        match ((*k).cmp(&i1), (*k).cmp(&i2)) {
+                            (Equal, _) => *k = i2,
+                            (_, Equal) => *k = i1,
+                            (_, _) => {}
                         }
                     });
                 };
@@ -97,19 +86,13 @@ impl Engine<Edit> {
         }
     }
     pub fn dig_inputs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
-        let (mut i1, mut i2): (Option<usize>, Option<usize>) = (None, None);
-        for i in 0..self.dig_inputs.len() {
-            if self.dig_inputs[i] == kc_old {
-                i1 = Some(i);
-            } else if self.dig_inputs[i] == kc_new {
-                i2 = Some(i);
-            }
-        }
-        if i1.is_some() && i2.is_some() {
+        let i1 = self.dig_inputs.iter().position(|&key| key == kc_old);
+        let i2 = self.dig_inputs.iter().position(|&key| key == kc_new);
+        if let (Some(i1), Some(i2)) = (i1, i2) {
             let k_idx_update = |k_idx_vec: &mut Vec<usize>| {
                 k_idx_vec.iter_mut().for_each(|k: &mut usize| {
-                    if *k == i1.unwrap() {
-                        *k = i2.unwrap();
+                    if *k == i1 {
+                        *k = i2;
                     }
                 });
                 k_idx_vec.sort();
