@@ -11,6 +11,7 @@ pub(crate) struct NewScaleParams {
     #[default(69usize)]  reference_note: usize,
     #[default(440.0f64)] tuning_hz: f64,
     #[default(12usize)]  octave_divisions: usize,
+                         interval_ratios: Vec<f64>,
     #[default(-2i64)]    octave_label: i64,
     #[default(128usize)] note_amount: usize,
     #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
@@ -20,12 +21,12 @@ pub(crate) struct NewScaleParams {
 impl Scale<Edit> {
     pub(crate) fn new(mut n: NewScaleParams) -> Scale<Edit> {
         let mut new_scale: Scale = Scale {
-            name: if let Some(some_name) = n.name {
+            name: if let Some(some_name) = n.name.clone() {
                 some_name
             } else {
                 String::default()
             },
-            description: if let Some(some_description) = n.description {
+            description: if let Some(some_description) = n.description.clone() {
                 some_description
             } else {
                 String::default()
@@ -38,35 +39,35 @@ impl Scale<Edit> {
             notes: vec![Note::default(); n.note_amount],
             ..Default::default()
         };
-        let mut new_scale_name: String = String::default();
-        match n.scale_type {
-            ScaleType::EqualTemperament => {
-                if n.octave_divisions != 0 {
-                    let mut note_class_idx: usize = 0;
-                    for i in 0..n.note_amount {
-                        let distance_from_ref: i64 = i as i64 - n.reference_note as i64;
-                        new_scale.notes[i].frequency = n.tuning_hz
-                            * 2.0f64.powf((distance_from_ref as f64) / (n.octave_divisions as f64));
-                        new_scale.notes[i].note_num = i;
-
-                        if !n.note_class_set.is_empty() {
-                            new_scale.notes[i].name =
-                                format!("{}{}", n.note_class_set[note_class_idx], n.octave_label);
-                            note_class_idx += 1;
-                            if note_class_idx == n.note_class_set.len() {
-                                note_class_idx = 0;
-                                n.octave_label += 1;
-                            }
+        let new_scale_name: String;
+        (new_scale, new_scale_name) = match n.scale_type {
+            ScaleType::EqualTemperament => {if n.octave_divisions != 0 {
+                let mut note_class_idx: usize = 0;
+                for i in 0..n.note_amount {
+                    let distance_from_ref: i64 = i as i64 - n.reference_note as i64;
+                    new_scale.notes[i].frequency =
+                        n.tuning_hz * 2.0f64.powf((distance_from_ref as f64) / (n.octave_divisions as f64));
+                    new_scale.notes[i].note_num = i;
+        
+                    if !n.note_class_set.is_empty() {
+                        new_scale.notes[i].name =
+                            format!("{}{}", n.note_class_set[note_class_idx], n.octave_label);
+                        note_class_idx += 1;
+                        if note_class_idx == n.note_class_set.len() {
+                            note_class_idx = 0;
+                            n.octave_label += 1;
                         }
                     }
-
-                    new_scale_name = format!(
-                        "{}hz {}-Tone Equal Temperament Scale",
-                        n.tuning_hz, n.octave_divisions
-                    );
                 }
             }
-            ScaleType::Arbitrary => new_scale.name = String::from("Arbitrary Scale"),
+            (
+                new_scale,
+                format!(
+                    "{}hz {}-Tone Equal Temperament Scale",
+                    n.tuning_hz, n.octave_divisions
+                ),
+            )},
+            ScaleType::Arbitrary => todo!(),
             ScaleType::JustIntonation => todo!(),
             ScaleType::Pythagorean5Limit => todo!(),
             ScaleType::Werckmeister => todo!(),
@@ -79,7 +80,7 @@ impl Scale<Edit> {
             ScaleType::Hijaz => todo!(),
             ScaleType::ShonaMbira => todo!(),
             ScaleType::BohlenPierce => todo!(),
-        }
+        };
         if new_scale.name.is_empty() {
             new_scale.name = new_scale_name;
         }

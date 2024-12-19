@@ -1,4 +1,4 @@
-use crate::{engineedit::{NewTrait, NewEnginePartParams}, *};
+use crate::{engine::_edit::{NewTrait, NewEnginePartParams}, *};
 use duplicate::duplicate_item;
 
 #[duplicate_item(

@@ -1,6 +1,5 @@
 #![allow(dead_code)]
-mod engineedit;
-mod engineplay;
+mod engine;
 mod scale;
 
 use std::marker::PhantomData;

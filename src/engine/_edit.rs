@@ -25,36 +25,6 @@ impl NewEnginePartParams {
             ..Default::default()
         }
     }
-    /*pub(crate) fn new_validate_idxs(
-        gut_len: Option<usize>,
-        gut_idx: Option<usize>,
-        key_idx_val: Option<usize>,
-        dig_vec_len: Option<usize>,
-        set_idx: Option<usize>,
-        del_idx: Option<usize>,
-        trnsp_idx: Option<usize>,
-        c_btn_len: Option<usize>,
-    ) -> Result<NewEnginePartParams, ()> {
-        match (gut_len,     gut_idx,     key_idx_val,   dig_vec_len,   set_idx,     del_idx,     trnsp_idx,   c_btn_len    ) {
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len), Some(s_idx), Some(d_idx), Some(t_idx), Some(c_b_len)) => todo!(),
-              (Some(g_len), Some(g_idx),
-              (Some(g_len), Some(g_idx),                                                         Some(t_idx),
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len), 
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len),                           Some(t_idx),
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len), Some(s_idx), 
-              (Some(g_len), Some(g_idx),                               Some(s_idx),              Some(t_idx),
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len), Some(s_idx),              Some(t_idx),
-              (Some(g_len), Some(g_idx),                               Some(s_idx), Some(d_idx), Some(t_idx),
-              (Some(g_len), Some(g_idx), Some(k_i_val), Some(d_i_len), Some(s_idx), Some(d_idx), Some(t_idx),
-              (                          Some(k_i_val), Some(d_i_len),                           Some(t_idx), 
-              (                                                        Some(s_idx),
-              (                          Some(k_i_val), Some(d_i_len), Some(s_idx),
-              (                                                        Some(s_idx),              Some(t_idx),
-              (                          Some(k_i_val), Some(d_i_len), Some(s_idx),              Some(t_idx),
-              (                                                        Some(s_idx), Some(d_idx), Some(t_idx),
-              (                          Some(k_i_val), Some(d_i_len), Some(s_idx), Some(d_idx), Some(t_idx),
-        }
-    }*/
 }
 
 pub(crate) trait NewTrait: Default {

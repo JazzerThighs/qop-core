@@ -1,5 +1,5 @@
 use crate::{
-    engineedit::{NewEnginePartParams, NewTrait},
+    engine::_edit::{NewEnginePartParams, NewTrait},
     *,
 };
 use duplicate::duplicate_item;
