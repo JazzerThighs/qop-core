@@ -31,15 +31,7 @@ pub(crate) trait NewTrait: Default {
     fn new(n: &mut NewEnginePartParams) -> Self;
 }
 
-impl NewTrait for VFSet<i64, f64> {
-    fn new(n: &mut NewEnginePartParams) -> Self {
-        VFSet {
-            buttons: vec![VFBtn::new(n)],
-            ..Default::default()
-        }
-    }
-}
-impl NewTrait for VFSet<Vec<i64>, Vec<f64>> {
+impl NewTrait for VFSet {
     fn new(n: &mut NewEnginePartParams) -> Self {
         VFSet {
             buttons: vec![VFBtn::new(n)],
@@ -50,12 +42,7 @@ impl NewTrait for VFSet<Vec<i64>, Vec<f64>> {
     }
 }
 
-impl NewTrait for VFBtn<i64, f64> {
-    fn new(_n: &mut NewEnginePartParams) -> Self {
-        VFBtn::default()
-    }
-}
-impl NewTrait for VFBtn<Vec<i64>, Vec<f64>> {
+impl NewTrait for VFBtn {
     fn new(n: &mut NewEnginePartParams) -> Self {
         VFBtn {
             i_delta: vec![0i64; n.guts_len],
@@ -67,16 +54,7 @@ impl NewTrait for VFBtn<Vec<i64>, Vec<f64>> {
     }
 }
 
-impl NewTrait for ComboSet<i64, f64> {
-    fn new(n: &mut NewEnginePartParams) -> Self {
-        n.c_btn_len = 1usize;
-        ComboSet {
-            combos: vec![Combo::new(n)],
-            ..Default::default()
-        }
-    }
-}
-impl NewTrait for ComboSet<Vec<i64>, Vec<f64>> {
+impl NewTrait for ComboSet {
     fn new(n: &mut NewEnginePartParams) -> Self {
         n.c_btn_len = 1usize;
         ComboSet {
@@ -88,15 +66,7 @@ impl NewTrait for ComboSet<Vec<i64>, Vec<f64>> {
     }
 }
 
-impl NewTrait for Combo<i64, f64> {
-    fn new(n: &mut NewEnginePartParams) -> Self {
-        Combo {
-            combo: vec![false; n.c_btn_len],
-            ..Default::default()
-        }
-    }
-}
-impl NewTrait for Combo<Vec<i64>, Vec<f64>> {
+impl NewTrait for Combo {
     fn new(n: &mut NewEnginePartParams) -> Self {
         Combo {
             combo: vec![false; n.c_btn_len],

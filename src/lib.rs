@@ -65,75 +65,72 @@ nest! {
                                 pub(crate) i_delta: T,
                                 pub(crate) x_delta: U,
                             } ||<i64, f64>
-                        >,
-                        pub(crate) v_one: Vec<
-                            pub(crate) struct VFSet<T: Default, U: Default> {
-                                pub name: String,
-                                pub description: String,
-                                pub(crate) buttons: Vec<
-                                    pub(crate) struct VFBtn<T: Default, U: Default> {
-                                        pub name: String,
-                                        pub description: String,
-                                        pub(crate) togs: Vec<usize>,
-                                        pub(crate) i_delta: T,
-                                        pub(crate) x_delta: U,
-                                        pub(crate) trnsp_one: Vec<Trnsp<T, U>>,
-                                        pub(crate) i_mem: T,
-                                        pub(crate) x_mem: U,
-                                    } ||<T, U>
-                                >,
-                                #[default(vec![false])]
-                                pub(crate) pressed: Vec<bool>,
-                                pub(crate) trnsp_all: Vec<Trnsp<T, U>>,
-                                pub(crate) i_mem: T,
-                                pub(crate) x_mem: U,
-                                pub(crate) holds: HoldBtns,
-                                pub(crate) max_pressed: usize,
-                                pub(crate) min_pressed: usize,
-                                pub(crate) radio_mode: bool,
-                            } ||<i64, f64>
-                        >,
-                        pub(crate) f_one: Vec<VFSet<i64, f64>>,
-                        pub(crate) c_one: Vec<
-                            pub(crate) struct ComboSet<T: Default, U: Default> {
-                                pub name: String,
-                                pub description: String,
-                                #[default(vec![ComboTog::default()])]
-                                pub(crate) buttons: Vec<
-                                    pub(crate) struct ComboTog {
-                                        pub name: String,
-                                        pub description: String,
-                                        togs: Vec<usize>,
-                                    }
-                                >,
-                                #[default(vec![false])]
-                                pub(crate) pressed: Vec<bool>,
-                                pub(crate) combos: Vec<
-                                    pub(crate) struct Combo<T: Default, U: Default> {
-                                        pub name: String,
-                                        pub description: String,
-                                        pub(crate) combo: Vec<bool>,
-                                        pub(crate) i_delta: T,
-                                        pub(crate) x_delta: U,
-                                        pub(crate) trnsp_one: Vec<Trnsp<T, U>>,
-                                        pub(crate) i_mem: T,
-                                        pub(crate) x_mem: U,
-                                    } ||<T, U>
-                                >,
-                                pub(crate) holds: HoldBtns,
-                                pub(crate) trnsp_all: Vec<Trnsp<T, U>>,
-                                pub(crate) i_mem: T,
-                                pub(crate) x_mem: U,
-                                pub(crate) max_pressed: usize,
-                                pub(crate) min_pressed: usize,
-                                pub(crate) radio_mode: bool,
-                            }||<i64, f64>
                         >
                     }
                 >,
-                pub(crate) v_multi: Vec<VFSet<Vec<i64>, Vec<f64>>>,
-                pub(crate) f_multi: Vec<VFSet<Vec<i64>, Vec<f64>>>,
-                pub(crate) c_multi: Vec<ComboSet<Vec<i64>, Vec<f64>>>,
+                pub(crate) v_multi: Vec<
+                    pub(crate) struct VFSet {
+                        pub name: String,
+                        pub description: String,
+                        pub(crate) buttons: Vec<
+                            pub(crate) struct VFBtn {
+                                pub name: String,
+                                pub description: String,
+                                pub(crate) togs: Vec<usize>,
+                                pub(crate) i_delta: Vec<i64>,
+                                pub(crate) x_delta: Vec<f64>,
+                                pub(crate) trnsp_one: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
+                                pub(crate) i_mem: Vec<i64>,
+                                pub(crate) x_mem: Vec<f64>,
+                            }
+                        >,
+                        #[default(vec![false])]
+                        pub(crate) pressed: Vec<bool>,
+                        pub(crate) trnsp_all: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
+                        pub(crate) i_mem: Vec<i64>,
+                        pub(crate) x_mem: Vec<f64>,
+                        pub(crate) holds: HoldBtns,
+                        pub(crate) max_pressed: usize,
+                        pub(crate) min_pressed: usize,
+                        pub(crate) radio_mode: bool,
+                    }
+                >,
+                pub(crate) f_multi: Vec<VFSet>,
+                pub(crate) c_multi: Vec<
+                    pub(crate) struct ComboSet {
+                        pub name: String,
+                        pub description: String,
+                        #[default(vec![ComboTog::default()])]
+                        pub(crate) buttons: Vec<
+                            pub(crate) struct ComboTog {
+                                pub name: String,
+                                pub description: String,
+                                togs: Vec<usize>,
+                            }
+                        >,
+                        #[default(vec![false])]
+                        pub(crate) pressed: Vec<bool>,
+                        pub(crate) combos: Vec<
+                            pub(crate) struct Combo {
+                                pub name: String,
+                                pub description: String,
+                                pub(crate) combo: Vec<bool>,
+                                pub(crate) i_delta: Vec<i64>,
+                                pub(crate) x_delta: Vec<f64>,
+                                pub(crate) trnsp_one: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
+                                pub(crate) i_mem: Vec<i64>,
+                                pub(crate) x_mem: Vec<f64>,
+                            }
+                        >,
+                        pub(crate) holds: HoldBtns,
+                        pub(crate) trnsp_all: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
+                        pub(crate) i_mem: Vec<i64>,
+                        pub(crate) x_mem: Vec<f64>,
+                        pub(crate) max_pressed: usize,
+                        pub(crate) min_pressed: usize,
+                        pub(crate) radio_mode: bool,
+                    }
+                >,
             },
         #[default(Scale::new(NewScaleParams::default()))]
         pub(crate) scale:

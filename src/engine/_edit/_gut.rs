@@ -123,7 +123,7 @@ impl Engine<Edit> {
     [ComboSet] [insert_gut]           [insert(g_idx, 0i64)] [insert(g_idx, 0.0f64)] [combos];
     [ComboSet] [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [combos];
 )]
-impl SetType<Vec<i64>, Vec<f64>> {
+impl SetType {
     pub(crate) fn multi_insertremove_gut(&mut self, g_idx: usize) {
         for del_idx in 0..self.deltafield.len() {
             self.deltafield[del_idx].i_delta.insertremove_i;
@@ -167,7 +167,7 @@ macro_rules! assert_eq_expr {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl SetType<Vec<i64>, Vec<f64>> {
+impl SetType {
     pub(crate) fn check_multi_delta_lengths(&self, guts_len: usize) {
         for d in 0..self.field.len() {
             assert_eq_expr!(self.field[d].i_delta.len(), guts_len);
