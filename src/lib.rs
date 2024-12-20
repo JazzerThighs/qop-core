@@ -142,7 +142,6 @@ nest! {
                 pub description: String,
                 pub(crate) reference_note: usize,
                 pub(crate) tuning_hz: f64,
-                pub(crate) octave_divisions: usize,
                 pub(crate) note_class_set: Vec<String>,
                 pub(crate) notes: Vec<
                     pub(crate) struct Note {

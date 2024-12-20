@@ -10,29 +10,13 @@ nest! {
         description: Option<String>,
         scale_type: 
             pub enum ScaleType {
-                #[default]
-                EqualTemperament,
-                Pythagorean,    // 3-Limit Intonation
-                JustIntonation, // 5-Limit Intonation
-                SeptimalMean,   // 7-Limit Intonation
-                UndecimalMean,  // 11-Limit Intonation
-                TridecimalMean, // 13-Limit Intonation
-                Septendecimal,  // 17-Limit Intonation
-                Werckmeister,
-                Kirnberger,
-                BohlenPierce,
-                Maqam,
-                Ndebele,
-                Gagaku,
-                Pelog,
-                Slendro,
-                Hijaz,
-                ShonaMbira,
+                #[default(0: 12usize)]
+                EqualTemperament(usize),
+                PrimeLimit(usize),
                 Arbitrary,
             },
         #[default(69usize)]  reference_note: usize,
         #[default(440.0f64)] tuning_hz: f64,
-        #[default(12usize)]  octave_divisions: usize,
                              interval_ratios: Option<Vec<f64>>,
         #[default(-2i64)]    octave_label: i64,
         #[default(128usize)] note_amount: usize,
@@ -42,26 +26,12 @@ nest! {
 }
 
 impl ScaleType {
-    fn name(&self, f: f64, d: usize) -> String {
+    fn name(&self, f: f64) -> String {
         match self {
-            ScaleType::EqualTemperament => format!("{f} hz {d}-Tone Equal Temperament Scale"),
-            ScaleType::Pythagorean => format!("{f} hz Pythagorean 3-Limit Scale"),
-            ScaleType::JustIntonation => format!("{f} hz Just Intonation 5-Limit Scale"),
-            ScaleType::SeptimalMean => format!("{f} hz Septimal 7-Limit Scale"),
-            ScaleType::UndecimalMean => format!("{f} hz Undecimal 11-Limit Scale"),
-            ScaleType::TridecimalMean => format!("{f} hz Tridecimal 13-Limit Scale"),
-            ScaleType::Septendecimal => format!("{f} hz Septendecimal 17-Limit Scale"),
-            ScaleType::Werckmeister => todo!(),
-            ScaleType::Kirnberger => todo!(),
-            ScaleType::BohlenPierce => todo!(),
-            ScaleType::Maqam => todo!(),
-            ScaleType::Ndebele => todo!(),
-            ScaleType::Gagaku => todo!(),
-            ScaleType::Pelog => todo!(),
-            ScaleType::Slendro => todo!(),
-            ScaleType::Hijaz => todo!(),
-            ScaleType::ShonaMbira => todo!(),
+            ScaleType::EqualTemperament(d) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
+            ScaleType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
             ScaleType::Arbitrary => format!("{f} hz Arbitrary Scale"),
+            
         }
     }
 
@@ -77,7 +47,7 @@ impl Scale<Edit> {
             name: if let Some(some_name) = n.name.clone() {
                 some_name
             } else {
-                n.scale_type.name(n.tuning_hz, n.octave_divisions)
+                n.scale_type.name(n.tuning_hz)
             },
             description: if let Some(some_description) = n.description.clone() {
                 some_description
@@ -86,18 +56,17 @@ impl Scale<Edit> {
             },
             reference_note: n.reference_note,
             tuning_hz: n.tuning_hz,
-            octave_divisions: n.octave_divisions,
             note_class_set: n.note_class_set.clone(),
             notes: vec![Note::default(); n.note_amount],
         };
         match n.scale_type {
-            ScaleType::EqualTemperament => {
-                if n.octave_divisions != 0 {
+            ScaleType::EqualTemperament(d) => {
+                if d != 0 {
                     let mut note_class_idx: usize = 0;
                     for i in 0..n.note_amount {
                         let distance_from_ref: i64 = i as i64 - n.reference_note as i64;
                         new_scale.notes[i].frequency =
-                            n.tuning_hz * 2.0f64.powf((distance_from_ref as f64) / (n.octave_divisions as f64));
+                            n.tuning_hz * 2.0f64.powf((distance_from_ref as f64) / (d as f64));
                         new_scale.notes[i].note_num = i;
             
                         if !n.note_class_set.is_empty() {
@@ -142,7 +111,6 @@ impl Scale<Edit> {
             description: self.description.clone(),
             reference_note: self.reference_note.clone(),
             tuning_hz: self.tuning_hz.clone(),
-            octave_divisions: self.octave_divisions.clone(),
             note_class_set: self.note_class_set.clone(),
             notes: self.notes.clone(),
         }
