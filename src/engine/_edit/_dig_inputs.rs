@@ -23,15 +23,6 @@ impl Engine<Edit> {
             for tg in 0..self.guts[g].trnsp_gut.len() {
                 operation(&mut self.guts[g].trnsp_gut[tg].triggers);
             }
-            for set in 0..self.guts[g].v_one.len() {
-                self.guts[g].v_one[set].all_dig_idx_vecs(&operation);
-            }
-            for set in 0..self.guts[g].f_one.len() {
-                self.guts[g].f_one[set].all_dig_idx_vecs(&operation);
-            }
-            for set in 0..self.guts[g].c_one.len() {
-                self.guts[g].c_one[set].all_dig_idx_vecs(&operation);
-            }
         }
         operation(&mut self.gut_holds.sustain.togs);
         operation(&mut self.gut_holds.inv_sustain.togs);
@@ -113,16 +104,6 @@ impl Engine<Edit> {
                     )
                 }
             }
-
-            for set in 0..self.guts[g].v_one.len() {
-                self.guts[g].v_one[set].check_digitalref_invariants(self.dig_inputs.len())
-            }
-            for set in 0..self.guts[g].f_one.len() {
-                self.guts[g].f_one[set].check_digitalref_invariants(self.dig_inputs.len())
-            }
-            for set in 0..self.guts[g].c_one.len() {
-                self.guts[g].c_one[set].check_digitalref_invariants(self.dig_inputs.len())
-            }
         }
 
         self.gut_holds
@@ -145,7 +126,7 @@ impl Engine<Edit> {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl<T: Default, U: Default> SetType<T, U> {
+impl SetType {
     pub(crate) fn all_dig_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);
