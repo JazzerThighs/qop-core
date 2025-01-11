@@ -29,9 +29,10 @@ nest! {
                 pub(crate) _engine_mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
-                pub(crate) dig_inputs:  Vec<KeyCode>,
+                pub(crate) dig_inputs: Vec<KeyCode>,
                 pub(crate) index_delta_bool: bool,
                 pub(crate) extra_delta_bool: bool,
+                #[default(usize::MAX)]
                 pub(crate) gut_max_pressed: usize,
                 pub(crate) gut_min_pressed: usize,
                 pub(crate) gut_radio_mode: bool,
@@ -90,6 +91,7 @@ nest! {
                         pub(crate) i_mem: Vec<i64>,
                         pub(crate) x_mem: Vec<f64>,
                         pub(crate) holds: HoldBtns,
+                        #[default(usize::MAX)]
                         pub(crate) max_pressed: usize,
                         pub(crate) min_pressed: usize,
                         pub(crate) radio_mode: bool,
@@ -126,6 +128,7 @@ nest! {
                         pub(crate) trnsp_all: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
                         pub(crate) i_mem: Vec<i64>,
                         pub(crate) x_mem: Vec<f64>,
+                        #[default(usize::MAX)]
                         pub(crate) max_pressed: usize,
                         pub(crate) min_pressed: usize,
                         pub(crate) radio_mode: bool,
@@ -154,6 +157,12 @@ nest! {
     }
 }
 
+impl Qop {
+    pub fn new() -> Qop {
+        Qop::default()
+    }
+}
+
 #[duplicate_item(
     change_string_param         new_string_param         string_param;
     [change_qop_name]           [new_qop_name]           [name];
@@ -162,7 +171,6 @@ nest! {
     [change_scale_description]  [new_scale_description]  [scale.description];
     [change_engine_name]        [new_engine_name]        [engine.name];
     [change_engine_description] [new_engine_description] [engine.description];
-    
 )]
 impl Qop {   
     pub fn change_string_param(&mut self, new_string_param: String) {
