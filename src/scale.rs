@@ -1,3 +1,5 @@
+pub mod intervals;
+
 use crate::*;
 use better_default::Default;
 use nestify::nest;

@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 mod engine;
 mod scale;
-mod intervals;
 
 use std::marker::PhantomData;
 use winit::keyboard::KeyCode;

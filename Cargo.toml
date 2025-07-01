@@ -12,3 +12,4 @@ better_default = "1"
 serde = { version = "1", features = ["derive"] }
 nestify = "0.3"
 duplicate = "2"
+lazy_static = "*"
