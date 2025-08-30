@@ -31,7 +31,6 @@ nest! {
                 pub(crate) dig_inputs: Vec<KeyCode>,
                 pub(crate) index_delta_bool: bool,
                 pub(crate) extra_delta_bool: bool,
-                #[default(usize::MAX)]
                 pub(crate) gut_max_pressed: usize,
                 pub(crate) gut_min_pressed: usize,
                 pub(crate) gut_radio_mode: bool,
@@ -90,7 +89,6 @@ nest! {
                         pub(crate) i_mem: Vec<i64>,
                         pub(crate) x_mem: Vec<f64>,
                         pub(crate) holds: HoldBtns,
-                        #[default(usize::MAX)]
                         pub(crate) max_pressed: usize,
                         pub(crate) min_pressed: usize,
                         pub(crate) radio_mode: bool,
@@ -127,7 +125,6 @@ nest! {
                         pub(crate) trnsp_all: Vec<Trnsp<Vec<i64>, Vec<f64>>>,
                         pub(crate) i_mem: Vec<i64>,
                         pub(crate) x_mem: Vec<f64>,
-                        #[default(usize::MAX)]
                         pub(crate) max_pressed: usize,
                         pub(crate) min_pressed: usize,
                         pub(crate) radio_mode: bool,
