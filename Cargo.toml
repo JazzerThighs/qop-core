@@ -8,9 +8,9 @@ authors = ["JazzerThighs <profenjb199@gmail.com>"]
 
 [dependencies]
 scale_omnibus = "*"
-winit = { version = "30.12", features = ["serde"] }
-better_default = "1"
-serde = { version = "1", features = ["derive"] }
-nestify = "0.3"
-duplicate = "2"
+winit = { version = "*", features = ["serde"] }
+better_default = "*"
+serde = { version = "*", features = ["derive"] }
+nestify = "*"
+duplicate = "*"
 lazy_static = "*"
