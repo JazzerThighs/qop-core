@@ -1,6 +1,5 @@
 pub mod intervals;
-pub mod equal_temperament;
-pub mod unequal_temperament;
+pub mod scale_list;
 
 use crate::*;
 use better_default::Default;
@@ -148,34 +147,4 @@ impl Scale<Edit> {
         }
         self.refresh_note_nums();             
     }
-}
-
-/// Represents a musical scale with various properties.
-
-#[derive(Debug, Clone, PartialEq, Default)]
-
-pub struct ListedScale {
-    /// The name of the scale (e.g., "Major", "Dorian").
-    pub name: String,
-    /// The intervals of the scale in semitones, if defined.
-    /// Example: A Major scale might have intervals `[2, 2, 1, 2, 2, 2, 1]`.
-    pub intervals: Option<Vec<f64>>,
-    /// The non-standard ascending intervals of the scale in semitones, if distinct from the main intervals.
-    /// Example: For an Enigmatic scale, this might be `[1, 3, 2, 2, 2, 1, 1]`.
-    pub intervals_ascending: Option<Vec<f64>>,
-    /// The non-standard descending intervals of the scale in semitones, if distinct from the main intervals.
-    /// Example: For an Enigmatic scale, this might be `[1, 3, 1, 3, 2, 1, 1]`.
-    pub intervals_descending: Option<Vec<f64>>,
-    /// The notes of the scale, expressed as offset from root, if defined
-    /// Example: A C Major scale might have notes `[0, 2, 4, 5, 7, 9, 11]` corresponding to `C, D, E, F, G, A, B`.
-    pub notes: Option<Vec<f64>>,
-    /// The non-standard ascending notes of the scale, if distinct.
-    /// Example: For an Enigmatic scale, this might be `[0, 1, 4, 6, 8, 10, 11]`.
-    pub notes_ascending: Option<Vec<f64>>,
-    /// The non-standard descending notes of the scale, if distinct.
-    /// Example: For an Enigmatic scale, this might be `[0, 1, 4, 5, 8, 10, 11]`.
-    pub notes_descending: Option<Vec<f64>>,
-    /// The origin or cultural association of the scale, if available.
-    /// Example: A scale might have an origin like `"Egypt"` or `"India"`.
-    pub origin: Option<String>,
 }
