@@ -51,7 +51,7 @@ pub fn closest_wiki_microtonal_interval(alpha: f64, beta: f64) -> (usize, usize)
 
 
 lazy_static! {
-    static ref WIKI_MICROTONAL_INTERVALS: Vec<(String, f64)> = vec![
+    pub static ref WIKI_MICROTONAL_INTERVALS: Vec<(String, f64)> = vec![
         ("Unison, monophony, perfect prime, tonic, or fundamental", 1_f64),
         ("Sixty-five-thousand-five-hundred-thirty-seventh harmonic", 65537_f64 / 65536_f64),
         ("Ragisma", 4375_f64 / 4374_f64),
