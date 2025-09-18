@@ -8,6 +8,8 @@ use better_default::Default;
 use serde::{Deserialize, Serialize};
 use nestify::nest;
 use duplicate::duplicate_item;
+use num_traits::{float::Float, sign::Sign, int::PrimInt};
+
 use scale::NewScaleParams;
 
 #[repr(C)]
@@ -40,8 +42,8 @@ nest! {
                             pub(crate) struct HoldTog {
                                 pub name: String,
                                 pub description: String,
-                                togs: Vec<usize>,
-                                pressed: bool
+                                pub(crate) togs: Vec<usize>,
+                                pub(crate) pressed: bool
                             },
                         pub(crate) inv_sustain: HoldTog,
                         pub(crate) sostenuto: HoldTog,
