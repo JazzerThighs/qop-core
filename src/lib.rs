@@ -5,7 +5,7 @@ mod scale;
 use std::marker::PhantomData;
 use winit::keyboard::KeyCode;
 use better_default::Default;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 use nestify::nest;
 use duplicate::duplicate_item;
 use num_traits::{float::Float, sign::Signed, int::PrimInt};
@@ -27,8 +27,7 @@ impl<F: Float + Clone + Default> Flo for F {}
 
 nest! {
     #[repr(C)]*
-    #[derive(Debug, Clone, Serialize)]*
-    #[derive(Default)]*
+    #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
     pub struct Qop<I: Int, F: Flo> {
         pub(crate) name: String,
         pub(crate) description: String,
