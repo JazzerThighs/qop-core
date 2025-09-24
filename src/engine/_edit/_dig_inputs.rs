@@ -11,7 +11,7 @@ macro_rules! assert_bool_custom {
     };
 }
 
-impl Engine<Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> {
     pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
         if !self.dig_inputs.contains(&key_code) {
             self.dig_inputs.push(key_code)
@@ -126,7 +126,7 @@ impl Engine<Edit> {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl SetType {
+impl<I: Int, F: Flo> SetType<I, F> {
     pub(crate) fn all_dig_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);

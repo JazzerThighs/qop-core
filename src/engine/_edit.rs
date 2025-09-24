@@ -8,87 +8,89 @@ use crate::*;
 use better_default::Default;
 
 #[derive(Default, Clone)]
-pub(crate) struct NewEnginePartParams {
+pub(crate) struct NewEnginePartParams<_I: Int, _F: Flo> {
     pub(crate) guts_len: usize,
     pub(crate) g_idx: usize,
     pub(crate) set_idx: usize,
     pub(crate) del_idx: usize,
     pub(crate) trnsp_idx: usize,
     pub(crate) c_btn_len: usize,
+    _i: _I,
+    _f: _F
 }
 
-impl NewEnginePartParams {
-    pub(crate) fn new(engine: &Engine) -> Self {
+impl<_I: Int, _F: Flo> NewEnginePartParams<_I, _F> {
+    pub(crate) fn new(engine: &Engine<_I, _F>) -> Self {
         NewEnginePartParams {
             guts_len: engine.guts.len(),
             c_btn_len: 1,
-            ..Default::default()
+            ..Self::default()
         }
     }
 }
 
-pub(crate) trait NewTrait: Default {
-    fn new(n: &mut NewEnginePartParams) -> Self;
+pub(crate) trait NewTrait<_I: Int, _F: Flo>: Default {
+    fn new(n: &mut NewEnginePartParams<_I, _F>) -> Self;
 }
 
-impl NewTrait for VFSet {
-    fn new(n: &mut NewEnginePartParams) -> Self {
+impl<I: Int, F: Flo> NewTrait<I, F> for VFSet<I, F> {
+    fn new(n: &mut NewEnginePartParams<I, F>) -> Self {
         VFSet {
             buttons: vec![VFBtn::new(n)],
-            i_mem: vec![0i64; n.guts_len],
-            x_mem: vec![0.0f64; n.guts_len],
+            i_mem: vec![I::default(); n.guts_len],
+            x_mem: vec![F::default(); n.guts_len],
             ..Default::default()
         }
     }
 }
 
-impl NewTrait for VFBtn {
-    fn new(n: &mut NewEnginePartParams) -> Self {
+impl<I: Int, F: Flo> NewTrait<I, F> for VFBtn<I, F> {
+    fn new(n: &mut NewEnginePartParams<I, F>) -> Self {
         VFBtn {
-            i_delta: vec![0i64; n.guts_len],
-            x_delta: vec![0.0f64; n.guts_len],
-            i_mem: vec![0i64; n.guts_len],
-            x_mem: vec![0.0f64; n.guts_len],
+            i_delta: vec![I::default(); n.guts_len],
+            x_delta: vec![F::default(); n.guts_len],
+            i_mem: vec![I::default(); n.guts_len],
+            x_mem: vec![F::default(); n.guts_len],
             ..Default::default()
         }
     }
 }
 
-impl NewTrait for ComboSet {
-    fn new(n: &mut NewEnginePartParams) -> Self {
+impl<I: Int, F: Flo> NewTrait<I, F> for ComboSet<I, F> {
+    fn new(n: &mut NewEnginePartParams<I, F>) -> Self {
         n.c_btn_len = 1usize;
         ComboSet {
             combos: vec![Combo::new(n)],
-            i_mem: vec![0i64; n.guts_len],
-            x_mem: vec![0.0f64; n.guts_len],
+            i_mem: vec![I::default(); n.guts_len],
+            x_mem: vec![F::default(); n.guts_len],
             ..Default::default()
         }
     }
 }
 
-impl NewTrait for Combo {
-    fn new(n: &mut NewEnginePartParams) -> Self {
+impl<I: Int, F: Flo> NewTrait<I, F> for Combo<I, F> {
+    fn new(n: &mut NewEnginePartParams<I, F>) -> Self {
         Combo {
             combo: vec![false; n.c_btn_len],
-            i_delta: vec![0i64; n.guts_len],
-            x_delta: vec![0.0f64; n.guts_len],
-            i_mem: vec![0i64; n.guts_len],
-            x_mem: vec![0.0f64; n.guts_len],
+            i_delta: vec![I::default(); n.guts_len],
+            x_delta: vec![F::default(); n.guts_len],
+            i_mem: vec![I::default(); n.guts_len],
+            x_mem: vec![F::default(); n.guts_len],
             ..Default::default()
         }
     }
 }
 
-impl NewTrait for Trnsp<i64, f64> {
-    fn new(_n: &mut NewEnginePartParams) -> Self {
-        Trnsp::default()
+impl<I: Int, F: Flo> NewTrait<I, F> for Trnsp<I, F> {
+    fn new(_n: &mut NewEnginePartParams<I, F>) -> Self {
+        Self::default()
     }
 }
-impl NewTrait for Trnsp<Vec<i64>, Vec<f64>> {
-    fn new(n: &mut NewEnginePartParams) -> Self {
-        Trnsp {
-            i_delta: vec![0i64; n.guts_len],
-            x_delta: vec![0.0f64; n.guts_len],
+impl<I: Int, F: Flo> NewTrait<I, F> for MulTrnsp<I, F> {
+    fn new(n: &mut NewEnginePartParams<I, F>) -> Self {
+        MulTrnsp {
+            i_delta: vec![I::default(); n.guts_len],
+            x_delta: vec![F::default(); n.guts_len],
             ..Default::default()
         }
     }
