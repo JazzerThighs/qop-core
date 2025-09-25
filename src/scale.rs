@@ -8,23 +8,24 @@ use duplicate::duplicate_item;
 
 nest! {
     #[derive(Default)]*
-    pub(crate) struct NewScaleParams {
+    pub(crate) struct NewScaleParams<F: Flo> {
         name: Option<String>,
         description: Option<String>,
         scale_type: 
-            pub enum ScaleType {
+            pub enum ScaleType<F: Flo> {
                 #[default(0: 12usize)]
-                EqualTemperament(usize),
+                EqualTemperament(F),
                 PrimeLimit(usize),
                 Arbitrary,
-            },
-        #[default(69usize)]  reference_note: usize,
-        #[default(440.0f64)] tuning_hz: f64,
-                             interval_ratios: Option<Vec<f64>>,
-        #[default(-2i64)]    octave_label: i64,
-        #[default(128usize)] note_amount: usize,
+            } || <F>,
+        #[default(69usize)]     reference_note: usize,
+        #[default(440.0)]       tuning_hz: F,
         #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
-                             note_class_set: Vec<String>,
+                                note_class_set: Vec<String>,
+        #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
+                                intervals: Vec<f64>,
+        #[default(-2i64)]       octave_label: i64,
+        #[default(128usize)]    note_amount: usize,
     }
 }
 
@@ -43,9 +44,9 @@ impl ScaleType {
     }
 }
 
-impl Scale<Edit> {
-    pub(crate) fn new(mut n: NewScaleParams) -> Scale<Edit> {
-        let mut new_scale: Scale<Edit> = Scale {
+impl<F: Flo> Scale<F, Edit> {
+    pub(crate) fn new(mut n: NewScaleParams<F>) -> Scale<F, Edit> {
+        let mut new_scale: Scale<F, Edit> = Scale {
             _scale_mode: PhantomData,
             name: if let Some(some_name) = n.name.clone() {
                 some_name
@@ -61,6 +62,8 @@ impl Scale<Edit> {
             tuning_hz: n.tuning_hz,
             note_class_set: n.note_class_set.clone(),
             notes: vec![Note::default(); n.note_amount],
+            scaling_factor: todo!(),
+            intervals: todo!(),
         };
         match n.scale_type {
             ScaleType::EqualTemperament(d) => {
@@ -107,7 +110,7 @@ impl Scale<Edit> {
         }
     }
 
-    pub fn to_play(&self) -> Scale<Play> {
+    pub fn to_play(&self) -> Scale<F, Play> {
         Scale {
             _scale_mode: PhantomData,
             name: self.name.clone(),
@@ -127,7 +130,7 @@ impl Scale<Edit> {
     [change_note_color]       [new_color]       [String]   [color];
     [change_note_frequency]   [new_frequency]   [f64]      [frequency];
 )]
-impl Scale<Edit> {
+impl<F: Flo> Scale<F, Edit> {
     pub(crate) fn change_note_param(&mut self, n_idx: usize, new_note_param: param_type) {
         if n_idx < self.notes.len() {
             self.notes[n_idx].note_param = new_note_param;
@@ -140,7 +143,7 @@ impl Scale<Edit> {
     [insert_note]     [insert(n_idx, Note::default())];
     [remove_note]     [remove(n_idx)];
 )]
-impl Scale<Edit> {
+impl<F: Flo> Scale<F, Edit> {
     pub fn insertremove_note(&mut self, n_idx: usize) {
         if n_idx <= self.notes.len() {
             self.notes.insertremove_idx;

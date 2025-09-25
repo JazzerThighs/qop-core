@@ -6,7 +6,7 @@ mod _vfc_sets;
 
 use crate::*;
 
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn to_play(&self) -> Engine<I, F, Play> {
         Engine {
             _engine_mode: PhantomData,

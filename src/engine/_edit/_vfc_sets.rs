@@ -7,7 +7,7 @@ use duplicate::duplicate_item;
     [VFSet]    [f_multi]  [f_multi_insert_set] [f_multi_remove_set] [f_multi_remove_btn] [f_multi_toggle_radio_mode];
     [ComboSet] [c_multi]  [c_multi_insert_set] [c_multi_remove_set] [c_multi_remove_btn] [c_multi_toggle_radio_mode];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn multi_insert_set(&mut self, set_idx: usize) {
         if set_idx <= self.multifield.len() {
             self.multifield.insert(set_idx, SetType::new(&mut NewEnginePartParams::new(&self)));
@@ -44,7 +44,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [VFSet]    [f_multi]  [f_multi_change_max_pressed]  [max_val] [max_pressed] [ge(&self.f_multi[set_idx].min_pressed)] [f_multi_remove_btn_dig]   [btn_remove_dig]    ;
     [ComboSet] [c_multi]  [c_multi_change_max_pressed]  [max_val] [max_pressed] [ge(&self.c_multi[set_idx].min_pressed)] [c_multi_remove_btn_dig]   [btn_remove_dig]    ;
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn multi_change_minmax_pressed(&mut self, set_idx: usize, minmaxval: usize) {
         if set_idx < self.multifield.len()
             && minmaxval.iscomparedto
@@ -67,7 +67,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [v_multi]  [v_multi_insert_btn];
     [f_multi]  [f_multi_insert_btn];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn vf_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         if set_idx < self.multifield.len() && btn_idx < self.multifield[set_idx].buttons.len() {
             let mut n: NewEnginePartParams<I, F> = NewEnginePartParams::new(&self);
@@ -76,7 +76,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     }
 }
 
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn c_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
         if set_idx < self.c_multi.len()
             && btn_idx <= self.c_multi[set_idx].buttons.len()
@@ -111,7 +111,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [f_multi]  [buttons]  [f_multi_change_x_deltas] [x_delta] [x_del_vec] [Vec<Option<F>>];
     [c_multi]  [combos]   [c_multi_change_x_deltas] [x_delta] [x_del_vec] [Vec<Option<F>>];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn multi_change_deltas(&mut self, set_idx: usize, del_idx: usize, d_del_vec: del_type_vec) {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
@@ -128,7 +128,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     }
 }
 
-impl<I: Int, F: Flo> VFSet<I, F> {
+impl<I: Int, F: Flo> VFSet<I, F> where f32: From<F> {
     pub(crate) fn insert_btn(&mut self, btn_idx: usize, n: &mut NewEnginePartParams<I, F>) {
         self.buttons.insert(btn_idx, VFBtn::new(n));
         self.pressed.insert(btn_idx, false);
@@ -139,7 +139,7 @@ impl<I: Int, F: Flo> VFSet<I, F> {
     }
 }
 
-impl<I: Int, F: Flo> ComboSet<I, F> {
+impl<I: Int, F: Flo> ComboSet<I, F> where f32: From<F> {
     pub(crate) fn insert_btn(&mut self, btn_idx: usize) {
         self.buttons.insert(btn_idx, ComboTog::default());
         self.pressed.insert(btn_idx, false);
@@ -169,7 +169,7 @@ impl<I: Int, F: Flo> ComboSet<I, F> {
     [VFSet]     [btn_remove_dig] [retain(|&idx| idx != key_idx_val)];
     [ComboSet]  [btn_remove_dig] [retain(|&idx| idx != key_idx_val)];
 )]
-impl<I: Int, F: Flo> SetType<I, F> {
+impl<I: Int, F: Flo> SetType<I, F> where f32: From<F> {
     pub(crate) fn btn_dig(&mut self, btn_idx: usize, key_idx_val: usize) {
         self.buttons[btn_idx].togs.operation;
         self.buttons[btn_idx].togs.dedup();

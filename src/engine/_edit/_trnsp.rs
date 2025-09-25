@@ -7,7 +7,7 @@ use duplicate::duplicate_item;
     [f_multi]  [buttons]  [f_multi_insert_trnsp_all_t] [f_multi_remove_trnsp_all_t] [f_multi_insert_trnsp_all_dig] [f_multi_remove_trnsp_all_dig] [f_multi_insert_trnsp_one_t] [f_multi_remove_trnsp_one_t] [f_multi_insert_trnsp_one_dig] [f_multi_remove_trnsp_one_dig];
     [c_multi]  [combos]   [c_multi_insert_trnsp_all_t] [c_multi_remove_trnsp_all_t] [c_multi_insert_trnsp_all_dig] [c_multi_remove_trnsp_all_dig] [c_multi_insert_trnsp_one_t] [c_multi_remove_trnsp_one_t] [c_multi_insert_trnsp_one_dig] [c_multi_remove_trnsp_one_dig];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
         if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
             let mut n: NewEnginePartParams<I, F> = NewEnginePartParams::new(&self);
@@ -93,7 +93,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [f_multi]  [buttons]  [x_del_vec] [Vec<Option<F>>] [f_multi_trnsp_all_change_x_deltas] [f_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
     [c_multi]  [combos]   [x_del_vec] [Vec<Option<F>>] [c_multi_trnsp_all_change_x_deltas] [c_multi_trnsp_one_change_x_deltas] [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     pub fn multi_trnsp_all_change_deltas(
         &mut self,
         set_idx: usize,
@@ -129,7 +129,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl<I: Int, F: Flo> SetType<I, F> {
+impl<I: Int, F: Flo> SetType<I, F> where f32: From<F> {
     pub(crate) fn trnsp_all_insert_t(&mut self, trnsp_idx: usize, n: &mut NewEnginePartParams<I, F>) {
         self.trnsp_all.insert(trnsp_idx, MulTrnsp::new(n))
     }
@@ -194,7 +194,7 @@ impl<I: Int, F: Flo> SetType<I, F> {
     [ComboSet] [combos]   [trnsp_all_change_i_deltas] [trnsp_one_change_i_deltas] [i_delta] [i_del_val] [Vec<Option<I>>];
     [ComboSet] [combos]   [trnsp_all_change_x_deltas] [trnsp_one_change_x_deltas] [x_delta] [x_del_val] [Vec<Option<F>>];
 )]
-impl<I: Int, F: Flo> SetType<I, F> {
+impl<I: Int, F: Flo> SetType<I, F> where f32: From<F> {
     pub(crate) fn trnsp_all_change_deltas(&mut self, trnsp_idx: usize, d_del_vec: del_type) {
         for d in 0..d_del_vec.len() {
             if let Some(i_val) = d_del_vec[d] {

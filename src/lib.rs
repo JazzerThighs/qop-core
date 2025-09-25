@@ -22,17 +22,18 @@ pub(crate) struct Play;
 
 pub trait Int: PrimInt + Signed + Clone + Default {}
 impl<I: PrimInt + Signed + Clone + Default> Int for I {}
-pub trait Flo: Float + Clone + Default {}
-impl<F: Float + Clone + Default> Flo for F {}
+
+pub trait Flo: Float + Clone + Default where f32: From<Self> {}
+impl<F: Float + Clone + Default> Flo for F where f32: From<F> {}
 
 nest! {
     #[repr(C)]*
     #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
-    pub struct Qop<I: Int, F: Flo> {
+    pub struct Qop<I: Int, F: Flo> where f32: From<F> {
         pub(crate) name: String,
         pub(crate) description: String,
         pub(crate) engine:
-            pub(crate) struct Engine<I: Int, F: Flo, Mode = Edit> {
+            pub(crate) struct Engine<I: Int, F: Flo, Mode = Edit> where f32: From<F> {
                 pub(crate) _engine_mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
@@ -57,7 +58,7 @@ nest! {
                     },
                 #[default(vec![Gut::default()])]
                 pub(crate) guts: Vec<
-                    pub(crate) struct Gut<I: Int, F: Flo> {
+                    pub(crate) struct Gut<I: Int, F: Flo> where f32: From<F> {
                         pub name: String,
                         pub description: String,
                         pub(crate) togs: Vec<usize>,
@@ -67,7 +68,7 @@ nest! {
                         pub(crate) i_mem: I,
                         pub(crate) x_mem: F,
                         pub(crate) trnsp_gut: Vec<
-                            pub(crate) struct Trnsp<I: Int, F: Flo> {
+                            pub(crate) struct Trnsp<I: Int, F: Flo> where f32: From<F> {
                                 pub(crate) triggers: Vec<usize>,
                                 pub(crate) i_delta: I,
                                 pub(crate) x_delta: F,
@@ -76,18 +77,18 @@ nest! {
                     } ||<I, F>
                 >,
                 pub(crate) v_multi: Vec<
-                    pub(crate) struct VFSet<I: Int, F: Flo> {
+                    pub(crate) struct VFSet<I: Int, F: Flo> where f32: From<F> {
                         pub name: String,
                         pub description: String,
                         pub(crate) buttons: Vec<
-                            pub(crate) struct VFBtn<I: Int, F: Flo> {
+                            pub(crate) struct VFBtn<I: Int, F: Flo> where f32: From<F> {
                                 pub name: String,
                                 pub description: String,
                                 pub(crate) togs: Vec<usize>,
                                 pub(crate) i_delta: Vec<I>,
                                 pub(crate) x_delta: Vec<F>,
                                 pub(crate) trnsp_one: Vec<
-                                    pub(crate) struct MulTrnsp<I: Int, F: Flo> {
+                                    pub(crate) struct MulTrnsp<I: Int, F: Flo> where f32: From<F> {
                                         pub(crate) triggers: Vec<usize>,
                                         pub(crate) i_delta: Vec<I>,
                                         pub(crate) x_delta: Vec<F>,
@@ -110,7 +111,7 @@ nest! {
                 >,
                 pub(crate) f_multi: Vec<VFSet<I, F>>,
                 pub(crate) c_multi: Vec<
-                    pub(crate) struct ComboSet<I: Int, F: Flo> {
+                    pub(crate) struct ComboSet<I: Int, F: Flo> where f32: From<F> {
                         pub name: String,
                         pub description: String,
                         #[default(vec![ComboTog::default()])]
@@ -124,7 +125,7 @@ nest! {
                         #[default(vec![false])]
                         pub(crate) pressed: Vec<bool>,
                         pub(crate) combos: Vec<
-                            pub(crate) struct Combo<I: Int, F: Flo> {
+                            pub(crate) struct Combo<I: Int, F: Flo> where f32: From<F> {
                                 pub name: String,
                                 pub description: String,
                                 pub(crate) combo: Vec<bool>,
@@ -147,27 +148,20 @@ nest! {
             } ||<I, F>,
         #[default(Scale::new(NewScaleParams::default()))]
         pub(crate) scale:
-            pub(crate) struct Scale<Mode = Edit> {
+            pub(crate) struct Scale<F: Flo, Mode = Edit> where f32: From<F> {
                 pub(crate) _scale_mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
                 pub(crate) reference_note: usize,
-                pub(crate) tuning_hz: f64,
+                pub(crate) tuning_hz: F,
+                pub(crate) scaling_factor: F,
                 pub(crate) note_class_set: Vec<String>,
-                pub(crate) notes: Vec<
-                    pub(crate) struct Note {
-                        pub name: String,
-                        pub description: String,
-                        pub(crate) note_num: usize,
-                        pub color: String,
-                        pub(crate) frequency: f64,
-                    }
-                >,
-            },
+                pub(crate) intervals: Vec<F>
+            } ||<F>,
     }
 }
 
-impl<I: Int, F: Flo> Qop<I, F> {
+impl<I: Int, F: Flo> Qop<I, F> where f32: From<F> {
     pub fn new() -> Self {
         Self::default()
     }
@@ -182,7 +176,7 @@ impl<I: Int, F: Flo> Qop<I, F> {
     [change_engine_name]        [new_engine_name]        [engine.name];
     [change_engine_description] [new_engine_description] [engine.description];
 )]
-impl<I: Int, F: Flo> Qop<I, F> {   
+impl<I: Int, F: Flo> Qop<I, F> where f32: From<F> {   
     pub fn change_string_param(&mut self, new_string_param: String) {
         self.string_param = new_string_param;
     }
