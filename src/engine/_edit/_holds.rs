@@ -12,7 +12,7 @@ use duplicate::duplicate_item;
     [sostenuto]     [gut_sostenuto_remove_dig]      [retain(|&idx| idx != key_idx_val)];
     [inv_sostenuto] [gut_inv_sostenuto_remove_dig]  [retain(|&idx| idx != key_idx_val)];
 )]
-impl<_I: Int, _F: Flo> Engine<_I, _F, Edit> where f32: From<_F> {
+impl Engine<Edit> {
     pub fn gut_hold_dig(&mut self, key_idx_val: usize) {
         self.gut_holds.holdfield.togs.operation;
         self.gut_holds.holdfield.togs.dedup()
@@ -46,7 +46,7 @@ impl<_I: Int, _F: Flo> Engine<_I, _F, Edit> where f32: From<_F> {
     [c_multi]  [sostenuto]     [c_multi_sostenuto_remove_dig]     [retain(|&idx| idx != key_idx_val)];
     [c_multi]  [inv_sostenuto] [c_multi_inv_sostenuto_remove_dig] [retain(|&idx| idx != key_idx_val)];
 )]
-impl<_I: Int, _F: Flo> Engine<_I, _F, Edit> where f32: From<_F> {
+impl Engine<Edit> {
     pub fn multi_hold_dig(&mut self, set_idx: usize, key_idx_val: usize) {
         if set_idx < self.multifield.len() {
             self.multifield[set_idx].holds.holdfield.togs.operation;

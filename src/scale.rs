@@ -8,18 +8,18 @@ use duplicate::duplicate_item;
 
 nest! {
     #[derive(Default)]*
-    pub(crate) struct NewScaleParams<F: Flo> {
+    pub(crate) struct NewScaleParams {
         name: Option<String>,
         description: Option<String>,
         scale_type: 
-            pub enum ScaleType<F: Flo> {
-                #[default(0: 12usize)]
-                EqualTemperament(F),
+            pub enum ScaleType {
+                #[default(0: 12.0)]
+                EqualTemperament(f64),
                 PrimeLimit(usize),
                 Arbitrary,
-            } || <F>,
+            },
         #[default(69usize)]     reference_note: usize,
-        #[default(440.0)]       tuning_hz: F,
+        #[default(440.0)]       tuning_hz: f64,
         #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
                                 note_class_set: Vec<String>,
         #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
@@ -44,9 +44,9 @@ impl ScaleType {
     }
 }
 
-impl<F: Flo> Scale<F, Edit> {
-    pub(crate) fn new(mut n: NewScaleParams<F>) -> Scale<F, Edit> {
-        let mut new_scale: Scale<F, Edit> = Scale {
+impl Temperament<Edit> {
+    pub(crate) fn new(mut n: NewScaleParams) -> Temperament<Edit> {
+        let mut new_scale: Temperament<Edit> = Temperament {
             _scale_mode: PhantomData,
             name: if let Some(some_name) = n.name.clone() {
                 some_name
@@ -110,15 +110,16 @@ impl<F: Flo> Scale<F, Edit> {
         }
     }
 
-    pub fn to_play(&self) -> Scale<F, Play> {
-        Scale {
+    pub fn to_play(&self) -> Temperament<Play> {
+        Temperament {
             _scale_mode: PhantomData,
             name: self.name.clone(),
             description: self.description.clone(),
             reference_note: self.reference_note.clone(),
             tuning_hz: self.tuning_hz.clone(),
             note_class_set: self.note_class_set.clone(),
-            notes: self.notes.clone(),
+            scaling_factor: self.scaling_factor.clone(),
+            intervals: self.intervals.clone(),
         }
     }
 }
@@ -130,7 +131,7 @@ impl<F: Flo> Scale<F, Edit> {
     [change_note_color]       [new_color]       [String]   [color];
     [change_note_frequency]   [new_frequency]   [f64]      [frequency];
 )]
-impl<F: Flo> Scale<F, Edit> {
+impl Temperament<Edit> {
     pub(crate) fn change_note_param(&mut self, n_idx: usize, new_note_param: param_type) {
         if n_idx < self.notes.len() {
             self.notes[n_idx].note_param = new_note_param;
@@ -143,7 +144,7 @@ impl<F: Flo> Scale<F, Edit> {
     [insert_note]     [insert(n_idx, Note::default())];
     [remove_note]     [remove(n_idx)];
 )]
-impl<F: Flo> Scale<F, Edit> {
+impl Temperament<Edit> {
     pub fn insertremove_note(&mut self, n_idx: usize) {
         if n_idx <= self.notes.len() {
             self.notes.insertremove_idx;

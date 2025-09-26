@@ -6,8 +6,8 @@ mod _vfc_sets;
 
 use crate::*;
 
-impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
-    pub fn to_play(&self) -> Engine<I, F, Play> {
+impl Engine<Edit> {
+    pub fn to_play(&self) -> Engine<Play> {
         Engine {
             _engine_mode: PhantomData,
             name: self.name.clone(),

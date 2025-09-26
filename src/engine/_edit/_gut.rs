@@ -4,7 +4,7 @@ use crate::{
 };
 use duplicate::duplicate_item;
 
-impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
+impl Engine<Edit> {
     pub fn gut_insert_g(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
             self.guts.insert(g_idx, Gut::default());
@@ -50,7 +50,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
     }
     pub fn gut_insert_trnsp_t(&mut self, g_idx: usize, trnsp_idx: usize) {
         if g_idx < self.guts.len() && trnsp_idx <= self.guts[g_idx].trnsp_gut.len() {
-            let mut n: NewEnginePartParams<I, F> = NewEnginePartParams::new(&self);
+            let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx]
                 .trnsp_gut
                 .insert(trnsp_idx, Trnsp::new(&mut n));
@@ -95,10 +95,10 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
 
 #[duplicate_item(
     gut_change_delta_out         d_out       d_del_val   del_type   gut_change_minmax        minmaxval minmax_field      iscomparedto                gut_trnsp_change_deltas     d_type d_field;
-    [gut_change_index_delta_out] [index_out] [i_del_val] [usize]    [gut_change_min_pressed] [min_val] [gut_min_pressed] [le(&self.gut_max_pressed)] [gut_trnsp_change_i_deltas] [I]    [i_delta];
-    [gut_change_extra_delta_out] [extra_out] [x_del_val] [F]        [gut_change_max_pressed] [max_val] [gut_max_pressed] [ge(&self.gut_max_pressed)] [gut_trnsp_change_x_deltas] [F]    [x_delta];
+    [gut_change_index_delta_out] [index_out] [i_del_val] [usize]    [gut_change_min_pressed] [min_val] [gut_min_pressed] [le(&self.gut_max_pressed)] [gut_trnsp_change_i_deltas] [i32]    [i_delta];
+    [gut_change_extra_delta_out] [extra_out] [x_del_val] [f64]      [gut_change_max_pressed] [max_val] [gut_max_pressed] [ge(&self.gut_max_pressed)] [gut_trnsp_change_x_deltas] [f64]    [x_delta];
 )]
-impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
+impl Engine<Edit> {
     pub fn gut_change_delta_out(&mut self, g_idx: usize, d_del_val: del_type) {
         if g_idx < self.guts.len() {
             self.guts[g_idx].d_out = d_del_val;
@@ -117,13 +117,13 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> where f32: From<F> {
 }
 
 #[duplicate_item(
-    SetType    multi_insertremove_gut insertremove_i                insertremove_x                  deltafield;
-    [VFSet]    [insert_gut]           [insert(g_idx, I::default())] [insert(g_idx, F::default())]   [buttons];
-    [VFSet]    [remove_gut]           [remove(g_idx)]               [remove(g_idx)]                 [buttons];
-    [ComboSet] [insert_gut]           [insert(g_idx, I::default())] [insert(g_idx, F::default())]   [combos];
-    [ComboSet] [remove_gut]           [remove(g_idx)]               [remove(g_idx)]                 [combos];
+    SetType    multi_insertremove_gut insertremove_i        insertremove_x          deltafield;
+    [VFSet]    [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [buttons];
+    [VFSet]    [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [buttons];
+    [ComboSet] [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [combos];
+    [ComboSet] [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [combos];
 )]
-impl<I: Int, F: Flo> SetType<I, F> where f32: From<F> {
+impl SetType {
     pub(crate) fn multi_insertremove_gut(&mut self, g_idx: usize) {
         for del_idx in 0..self.deltafield.len() {
             self.deltafield[del_idx].i_delta.insertremove_i;
@@ -167,7 +167,7 @@ macro_rules! assert_eq_expr {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl<_I: Int, _F: Flo> SetType<_I, _F> where f32: From<_F> {
+impl SetType {
     pub(crate) fn check_multi_delta_lengths(&self, guts_len: usize) {
         for d in 0..self.field.len() {
             assert_eq_expr!(self.field[d].i_delta.len(), guts_len);
