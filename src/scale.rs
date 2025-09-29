@@ -6,13 +6,29 @@ use better_default::Default;
 use nestify::nest;
 use duplicate::duplicate_item;
 
+impl Temperament<Edit> {
+    pub fn to_play(&self) -> Temperament<Play> {
+        Temperament {
+            _mode: PhantomData,
+            name: self.name.clone(),
+            description: self.description.clone(),
+            reference_note: self.reference_note.clone(),
+            tuning_hz: self.tuning_hz.clone(),
+            note_class_set: self.note_class_set.clone(),
+            octave_scalar_factor: self.octave_scalar_factor.clone(),
+            intervals: self.intervals.clone(),
+            octave_label: self.octave_label.clone(),
+        }
+    }
+}
+
 nest! {
     #[derive(Default)]*
     pub(crate) struct NewScaleParams {
         name: Option<String>,
         description: Option<String>,
         scale_type: 
-            pub enum ScaleType {
+            pub enum TemperamentType {
                 #[default(0: 12.0)]
                 EqualTemperament(f64),
                 PrimeLimit(usize),
@@ -22,32 +38,34 @@ nest! {
         #[default(440.0)]       tuning_hz: f64,
         #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
                                 note_class_set: Vec<String>,
+                                note_class_amount: i64,
         #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
                                 intervals: Vec<f64>,
         #[default(-2i64)]       octave_label: i64,
+        #[default(2.0f64)]      octave_scalar_factor: f64,
         #[default(128usize)]    note_amount: usize,
     }
 }
 
-impl ScaleType {
+impl TemperamentType {
     fn name(&self, f: f64) -> String {
         match self {
-            ScaleType::EqualTemperament(d) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
-            ScaleType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
-            ScaleType::Arbitrary => format!("{f} hz Arbitrary Scale"),
+            TemperamentType::EqualTemperament(d) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
+            TemperamentType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
+            TemperamentType::Arbitrary => format!("{f} hz Arbitrary Scale"),
             
         }
     }
 
-    fn intervals(&self) -> Option<Vec<f64>> {
-        Some(vec![])
+    fn intervals(&self) -> Vec<f64> {
+        todo!()
     }
 }
 
 impl Temperament<Edit> {
     pub(crate) fn new(mut n: NewScaleParams) -> Temperament<Edit> {
         let mut new_scale: Temperament<Edit> = Temperament {
-            _scale_mode: PhantomData,
+            _mode: PhantomData,
             name: if let Some(some_name) = n.name.clone() {
                 some_name
             } else {
@@ -61,12 +79,12 @@ impl Temperament<Edit> {
             reference_note: n.reference_note,
             tuning_hz: n.tuning_hz,
             note_class_set: n.note_class_set.clone(),
-            notes: vec![Note::default(); n.note_amount],
-            scaling_factor: todo!(),
-            intervals: todo!(),
+            octave_scalar_factor: n.octave_scalar_factor,
+            intervals: n.intervals.clone(),
+            octave_label: n.octave_label.clone()
         };
         match n.scale_type {
-            ScaleType::EqualTemperament(d) => {
+            TemperamentType::EqualTemperament(d) => {
                 if d != 0 {
                     let mut note_class_idx: usize = 0;
                     for i in 0..n.note_amount {
@@ -89,7 +107,7 @@ impl Temperament<Edit> {
             },
             _ => {
                 match n.scale_type {
-                    ScaleType::Arbitrary => {},
+                    TemperamentType::Arbitrary => {},
                     _ => n.interval_ratios = n.scale_type.intervals()
                 }
                 todo!() // populate scale with interval'd notes
@@ -107,19 +125,6 @@ impl Temperament<Edit> {
         if n1 < self.notes.len() && n2 < self.notes.len() {
             self.notes.swap(n1, n2);
             self.refresh_note_nums();
-        }
-    }
-
-    pub fn to_play(&self) -> Temperament<Play> {
-        Temperament {
-            _scale_mode: PhantomData,
-            name: self.name.clone(),
-            description: self.description.clone(),
-            reference_note: self.reference_note.clone(),
-            tuning_hz: self.tuning_hz.clone(),
-            note_class_set: self.note_class_set.clone(),
-            scaling_factor: self.scaling_factor.clone(),
-            intervals: self.intervals.clone(),
         }
     }
 }

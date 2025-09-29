@@ -25,7 +25,7 @@ nest! {
         pub(crate) description: String,
         pub(crate) engine:
             pub(crate) struct Engine<Mode = Edit> {
-                pub(crate) _engine_mode: PhantomData<Mode>,
+                pub(crate) _mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
                 pub(crate) dig_inputs: Vec<KeyCode>,
@@ -140,14 +140,17 @@ nest! {
         #[default(Temperament::default())]
         pub(crate) temperament:
             pub(crate) struct Temperament<Mode = Edit> {
-                pub(crate) _scale_mode: PhantomData<Mode>,
+                pub(crate) _mode: PhantomData<Mode>,
                 pub name: String,
                 pub description: String,
                 #[default(69usize)]
                 pub(crate) reference_note: usize,
                 #[default(440.0f64)]
                 pub(crate) tuning_hz: f64,
-                pub(crate) scaling_factor: f64,
+                #[default(4i64)]       
+                octave_label: i64,
+                #[default(2.0f64)]
+                pub(crate) octave_scalar_factor: f64,
                 #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
                 pub(crate) note_class_set: Vec<String>,
                 #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
