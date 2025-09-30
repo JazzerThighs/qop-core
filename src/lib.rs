@@ -6,7 +6,7 @@ use better_default::Default;
 use duplicate::duplicate_item;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
-use std::marker::PhantomData;
+use std::{fmt::Debug, marker::PhantomData};
 use winit::keyboard::KeyCode;
 
 #[repr(C)]
@@ -16,6 +16,15 @@ pub(crate) struct Edit;
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub(crate) struct Play;
+
+pub trait Gutted: Debug + Clone + Default + Serialize + for<'a> Deserialize<'a> {
+    fn handle_engine_output(&self, qop: EngineOutput);
+}
+
+pub struct EngineOutput {
+    index_out: Vec<usize>,
+    extra_out: Vec<f64>,
+}
 
 nest! {
     #[repr(C)]*
@@ -137,29 +146,39 @@ nest! {
                     }
                 >,
             },
-        #[default(Temperament::default())]
-        pub(crate) temperament:
-            pub(crate) struct Temperament<Mode = Edit> {
-                pub(crate) _mode: PhantomData<Mode>,
-                pub name: String,
-                pub description: String,
-                #[default(69usize)]
-                pub(crate) reference_note: usize,
-                #[default(440.0f64)]
-                pub(crate) tuning_hz: f64,
-                #[default(4i64)]       
-                octave_label: i64,
-                #[default(2.0f64)]
-                pub(crate) octave_scalar_factor: f64,
-                #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect())]
-                pub(crate) note_class_set: Vec<String>,
-                #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
-                pub(crate) intervals: Vec<f64>
-            },
     }
 }
 
-impl Qop {
+nest! {
+    #[repr(C)]*
+    #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
+    pub(crate) struct Temperament<Mode = Edit> {
+        pub(crate) _mode: PhantomData<Mode>,
+        pub name: String,
+        pub description: String,
+        scale_type: 
+            pub enum TemperamentType {
+                #[default(0: 12.0f64, 1: 2.0f64)]
+                EqualTemperament(f64, f64),
+                PrimeLimit(usize),
+                Arbitrary,
+            },
+        #[default(69usize)]
+        pub(crate) reference_note: usize,
+        #[default(440.0f64)]
+        pub(crate) tuning_hz: f64,
+        #[default(4i64)]
+        octave_label: i64,
+        #[default(2.0f64)]
+        pub(crate) octave_scalar_factor: f64,
+        #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect::<Vec<String>>())]
+        pub(crate) note_class_set: Vec<String>,
+        #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
+        pub(crate) intervals: Vec<f64>,
+    }
+}
+
+impl Qop  {
     pub fn new() -> Self {
         Self::default()
     }
@@ -169,8 +188,6 @@ impl Qop {
     change_string_param         new_string_param         string_param;
     [change_qop_name]           [new_qop_name]           [name];
     [change_qop_description]    [new_qop_description]    [description];
-    [change_temperament_name]         [new_scale_name]         [temperament.name];
-    [change_temperament_description]  [new_scale_description]  [temperament.description];
     [change_engine_name]        [new_engine_name]        [engine.name];
     [change_engine_description] [new_engine_description] [engine.description];
 )]
