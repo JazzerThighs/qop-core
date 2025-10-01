@@ -16,49 +16,61 @@ impl Temperament<Edit> {
             octave_scalar_factor: self.octave_scalar_factor.clone(),
             intervals: self.intervals.clone(),
             octave_label: self.octave_label.clone(),
-            scale_type: self.scale_type.clone(),
+            temperament_type: self.temperament_type.clone(),
         }
     }
 }
-
-
 
 impl TemperamentType {
     fn name(&self, f: f64) -> String {
         match self {
-            TemperamentType::EqualTemperament(o, d) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
+            TemperamentType::EqualTemperament(d, _o) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
             TemperamentType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
-            TemperamentType::Arbitrary => format!("{f} hz Arbitrary Scale"),
-            
+            TemperamentType::Arbitrary => format!("{f} hz Arbitrary Scale"), 
         }
     }
 
-    fn intervals(&self) -> Vec<f64> {
-        todo!()
+    fn intervals(&self) -> Option<Vec<f64>> {
+        match self {
+            TemperamentType::EqualTemperament(_d, _o) => todo!(),
+            TemperamentType::PrimeLimit(_p) => todo!(),
+            TemperamentType::Arbitrary => None,
+        }
     }
 }
 
 impl Temperament<Edit> {
-    pub(crate) fn new(n: Option<&Temperament>) -> Temperament<Edit> {
-        let mut new_scale: Temperament<Edit> = if n.is_some() { 
-            n.unwrap().clone()
-        } else { 
-            Temperament::default() 
+    pub(crate) fn new(
+        name: Option<String>,
+        description: Option<String>,
+        temperament_type: Option<TemperamentType>,
+        reference_note: Option<usize>,
+        tuning_hz: Option<f64>,
+        octave_label: Option<i64>,
+        octave_scalar_factor: Option<f64>,
+        note_class_set: Option<Vec<String>>,
+        intervals: Option<Vec<f64>>,
+    ) -> Temperament<Edit> {
+        let mut n: Temperament<Edit> = Temperament {
+            _mode: PhantomData,
+            name: name.unwrap_or_default(),
+            description: description.unwrap_or_default(),
+            temperament_type: temperament_type.unwrap_or_default(),
+            reference_note: reference_note.unwrap_or_default(),
+            tuning_hz: tuning_hz.unwrap_or_default(),
+            octave_label: octave_label.unwrap_or_default(),
+            octave_scalar_factor: octave_scalar_factor.unwrap_or_default(),
+            note_class_set: note_class_set.unwrap_or_default(),
+            intervals: intervals.unwrap_or_default(),
         };
-        match n.scale_type {
-            TemperamentType::EqualTemperament(divisions_value, octave_value) => {
-                if divisions_value > 0.0 {
-                    n.tuning_hz * 2.0f64.powf((n.reference_note as f64) / (divisions_value as f64));
-                }
-            },
-            _ => {
-                match n.scale_type {
-                    TemperamentType::Arbitrary => {},
-                    _ => n.intervals = n.scale_type.intervals()
-                }
-                todo!() // populate scale with interval'd notes
-            }
-        };
-        new_scale
+        
+        // based on what is present in the input, build the other params from that
+        // check for list of parameters in order of precedence
+
+        if let Some(interval_list) = n.temperament_type.intervals() {
+            n.intervals = interval_list;
+        }
+
+        n
     }
 }

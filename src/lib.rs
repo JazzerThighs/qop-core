@@ -156,11 +156,11 @@ nest! {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
-        scale_type: 
+        temperament_type: 
             pub enum TemperamentType {
-                #[default(0: 12.0f64, 1: 2.0f64)]
                 EqualTemperament(f64, f64),
                 PrimeLimit(usize),
+                #[default]
                 Arbitrary,
             },
         #[default(69usize)]
