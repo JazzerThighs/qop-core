@@ -2,7 +2,41 @@ pub mod intervals;
 pub mod scale_list;
 
 use crate::*;
+use better_default::Default;
 use duplicate::duplicate_item;
+use nestify::nest;
+use serde::{Deserialize, Serialize};
+use std::{fmt::Debug, marker::PhantomData};
+use winit::keyboard::KeyCode;
+
+nest! {
+    #[repr(C)]*
+    #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
+    pub(crate) struct Temperament<Mode = Edit> {
+        pub(crate) _mode: PhantomData<Mode>,
+        pub name: String,
+        pub description: String,
+        temperament_type: 
+            pub enum TemperamentType {
+                EqualTemperament(f64, f64),
+                PrimeLimit(usize),
+                #[default]
+                Arbitrary,
+            },
+        #[default(69usize)]
+        pub(crate) reference_note: usize,
+        #[default(440.0f64)]
+        pub(crate) tuning_hz: f64,
+        #[default(4i64)]
+        octave_label: i64,
+        #[default(2.0f64)]
+        pub(crate) octave_scalar_factor: f64,
+        #[default(["C", "C♯/D♭", "D", "D♯/E♭", "E", "F", "F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B"].iter().map(|i: &&str| i.to_string()).collect::<Vec<String>>())]
+        pub(crate) note_class_set: Vec<String>,
+        #[default(vec![0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0])]
+        pub(crate) intervals: Vec<f64>,
+    }
+}
 
 impl Temperament<Edit> {
     pub fn to_play(&self) -> Temperament<Play> {
@@ -19,27 +53,7 @@ impl Temperament<Edit> {
             temperament_type: self.temperament_type.clone(),
         }
     }
-}
 
-impl TemperamentType {
-    fn name(&self, f: f64) -> String {
-        match self {
-            TemperamentType::EqualTemperament(d, _o) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
-            TemperamentType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
-            TemperamentType::Arbitrary => format!("{f} hz Arbitrary Scale"), 
-        }
-    }
-
-    fn intervals(&self) -> Option<Vec<f64>> {
-        match self {
-            TemperamentType::EqualTemperament(_d, _o) => todo!(),
-            TemperamentType::PrimeLimit(_p) => todo!(),
-            TemperamentType::Arbitrary => None,
-        }
-    }
-}
-
-impl Temperament<Edit> {
     pub(crate) fn new(
         name: Option<String>,
         description: Option<String>,
@@ -72,5 +86,23 @@ impl Temperament<Edit> {
         }
 
         n
+    }
+}
+
+impl TemperamentType {
+    fn name(&self, f: f64) -> String {
+        match self {
+            TemperamentType::EqualTemperament(d, _o) => format!("{f} hz {d}-Tone Equal Temperament Scale"),
+            TemperamentType::PrimeLimit(p) => format!("{f} hz {p}-Limit Intonation Scale"),
+            TemperamentType::Arbitrary => format!("{f} hz Arbitrary Scale"), 
+        }
+    }
+
+    fn intervals(&self) -> Option<Vec<f64>> {
+        match self {
+            TemperamentType::EqualTemperament(_d, _o) => todo!(),
+            TemperamentType::PrimeLimit(_p) => todo!(),
+            TemperamentType::Arbitrary => None,
+        }
     }
 }

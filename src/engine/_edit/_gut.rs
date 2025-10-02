@@ -1,7 +1,4 @@
-use crate::{
-    engine::_edit::{NewEnginePartParams, NewTrait},
-    *,
-};
+use crate::engine::{_edit::*, *};
 use duplicate::duplicate_item;
 
 impl Engine<Edit> {
