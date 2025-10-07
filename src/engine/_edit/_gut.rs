@@ -77,16 +77,17 @@ impl Engine<Edit> {
                 .retain(|&idx| idx != key_idx_val);
         }
     }
-    pub(crate) fn check_multi_delta_lengths(&self) {
-        self.v_multi
-            .iter()
-            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
-        self.f_multi
-            .iter()
-            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
-        self.c_multi
-            .iter()
-            .for_each(|element| element.check_multi_delta_lengths(self.guts.len()));
+    pub(crate) fn check_multi_delta_lengths(&self) -> Result<(), String> {
+        for i in 0..self.v_multi.len() {
+            self.v_multi[i].check_multi_delta_lengths(self.guts.len())?;
+        }
+        for i in 0..self.f_multi.len() {
+            self.f_multi[i].check_multi_delta_lengths(self.guts.len())?;
+        }
+        for i in 0..self.c_multi.len() {
+            self.c_multi[i].check_multi_delta_lengths(self.guts.len())?;
+        }
+        Ok(())
     }
 }
 
@@ -148,13 +149,13 @@ impl SetType {
 macro_rules! assert_eq_expr {
     ($left:expr, $right:expr) => {
         if $left != $right {
-            panic!(
+            return Err(format!(
                 "Assertion failed: `{}` == `{}`\n(left: `{:?}`, right: `{:?}`)",
                 stringify!($left),
                 stringify!($right),
                 $left,
                 $right
-            );
+            ));
         }
     };
 }
@@ -165,7 +166,7 @@ macro_rules! assert_eq_expr {
     [ComboSet] [combos];
 )]
 impl SetType {
-    pub(crate) fn check_multi_delta_lengths(&self, guts_len: usize) {
+    pub(crate) fn check_multi_delta_lengths(&self, guts_len: usize) -> Result<(), String> {
         for d in 0..self.field.len() {
             assert_eq_expr!(self.field[d].i_delta.len(), guts_len);
             assert_eq_expr!(self.field[d].x_delta.len(), guts_len);
@@ -182,5 +183,6 @@ impl SetType {
             assert_eq_expr!(self.trnsp_all[ta].i_delta.len(), guts_len);
             assert_eq_expr!(self.trnsp_all[ta].x_delta.len(), guts_len);
         }
+        Ok(())
     }
 }
