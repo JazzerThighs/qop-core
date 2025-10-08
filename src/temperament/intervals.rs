@@ -40,8 +40,8 @@ pub fn closest_wiki_microtonal_interval(alpha: f64, beta: f64) -> (usize, usize)
     }
     let mut result: usize = 0;
     for test in 0..WIKI_MICROTONAL_INTERVALS.len() {
-        if (WIKI_MICROTONAL_INTERVALS[test].1 - arg_interval).abs()
-            < (WIKI_MICROTONAL_INTERVALS[result].1 - arg_interval).abs()
+        if (WIKI_MICROTONAL_INTERVALS[test].hz_ratio - arg_interval).abs()
+            < (WIKI_MICROTONAL_INTERVALS[result].hz_ratio - arg_interval).abs()
         {
             result = test;
         }
@@ -49,9 +49,29 @@ pub fn closest_wiki_microtonal_interval(alpha: f64, beta: f64) -> (usize, usize)
     (result, octave_displacement)
 }
 
+pub struct WikiInterval {
+    name: String,
+    hz_ratio: f64,
+    cents_above_fundamental: f64,
+}
+
+macro_rules! wiki_interval_input {
+    [ $( ($name:expr, $hz:expr) ),+ $(,)? ] => {{
+        const CENTS_IN_OCTAVE: f64 = 1200.0;
+        let mut intervals = Vec::new();
+        $(
+            intervals.push(WikiInterval {
+                name: $name.to_string(),
+                hz_ratio: $hz,
+                cents_above_fundamental: CENTS_IN_OCTAVE * $hz.log2(),
+            });
+        )+
+        intervals
+    }};
+}
 
 lazy_static! {
-    pub static ref WIKI_MICROTONAL_INTERVALS: Vec<(String, f64)> = vec![
+    pub static ref WIKI_MICROTONAL_INTERVALS: Vec<WikiInterval> = wiki_interval_input![
         ("Unison, monophony, perfect prime, tonic, or fundamental", 1_f64),
         ("Sixty-five-thousand-five-hundred-thirty-seventh harmonic", 65537_f64 / 65536_f64),
         ("Ragisma", 4375_f64 / 4374_f64),
@@ -367,5 +387,5 @@ lazy_static! {
         ("Two-hundred-fifty-third harmonic", 253_f64 / 128_f64),
         ("Hundred-twenty-seventh harmonic", 127_f64 / 64_f64),
         ("Octave or diapason", 2_f64),
-    ].iter().map(|i: &(&str, f64)| (i.0.to_string(), i.1)).collect();
+    ];
 }
