@@ -14,4 +14,3 @@ serde = { version = "*", features = ["derive"] }
 nestify = "*"
 duplicate = "*"
 lazy_static = "*"
-num-traits = "*"

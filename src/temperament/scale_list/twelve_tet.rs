@@ -1,4 +1,4 @@
-use crate::scale::scale_list::ETScale;
+use crate::temperament::scale_list::ETScale;
 use lazy_static::lazy_static;
 
 lazy_static! {

@@ -1,17 +1,23 @@
-use crate::*;
+use crate::engine::*;
 use duplicate::duplicate_item;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use winit::keyboard::KeyCode;
 
-macro_rules! assert_bool_custom {
-    ($cond:expr) => {
-        if !$cond {
-            panic!("assertion failed: `{}`", stringify!($cond));
+macro_rules! assert_lt_expr {
+    ($left:expr, $right:expr) => {
+        if !($left < $right) {
+            return Err(format!(
+                "Assertion failed: `{}` < `{}`\n(left: `{:?}`, right: `{:?}`)",
+                stringify!($left),
+                stringify!($right),
+                $left,
+                $right
+            ));
         }
     };
 }
 
-impl<I: Int, F: Flo> Engine<I, F, Edit> {
+impl Engine<Edit> {
     pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
         if !self.dig_inputs.contains(&key_code) {
             self.dig_inputs.push(key_code)
@@ -92,32 +98,32 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
             Engine::dig_inputs_global_vec_manip(self, k_idx_update);
         }
     }
-    pub(crate) fn check_digitalref_invariants(&self) {
+    pub(crate) fn check_digitalref_invariants(&self) -> Result<(), String> {
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].togs.len() {
-                assert_bool_custom!(self.guts[g].togs[t] < self.dig_inputs.len())
+                assert_lt_expr!(self.guts[g].togs[t], self.dig_inputs.len())
             }
             for tg in 0..self.guts[g].trnsp_gut.len() {
                 for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {
-                    assert_bool_custom!(
-                        self.guts[g].trnsp_gut[tg].triggers[t] < self.dig_inputs.len()
+                    assert_lt_expr!(
+                        self.guts[g].trnsp_gut[tg].triggers[t], self.dig_inputs.len()
                     )
                 }
             }
         }
 
-        self.gut_holds
-            .check_digitalref_invariants(self.dig_inputs.len());
+        self.gut_holds.check_digitalref_invariants(self.dig_inputs.len())?;
 
         for set in 0..self.v_multi.len() {
-            self.v_multi[set].check_digitalref_invariants(self.dig_inputs.len())
+            self.v_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
         }
         for set in 0..self.f_multi.len() {
-            self.f_multi[set].check_digitalref_invariants(self.dig_inputs.len())
+            self.f_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
         }
         for set in 0..self.c_multi.len() {
-            self.c_multi[set].check_digitalref_invariants(self.dig_inputs.len())
+            self.c_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
         }
+        Ok(())
     }
 }
 
@@ -126,7 +132,7 @@ impl<I: Int, F: Flo> Engine<I, F, Edit> {
     [VFSet]    [buttons];
     [ComboSet] [combos];
 )]
-impl<I: Int, F: Flo> SetType<I, F> {
+impl SetType {
     pub(crate) fn all_dig_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
         for b in 0..self.buttons.len() {
             vec_closure(&mut self.buttons[b].togs);
@@ -144,41 +150,42 @@ impl<I: Int, F: Flo> SetType<I, F> {
         vec_closure(&mut self.holds.sostenuto.togs);
         vec_closure(&mut self.holds.inv_sostenuto.togs);
     }
-    pub(crate) fn check_digitalref_invariants(&self, dig_vec_len: usize) {
+    pub(crate) fn check_digitalref_invariants(&self, dig_vec_len: usize) -> Result<(), String> {
         for b in 0..self.buttons.len() {
             for t in 0..self.buttons[b].togs.len() {
-                assert_bool_custom!(self.buttons[b].togs[t] < dig_vec_len)
+                assert_lt_expr!(self.buttons[b].togs[t], dig_vec_len)
             }
         }
         for c in 0..self.tofield.len() {
             for to in 0..self.tofield[c].trnsp_one.len() {
                 for t in 0..self.tofield[c].trnsp_one[to].triggers.len() {
-                    assert_bool_custom!(self.tofield[c].trnsp_one[to].triggers[t] < dig_vec_len)
+                    assert_lt_expr!(self.tofield[c].trnsp_one[to].triggers[t], dig_vec_len)
                 }
             }
         }
         for ta in 0..self.trnsp_all.len() {
             for t in 0..self.trnsp_all[ta].triggers.len() {
-                assert_bool_custom!(self.trnsp_all[ta].triggers[t] < dig_vec_len)
+                assert_lt_expr!(self.trnsp_all[ta].triggers[t], dig_vec_len)
             }
         }
-        self.holds.check_digitalref_invariants(dig_vec_len)
+        return self.holds.check_digitalref_invariants(dig_vec_len);
     }
 }
 
 impl HoldBtns {
-    pub(crate) fn check_digitalref_invariants(&self, dig_vec_len: usize) {
+    pub(crate) fn check_digitalref_invariants(&self, dig_vec_len: usize) -> Result<(), String> {
         for sus in 0..self.sustain.togs.len() {
-            assert_bool_custom!(self.sustain.togs[sus] < dig_vec_len)
+            assert_lt_expr!(self.sustain.togs[sus], dig_vec_len)
         }
         for isus in 0..self.inv_sustain.togs.len() {
-            assert_bool_custom!(self.inv_sustain.togs[isus] < dig_vec_len)
+            assert_lt_expr!(self.inv_sustain.togs[isus], dig_vec_len)
         }
         for sos in 0..self.sostenuto.togs.len() {
-            assert_bool_custom!(self.sostenuto.togs[sos] < dig_vec_len)
+            assert_lt_expr!(self.sostenuto.togs[sos], dig_vec_len)
         }
         for isos in 0..self.inv_sostenuto.togs.len() {
-            assert_bool_custom!(self.inv_sostenuto.togs[isos] < dig_vec_len)
+            assert_lt_expr!(self.inv_sostenuto.togs[isos], dig_vec_len)
         }
+        Ok(())
     }
 }
