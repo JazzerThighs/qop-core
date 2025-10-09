@@ -6,7 +6,7 @@ use better_default::Default;
 use duplicate::duplicate_item;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
-use std::{fmt::Debug, marker::PhantomData};
+use std::{fmt::Debug, marker::PhantomData, ops::RangeInclusive};
 use winit::keyboard::KeyCode;
 
 nest! {
@@ -16,12 +16,18 @@ nest! {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
+
+
         pub(crate) dig_inputs: Vec<KeyCode>,
+        pub(crate) analog_inputs: Vec<RangeInclusive<usize>>,
+
+
         pub(crate) index_delta_bool: bool,
         pub(crate) extra_delta_bool: bool,
         pub(crate) gut_max_pressed: usize,
         pub(crate) gut_min_pressed: usize,
         pub(crate) gut_radio_mode: bool,
+        pub(crate) gut_hold_mode: bool,
         pub(crate) gut_holds:
             pub(crate) struct HoldBtns {
                 pub(crate) sustain:
@@ -35,6 +41,22 @@ nest! {
                 pub(crate) sostenuto: HoldTog,
                 pub(crate) inv_sostenuto: HoldTog,
             },
+        pub(crate) gut_analog_mode: bool,
+        pub(crate) gut_analogs: Vec<
+            pub(crate) struct AnalogMod {
+                pot: usize,
+                i_mem: Vec<i32>,
+                x_mem: Vec<f64>,
+                i_min_in: i32,
+                x_min_in: f64,
+                i_max_in: i32,
+                x_max_in: f64,
+                i_min_out: Vec<i32>,
+                x_min_out: Vec<f64>,
+                i_max_out: Vec<i32>,
+                x_max_out: Vec<f64>,
+            }
+        >,
         #[default(vec![Gut::default()])]
         pub(crate) guts: Vec<
             pub(crate) struct Gut {
