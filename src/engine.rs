@@ -6,7 +6,7 @@ use better_default::Default;
 use duplicate::duplicate_item;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
-use std::{fmt::Debug, marker::PhantomData, ops::RangeInclusive};
+use std::{fmt::Debug, marker::PhantomData};
 use winit::keyboard::KeyCode;
 
 nest! {
@@ -19,7 +19,7 @@ nest! {
 
 
         pub(crate) dig_inputs: Vec<KeyCode>,
-        pub(crate) analog_inputs: Vec<RangeInclusive<usize>>,
+        pub(crate) analog_inputs: Vec<(usize, usize)>,
 
 
         pub(crate) index_delta_bool: bool,
@@ -43,14 +43,12 @@ nest! {
             },
         pub(crate) gut_analog_mode: bool,
         pub(crate) gut_analogs: Vec<
-            pub(crate) struct AnalogMod {
+            pub(crate) struct MulAnalogMod {
                 pot: usize,
+                pot_min_in: usize,
+                pot_max_in: usize,
                 i_mem: Vec<i32>,
                 x_mem: Vec<f64>,
-                i_min_in: i32,
-                x_min_in: f64,
-                i_max_in: i32,
-                x_max_in: f64,
                 i_min_out: Vec<i32>,
                 x_min_out: Vec<f64>,
                 i_max_out: Vec<i32>,
@@ -159,16 +157,20 @@ impl Engine<Edit> {
             name: self.name.clone(),
             description: self.description.clone(),
             dig_inputs: self.dig_inputs.clone(),
+            analog_inputs: self.analog_inputs.clone(),
+            index_delta_bool: self.index_delta_bool.clone(),
+            extra_delta_bool: self.extra_delta_bool.clone(),
             gut_max_pressed: self.gut_max_pressed.clone(),
             gut_min_pressed: self.gut_min_pressed.clone(),
             gut_radio_mode: self.gut_radio_mode.clone(),
+            gut_hold_mode: self.gut_hold_mode.clone(),
             gut_holds: self.gut_holds.clone(),
+            gut_analog_mode: self.gut_analog_mode.clone(),
+            gut_analogs: self.gut_analogs.clone(),
             guts: self.guts.clone(),
             v_multi: self.v_multi.clone(),
             f_multi: self.f_multi.clone(),
             c_multi: self.c_multi.clone(),
-            index_delta_bool: self.index_delta_bool.clone(),
-            extra_delta_bool: self.extra_delta_bool.clone(),
         })
     }
 }
