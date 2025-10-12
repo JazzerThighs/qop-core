@@ -15,12 +15,8 @@ nest! {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
-
-
         pub(crate) dig_inputs: Vec<KeyCode>,
         pub(crate) analog_inputs: Vec<(usize, usize)>,
-
-
         pub(crate) index_delta_bool: bool,
         pub(crate) extra_delta_bool: bool,
         pub(crate) gut_max_pressed: usize,
@@ -40,6 +36,14 @@ nest! {
                 pub(crate) sostenuto: HoldTog,
                 pub(crate) inv_sostenuto: HoldTog,
             },
+        pub(crate) gut_trnsp_mode: bool,
+        pub(crate) gut_trnsp: Vec<
+            pub(crate) struct MulTrnsp {
+                pub(crate) triggers: Vec<usize>,
+                pub(crate) i_delta: Vec<i32>,
+                pub(crate) x_delta: Vec<f64>,
+            }
+        >,
         pub(crate) gut_analog_mode: bool,
         pub(crate) gut_analogs: Vec<
             pub(crate) struct MulAnalogMod {
@@ -62,10 +66,10 @@ nest! {
                 pub description: String,
                 pub(crate) togs: Vec<usize>,
                 pub(crate) pressed: bool,
-                pub(crate) index_out: usize,
-                pub(crate) extra_out: f64,
                 pub(crate) i_mem: i32,
                 pub(crate) x_mem: f64,
+                pub(crate) index_out: usize,
+                pub(crate) extra_out: f64,
                 pub(crate) trnsp_gut: Vec<
                     pub(crate) struct Trnsp {
                         pub(crate) triggers: Vec<usize>,
@@ -88,6 +92,7 @@ nest! {
                 pub(crate) radio_mode: bool,
                 pub(crate) holds: HoldBtns,
                 pub(crate) trnsp_all: Vec<MulTrnsp>,
+                pub(crate) analog_all: Vec<MulAnalogMod>,
                 pub(crate) buttons: Vec<
                     pub(crate) struct VFBtn {
                         pub name: String,
@@ -97,13 +102,7 @@ nest! {
                         pub(crate) x_delta: Vec<f64>,
                         pub(crate) i_mem: Vec<i32>,
                         pub(crate) x_mem: Vec<f64>,
-                        pub(crate) trnsp_one: Vec<
-                            pub(crate) struct MulTrnsp {
-                                pub(crate) triggers: Vec<usize>,
-                                pub(crate) i_delta: Vec<i32>,
-                                pub(crate) x_delta: Vec<f64>,
-                            }
-                        >,
+                        pub(crate) trnsp_one: Vec<MulTrnsp>,
                         pub(crate) analog_one: Vec<MulAnalogMod>,
                     }
                 >,
@@ -123,6 +122,7 @@ nest! {
                 pub(crate) radio_mode: bool,
                 pub(crate) holds: HoldBtns,
                 pub(crate) trnsp_all: Vec<MulTrnsp>,
+                pub(crate) analog_all: Vec<MulAnalogMod>,
                 #[default(vec![ComboTog::default()])]
                 pub(crate) buttons: Vec<
                     pub(crate) struct ComboTog {
@@ -167,6 +167,8 @@ impl Engine<Edit> {
             gut_radio_mode: self.gut_radio_mode.clone(),
             gut_hold_mode: self.gut_hold_mode.clone(),
             gut_holds: self.gut_holds.clone(),
+            gut_trnsp_mode: self.gut_trnsp_mode.clone(),
+            gut_trnsp: self.gut_trnsp.clone(),
             gut_analog_mode: self.gut_analog_mode.clone(),
             gut_analogs: self.gut_analogs.clone(),
             guts: self.guts.clone(),

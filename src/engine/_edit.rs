@@ -215,6 +215,11 @@ impl Engine<Edit> {
         }
     }
     pub fn check_digitalref_invariants(&self) -> Result<(), String> {
+        for i in 0..self.gut_trnsp.len() {
+            for t in 0..self.gut_trnsp[i].triggers.len() {
+                assert_lt_expr!(self.gut_trnsp[i].triggers[t], self.guts.len())
+            }
+        }
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].togs.len() {
                 assert_lt_expr!(self.guts[g].togs[t], self.dig_inputs.len())
@@ -391,6 +396,9 @@ impl Engine<Edit> {
         }
     }
     pub fn check_gut_vec_lengths(&self) -> Result<(), String> {
+        for i in 0..self.gut_trnsp.len() {
+            self.gut_trnsp[i].check_gut_vec_lengths(self.guts.len())?
+        }
         for i in 0..self.gut_analogs.len() {
             self.gut_analogs[i].check_gut_vec_lengths(self.guts.len())?
         }
