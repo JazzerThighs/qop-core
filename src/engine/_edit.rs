@@ -111,8 +111,6 @@ impl NewTrait for MulAnalogMod {
     }
 }
 
-
-
 /**************************** _dig_inputs.rs ********************************
  ****************************************************************************
  ****************************************************************************
@@ -291,7 +289,7 @@ impl SetType {
                 assert_lt_expr!(self.trnsp_all[ta].triggers[t], dig_vec_len)
             }
         }
-        return self.holds.check_digitalref_invariants(dig_vec_len);
+        self.holds.check_digitalref_invariants(dig_vec_len)
     }
 }
 
