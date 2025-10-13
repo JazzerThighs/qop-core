@@ -5,6 +5,31 @@ use duplicate::duplicate_item;
 use std::cmp::Ordering::{Equal, Greater, Less};
 use winit::keyboard::KeyCode;
 
+
+#[duplicate_item(
+    pass    fail    assert_expr;
+    [==]    [!=]    [assert_eq_expr];
+    [!=]    [==]    [assert_neq_expr];
+    [>=]    [<]     [assert_lt_expr];
+    [>]     [<=]    [assert_le_expr];
+    [<=]    [>]     [assert_gt_expr];
+    [<]     [>=]    [assert_ge_expr];
+)]
+#[allow(unused)]
+macro_rules! assert_expr {
+    ($left:expr, $right:expr) => {
+        if $left fail $right {
+            return Err(format!(
+                "Assertion failed: `{}` pass `{}`\n(left: `{:?}`, right: `{:?}`)",
+                stringify!($left),
+                stringify!($right),
+                $left,
+                $right
+            ));
+        }
+    };
+}
+
 #[derive(Default, Clone)]
 pub struct NewEnginePartParams {
     pub guts_len: usize,
@@ -93,6 +118,24 @@ impl NewTrait for MulTrnsp {
     }
 }
 
+impl NewTrait for AnalogMod {
+    fn new(_n: &mut NewEnginePartParams) -> Self {
+       AnalogMod {
+            i_mem: 0,
+            x_mem: 0.0,
+            pot_input_nodes: vec![
+                AnalogModNode {
+                    pot_value: 0,
+                    i_del: 0,
+                    x_del: 0.0,
+                };
+                2
+            ],
+            ..Default::default()
+        } 
+    }
+}
+
 impl NewTrait for MulAnalogMod {
     fn new(n: &mut NewEnginePartParams) -> Self {
         MulAnalogMod {
@@ -117,19 +160,6 @@ impl NewTrait for MulAnalogMod {
  ****************************************************************************
  ****************************************************************************/
 
-macro_rules! assert_lt_expr {
-    ($left:expr, $right:expr) => {
-        if !($left < $right) {
-            return Err(format!(
-                "Assertion failed: `{}` < `{}`\n(left: `{:?}`, right: `{:?}`)",
-                stringify!($left),
-                stringify!($right),
-                $left,
-                $right
-            ));
-        }
-    };
-}
 
 impl Engine<Edit> {
     pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
@@ -140,14 +170,14 @@ impl Engine<Edit> {
     pub fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
         for g in 0..self.guts.len() {
             operation(&mut self.guts[g].togs);
-            for tg in 0..self.guts[g].trnsp_gut.len() {
-                operation(&mut self.guts[g].trnsp_gut[tg].triggers);
+            for tg in 0..self.guts[g].trnsp_one.len() {
+                operation(&mut self.guts[g].trnsp_one[tg].triggers);
             }
         }
-        operation(&mut self.gut_holds.sustain.togs);
-        operation(&mut self.gut_holds.inv_sustain.togs);
-        operation(&mut self.gut_holds.sostenuto.togs);
-        operation(&mut self.gut_holds.inv_sostenuto.togs);
+        operation(&mut self.holds.sustain.togs);
+        operation(&mut self.holds.inv_sustain.togs);
+        operation(&mut self.holds.sostenuto.togs);
+        operation(&mut self.holds.inv_sostenuto.togs);
         for set in 0..self.v_multi.len() {
             self.v_multi[set].all_dig_idx_vecs(&operation);
         }
@@ -213,26 +243,26 @@ impl Engine<Edit> {
         }
     }
     pub fn check_digitalref_invariants(&self) -> Result<(), String> {
-        for i in 0..self.gut_trnsp.len() {
-            for t in 0..self.gut_trnsp[i].triggers.len() {
-                assert_lt_expr!(self.gut_trnsp[i].triggers[t], self.guts.len())
+        for i in 0..self.trnsp_all.len() {
+            for t in 0..self.trnsp_all[i].triggers.len() {
+                assert_lt_expr!(self.trnsp_all[i].triggers[t], self.guts.len())
             }
         }
         for g in 0..self.guts.len() {
             for t in 0..self.guts[g].togs.len() {
                 assert_lt_expr!(self.guts[g].togs[t], self.dig_inputs.len())
             }
-            for tg in 0..self.guts[g].trnsp_gut.len() {
-                for t in 0..self.guts[g].trnsp_gut[tg].triggers.len() {
+            for tg in 0..self.guts[g].trnsp_one.len() {
+                for t in 0..self.guts[g].trnsp_one[tg].triggers.len() {
                     assert_lt_expr!(
-                        self.guts[g].trnsp_gut[tg].triggers[t],
+                        self.guts[g].trnsp_one[tg].triggers[t],
                         self.dig_inputs.len()
                     )
                 }
             }
         }
 
-        self.gut_holds
+        self.holds
             .check_digitalref_invariants(self.dig_inputs.len())?;
 
         for set in 0..self.v_multi.len() {
@@ -311,6 +341,14 @@ impl HoldBtns {
     }
 }
 
+/********************************* _analog_inputs.rs ************************
+ ****************************************************************************
+ ****************************************************************************
+ ****************************************************************************
+ ****************************************************************************/
+
+
+
 /********************************* _gut.rs **********************************
  ****************************************************************************
  ****************************************************************************
@@ -318,9 +356,15 @@ impl HoldBtns {
  ****************************************************************************/
 
 impl Engine<Edit> {
-    pub fn gut_insert_g(&mut self, g_idx: usize) {
+    pub fn insert_gut(&mut self, g_idx: usize) {
         if g_idx <= self.guts.len() {
             self.guts.insert(g_idx, Gut::default());
+            self.trnsp_all
+                .iter_mut()
+                .for_each(|element| element.insert_gut(g_idx));
+            self.analog_all
+                .iter_mut()
+                .for_each(|element| element.insert_gut(g_idx));
             self.v_multi
                 .iter_mut()
                 .for_each(|element| element.insert_gut(g_idx));
@@ -332,9 +376,15 @@ impl Engine<Edit> {
                 .for_each(|element| element.insert_gut(g_idx));
         }
     }
-    pub fn gut_remove_g(&mut self, g_idx: usize) {
+    pub fn remove_gut(&mut self, g_idx: usize) {
         if self.guts.len() > 1 && g_idx < self.guts.len() {
             self.guts.remove(g_idx);
+            self.trnsp_all
+                .iter_mut()
+                .for_each(|element| element.remove_gut(g_idx));
+            self.analog_all
+                .iter_mut()
+                .for_each(|element| element.remove_gut(g_idx));
             self.v_multi
                 .iter_mut()
                 .for_each(|element| element.remove_gut(g_idx));
@@ -358,47 +408,51 @@ impl Engine<Edit> {
             self.guts[g_idx].togs.retain(|&idx| idx != key_idx_val);
         }
     }
-    pub fn gut_toggle_radio_mode(&mut self) {
-        self.gut_radio_mode = !self.gut_radio_mode;
+    pub fn gut_insert_analog(&mut self, g_idx: usize, analog_idx_val: usize) {
+        todo!()
     }
+    pub fn gut_remove_analog(&mut self, g_idx: usize, analog_idx_val: usize) {
+        todo!()
+    }
+    
     pub fn gut_insert_trnsp_t(&mut self, g_idx: usize, trnsp_idx: usize) {
-        if g_idx < self.guts.len() && trnsp_idx <= self.guts[g_idx].trnsp_gut.len() {
+        if g_idx < self.guts.len() && trnsp_idx <= self.guts[g_idx].trnsp_one.len() {
             let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.guts[g_idx]
-                .trnsp_gut
+                .trnsp_one
                 .insert(trnsp_idx, Trnsp::new(&mut n));
         }
     }
     pub fn gut_remove_trnsp_t(&mut self, g_idx: usize, trnsp_idx: usize) {
-        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_gut.len() {
-            self.guts[g_idx].trnsp_gut.remove(trnsp_idx);
+        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_one.len() {
+            self.guts[g_idx].trnsp_one.remove(trnsp_idx);
         }
     }
     pub fn gut_insert_trnsp_dig(&mut self, g_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
         if g_idx < self.guts.len()
-            && trnsp_idx < self.guts[g_idx].trnsp_gut.len()
-            && !self.guts[g_idx].trnsp_gut[trnsp_idx]
+            && trnsp_idx < self.guts[g_idx].trnsp_one.len()
+            && !self.guts[g_idx].trnsp_one[trnsp_idx]
                 .triggers
                 .contains(&key_idx_val)
         {
-            self.guts[g_idx].trnsp_gut[trnsp_idx]
+            self.guts[g_idx].trnsp_one[trnsp_idx]
                 .triggers
                 .push(key_idx_val);
         }
     }
     pub fn gut_remove_trnsp_dig(&mut self, g_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
-        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_gut.len() {
-            self.guts[g_idx].trnsp_gut[trnsp_idx]
+        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_one.len() {
+            self.guts[g_idx].trnsp_one[trnsp_idx]
                 .triggers
                 .retain(|&idx| idx != key_idx_val);
         }
     }
     pub fn check_gut_vec_lengths(&self) -> Result<(), String> {
-        for i in 0..self.gut_trnsp.len() {
-            self.gut_trnsp[i].check_gut_vec_lengths(self.guts.len())?
+        for i in 0..self.trnsp_all.len() {
+            self.trnsp_all[i].check_gut_vec_lengths(self.guts.len())?
         }
-        for i in 0..self.gut_analogs.len() {
-            self.gut_analogs[i].check_gut_vec_lengths(self.guts.len())?
+        for i in 0..self.analog_all.len() {
+            self.analog_all[i].check_gut_vec_lengths(self.guts.len())?
         }
         for i in 0..self.v_multi.len() {
             self.v_multi[i].check_gut_vec_lengths(self.guts.len())?;
@@ -414,9 +468,24 @@ impl Engine<Edit> {
 }
 
 #[duplicate_item(
+    gut_toggle_delta_mode       delta_mode;
+    [gut_toggle_i_delta_mode]   [i_delta_mode];
+    [gut_toggle_x_delta_mode]   [x_delta_mode];
+    [gut_toggle_radio_mode]     [radio_mode];
+    [gut_toggle_holds_mode]     [holds_mode];
+    [gut_toggle_trnsp_mode]     [trnsp_mode];
+    [gut_toggle_analog_mode]    [analog_mode];
+)]
+impl Engine<Edit> {
+    pub fn gut_toggle_delta_mode(&mut self) {
+        self.delta_mode = !self.delta_mode;
+    }
+}
+
+#[duplicate_item(
     gut_change_delta_out         d_out       d_del_val   del_type   gut_change_minmax        minmaxval minmax_field      iscomparedto                gut_trnsp_change_deltas     d_type d_field;
-    [gut_change_index_delta_out] [index_out] [i_del_val] [usize]    [gut_change_min_pressed] [min_val] [gut_min_pressed] [le(&self.gut_max_pressed)] [gut_trnsp_change_i_deltas] [i32]    [i_delta];
-    [gut_change_extra_delta_out] [extra_out] [x_del_val] [f64]      [gut_change_max_pressed] [max_val] [gut_max_pressed] [ge(&self.gut_max_pressed)] [gut_trnsp_change_x_deltas] [f64]    [x_delta];
+    [gut_change_index_delta_out] [index_out] [i_del_val] [usize]    [gut_change_min_pressed] [min_val] [min_pressed] [le(&self.max_pressed)] [gut_trnsp_change_i_deltas] [i32]    [i_delta];
+    [gut_change_extra_delta_out] [extra_out] [x_del_val] [f64]      [gut_change_max_pressed] [max_val] [max_pressed] [ge(&self.max_pressed)] [gut_trnsp_change_x_deltas] [f64]    [x_delta];
 )]
 impl Engine<Edit> {
     pub fn gut_change_delta_out(&mut self, g_idx: usize, d_del_val: del_type) {
@@ -430,8 +499,8 @@ impl Engine<Edit> {
         }
     }
     pub fn gut_trnsp_change_deltas(&mut self, g_idx: usize, trnsp_idx: usize, d_del_val: d_type) {
-        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_gut.len() {
-            self.guts[g_idx].trnsp_gut[trnsp_idx].d_field = d_del_val;
+        if g_idx < self.guts.len() && trnsp_idx < self.guts[g_idx].trnsp_one.len() {
+            self.guts[g_idx].trnsp_one[trnsp_idx].d_field = d_del_val;
         }
     }
 }
@@ -468,19 +537,6 @@ impl SetType {
     }
 }
 
-macro_rules! assert_eq_expr {
-    ($left:expr, $right:expr) => {
-        if $left != $right {
-            return Err(format!(
-                "Assertion failed: `{}` == `{}`\n(left: `{:?}`, right: `{:?}`)",
-                stringify!($left),
-                stringify!($right),
-                $left,
-                $right
-            ));
-        }
-    };
-}
 
 #[duplicate_item(
     SetType    field;
@@ -498,6 +554,14 @@ impl SetType {
                 assert_eq_expr!(self.field[d].trnsp_one[to].i_delta.len(), guts_len);
                 assert_eq_expr!(self.field[d].trnsp_one[to].x_delta.len(), guts_len);
             }
+            for ao in 0..self.field[d].analog_one.len() {
+                assert_eq_expr!(self.field[d].analog_one[ao].i_mem.len(), guts_len);
+                assert_eq_expr!(self.field[d].analog_one[ao].x_mem.len(), guts_len);
+                for aon in 0..self.field[d].analog_one[ao].pot_input_nodes.len() {
+                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].i_del.len(), guts_len);
+                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].x_del.len(), guts_len);
+                }
+            }
         }
         assert_eq_expr!(self.i_mem.len(), guts_len);
         assert_eq_expr!(self.x_mem.len(), guts_len);
@@ -505,6 +569,32 @@ impl SetType {
             assert_eq_expr!(self.trnsp_all[ta].i_delta.len(), guts_len);
             assert_eq_expr!(self.trnsp_all[ta].x_delta.len(), guts_len);
         }
+        for aa in 0..self.analog_all.len() {
+            assert_eq_expr!(self.analog_all[aa].i_mem.len(), guts_len);
+            assert_eq_expr!(self.analog_all[aa].x_mem.len(), guts_len);
+            for aon in 0..self.analog_all[aa].pot_input_nodes.len() {
+                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].i_del.len(), guts_len);
+                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].x_del.len(), guts_len);
+            }
+        }
+        Ok(())
+    }
+}
+impl MulAnalogMod {
+    pub fn check_gut_vec_lengths(&self, guts_len: usize) -> Result<(), String> {
+        assert_eq_expr!(self.i_mem.len(), guts_len);
+        assert_eq_expr!(self.x_mem.len(), guts_len);
+        for aon in 0..self.pot_input_nodes.len() {
+            assert_eq_expr!(self.pot_input_nodes[aon].i_del.len(), guts_len);
+            assert_eq_expr!(self.pot_input_nodes[aon].x_del.len(), guts_len);
+        }
+        Ok(())
+    }
+}
+impl MulTrnsp {
+    pub fn check_gut_vec_lengths(&self, guts_len: usize) -> Result<(), String> {
+        assert_eq_expr!(self.i_delta.len(), guts_len);
+        assert_eq_expr!(self.x_delta.len(), guts_len);
         Ok(())
     }
 }
@@ -528,8 +618,8 @@ impl SetType {
 )]
 impl Engine<Edit> {
     pub fn gut_hold_dig(&mut self, key_idx_val: usize) {
-        self.gut_holds.holdfield.togs.operation;
-        self.gut_holds.holdfield.togs.dedup()
+        self.holds.holdfield.togs.operation;
+        self.holds.holdfield.togs.dedup()
     }
 }
 

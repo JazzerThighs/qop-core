@@ -17,13 +17,13 @@ nest! {
         pub description: String,
         pub(crate) dig_inputs: Vec<KeyCode>,
         pub(crate) analog_inputs: Vec<(usize, usize)>,
-        pub(crate) index_delta_bool: bool,
-        pub(crate) extra_delta_bool: bool,
-        pub(crate) gut_max_pressed: usize,
-        pub(crate) gut_min_pressed: usize,
-        pub(crate) gut_radio_mode: bool,
-        pub(crate) gut_hold_mode: bool,
-        pub(crate) gut_holds:
+        pub(crate) i_delta_mode: bool,
+        pub(crate) x_delta_mode: bool,
+        pub(crate) max_pressed: usize,
+        pub(crate) min_pressed: usize,
+        pub(crate) radio_mode: bool,
+        pub(crate) holds_mode: bool,
+        pub(crate) holds:
             pub(crate) struct HoldBtns {
                 pub(crate) sustain:
                     pub(crate) struct HoldTog {
@@ -36,16 +36,16 @@ nest! {
                 pub(crate) sostenuto: HoldTog,
                 pub(crate) inv_sostenuto: HoldTog,
             },
-        pub(crate) gut_trnsp_mode: bool,
-        pub(crate) gut_trnsp: Vec<
+        pub(crate) trnsp_mode: bool,
+        pub(crate) trnsp_all: Vec<
             pub(crate) struct MulTrnsp {
                 pub(crate) triggers: Vec<usize>,
                 pub(crate) i_delta: Vec<i32>,
                 pub(crate) x_delta: Vec<f64>,
             }
         >,
-        pub(crate) gut_analog_mode: bool,
-        pub(crate) gut_analogs: Vec<
+        pub(crate) analog_mode: bool,
+        pub(crate) analog_all: Vec<
             pub(crate) struct MulAnalogMod {
                 pot: usize,
                 i_mem: Vec<i32>,
@@ -70,13 +70,27 @@ nest! {
                 pub(crate) x_mem: f64,
                 pub(crate) index_out: usize,
                 pub(crate) extra_out: f64,
-                pub(crate) trnsp_gut: Vec<
+                pub(crate) trnsp_one: Vec<
                     pub(crate) struct Trnsp {
                         pub(crate) triggers: Vec<usize>,
                         pub(crate) i_delta: i32,
                         pub(crate) x_delta: f64,
                     }
-                >
+                >,
+                pub(crate) analog_one: Vec<
+                    pub(crate) struct AnalogMod {
+                        pot: usize,
+                        i_mem: i32,
+                        x_mem: f64,
+                        pot_input_nodes: Vec<
+                            pub(crate) struct AnalogModNode {
+                                pot_value: usize,
+                                i_del: i32,
+                                x_del: f64
+                            }
+                        >,
+                    }
+                >,
             }
         >,
         pub(crate) v_multi: Vec<
@@ -162,15 +176,15 @@ impl Engine<Edit> {
             analog_inputs: self.analog_inputs.clone(),
             index_delta_bool: self.index_delta_bool.clone(),
             extra_delta_bool: self.extra_delta_bool.clone(),
-            gut_max_pressed: self.gut_max_pressed.clone(),
-            gut_min_pressed: self.gut_min_pressed.clone(),
-            gut_radio_mode: self.gut_radio_mode.clone(),
-            gut_hold_mode: self.gut_hold_mode.clone(),
-            gut_holds: self.gut_holds.clone(),
-            gut_trnsp_mode: self.gut_trnsp_mode.clone(),
-            gut_trnsp: self.gut_trnsp.clone(),
-            gut_analog_mode: self.gut_analog_mode.clone(),
-            gut_analogs: self.gut_analogs.clone(),
+            max_pressed: self.max_pressed.clone(),
+            min_pressed: self.min_pressed.clone(),
+            radio_mode: self.radio_mode.clone(),
+            hold_mode: self.hold_mode.clone(),
+            holds: self.holds.clone(),
+            trnsp_mode: self.trnsp_mode.clone(),
+            trnsp_all: self.trnsp_all.clone(),
+            analog_mode: self.analog_mode.clone(),
+            analog_all: self.analog_all.clone(),
             guts: self.guts.clone(),
             v_multi: self.v_multi.clone(),
             f_multi: self.f_multi.clone(),
