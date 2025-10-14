@@ -53,8 +53,8 @@ nest! {
                 pot_input_nodes: Vec<
                     pub(crate) struct MulAnalogModNode {
                         pot_value: usize,
-                        i_del: Vec<i32>,
-                        x_del: Vec<f64>
+                        i_delta: Vec<i32>,
+                        x_delta: Vec<f64>
                     }
                 >,
             }
@@ -85,8 +85,8 @@ nest! {
                         pot_input_nodes: Vec<
                             pub(crate) struct AnalogModNode {
                                 pot_value: usize,
-                                i_del: i32,
-                                x_del: f64
+                                i_delta: i32,
+                                x_delta: f64
                             }
                         >,
                     }
@@ -174,12 +174,12 @@ impl Engine<Edit> {
             description: self.description.clone(),
             dig_inputs: self.dig_inputs.clone(),
             analog_inputs: self.analog_inputs.clone(),
-            index_delta_bool: self.index_delta_bool.clone(),
-            extra_delta_bool: self.extra_delta_bool.clone(),
+            i_delta_mode: self.i_delta_mode.clone(),
+            x_delta_mode: self.x_delta_mode.clone(),
             max_pressed: self.max_pressed.clone(),
             min_pressed: self.min_pressed.clone(),
             radio_mode: self.radio_mode.clone(),
-            hold_mode: self.hold_mode.clone(),
+            holds_mode: self.holds_mode.clone(),
             holds: self.holds.clone(),
             trnsp_mode: self.trnsp_mode.clone(),
             trnsp_all: self.trnsp_all.clone(),

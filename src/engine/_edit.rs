@@ -124,11 +124,7 @@ impl NewTrait for AnalogMod {
             i_mem: 0,
             x_mem: 0.0,
             pot_input_nodes: vec![
-                AnalogModNode {
-                    pot_value: 0,
-                    i_del: 0,
-                    x_del: 0.0,
-                };
+                AnalogModNode::default();
                 2
             ],
             ..Default::default()
@@ -144,8 +140,8 @@ impl NewTrait for MulAnalogMod {
             pot_input_nodes: vec![
                 MulAnalogModNode {
                     pot_value: 0,
-                    i_del: vec![0; n.guts_len],
-                    x_del: vec![0.0; n.guts_len],
+                    i_delta: vec![0; n.guts_len],
+                    x_delta: vec![0.0; n.guts_len],
                 };
                 2
             ],
@@ -506,11 +502,11 @@ impl Engine<Edit> {
 }
 
 #[duplicate_item(
-    SetType    multi_insertremove_gut insertremove_i        insertremove_x          deltafield;
-    [VFSet]    [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [buttons];
-    [VFSet]    [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [buttons];
-    [ComboSet] [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [combos];
-    [ComboSet] [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [combos];
+    SetType    multi_insertremove_gut insertremove_i        insertremove_x          op_gut              deltafield;
+    [VFSet]    [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [insert_gut(g_idx)] [buttons];
+    [VFSet]    [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [remove_gut(g_idx)] [buttons];
+    [ComboSet] [insert_gut]           [insert(g_idx, 0)]    [insert(g_idx, 0.0)]    [insert_gut(g_idx)] [combos];
+    [ComboSet] [remove_gut]           [remove(g_idx)]       [remove(g_idx)]         [remove_gut(g_idx)] [combos];
 )]
 impl SetType {
     pub fn multi_insertremove_gut(&mut self, g_idx: usize) {
@@ -519,23 +515,56 @@ impl SetType {
             self.deltafield[del_idx].x_delta.insertremove_x;
             self.deltafield[del_idx].i_mem.insertremove_i;
             self.deltafield[del_idx].x_mem.insertremove_x;
-            for to in 0..self.deltafield[del_idx].trnsp_one.len() {
-                self.deltafield[del_idx].trnsp_one[to]
-                    .i_delta
-                    .insertremove_i;
-                self.deltafield[del_idx].trnsp_one[to]
-                    .x_delta
-                    .insertremove_x;
-            }
+            self.deltafield[del_idx].trnsp_one
+                .iter_mut()
+                .for_each(|element| element.op_gut);
         }
         self.i_mem.insertremove_i;
         self.x_mem.insertremove_x;
-        for ta in 0..self.trnsp_all.len() {
-            self.trnsp_all[ta].i_delta.insertremove_i;
-            self.trnsp_all[ta].x_delta.insertremove_x;
-        }
+        self.trnsp_all
+            .iter_mut()
+            .for_each(|element| element.op_gut);
     }
 }
+
+impl MulAnalogMod {
+    pub fn insert_gut(&mut self, g_idx: usize) {
+        self.i_mem.insert(g_idx, 0);
+        self.x_mem.insert(g_idx, 0.0);
+        self.pot_input_nodes
+            .iter_mut()
+            .for_each(|element| element.insert_gut(g_idx));
+    }
+    pub fn remove_gut(&mut self, g_idx: usize) {
+        self.i_mem.remove(g_idx);
+        self.x_mem.remove(g_idx);
+        self.pot_input_nodes
+            .iter_mut()
+            .for_each(|element| element.remove_gut(g_idx));
+    }
+}
+impl MulAnalogModNode {
+    pub fn insert_gut(&mut self, g_idx: usize) {
+        self.i_delta.insert(g_idx, 0);
+        self.x_delta.insert(g_idx, 0.0);
+    }
+    pub fn remove_gut(&mut self, g_idx: usize) {
+        self.i_delta.remove(g_idx);
+        self.x_delta.remove(g_idx);
+    }
+}
+
+impl MulTrnsp {
+    pub fn insert_gut(&mut self, g_idx: usize) {
+        self.i_delta.insert(g_idx, 0);
+        self.x_delta.insert(g_idx, 0.0);
+    }
+    pub fn remove_gut(&mut self, g_idx: usize) {
+        self.i_delta.remove(g_idx);
+        self.x_delta.remove(g_idx);
+    }
+}
+
 
 
 #[duplicate_item(
@@ -558,8 +587,8 @@ impl SetType {
                 assert_eq_expr!(self.field[d].analog_one[ao].i_mem.len(), guts_len);
                 assert_eq_expr!(self.field[d].analog_one[ao].x_mem.len(), guts_len);
                 for aon in 0..self.field[d].analog_one[ao].pot_input_nodes.len() {
-                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].i_del.len(), guts_len);
-                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].x_del.len(), guts_len);
+                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].i_delta.len(), guts_len);
+                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].x_delta.len(), guts_len);
                 }
             }
         }
@@ -573,8 +602,8 @@ impl SetType {
             assert_eq_expr!(self.analog_all[aa].i_mem.len(), guts_len);
             assert_eq_expr!(self.analog_all[aa].x_mem.len(), guts_len);
             for aon in 0..self.analog_all[aa].pot_input_nodes.len() {
-                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].i_del.len(), guts_len);
-                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].x_del.len(), guts_len);
+                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].i_delta.len(), guts_len);
+                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].x_delta.len(), guts_len);
             }
         }
         Ok(())
@@ -585,8 +614,8 @@ impl MulAnalogMod {
         assert_eq_expr!(self.i_mem.len(), guts_len);
         assert_eq_expr!(self.x_mem.len(), guts_len);
         for aon in 0..self.pot_input_nodes.len() {
-            assert_eq_expr!(self.pot_input_nodes[aon].i_del.len(), guts_len);
-            assert_eq_expr!(self.pot_input_nodes[aon].x_del.len(), guts_len);
+            assert_eq_expr!(self.pot_input_nodes[aon].i_delta.len(), guts_len);
+            assert_eq_expr!(self.pot_input_nodes[aon].x_delta.len(), guts_len);
         }
         Ok(())
     }
