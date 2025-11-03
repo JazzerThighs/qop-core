@@ -163,13 +163,17 @@ impl Engine<Edit> {
             self.dig_inputs.push(key_code)
         }
     }
-    pub fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>)) {
+    pub fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+        for t in 0..self.trnsp_all.len() {
+            operation(&mut self.trnsp_all[t].triggers);
+        }
         for g in 0..self.guts.len() {
             operation(&mut self.guts[g].togs);
             for tg in 0..self.guts[g].trnsp_one.len() {
                 operation(&mut self.guts[g].trnsp_one[tg].triggers);
             }
         }
+        self.holds.all_dig_idx_vecs(&operation);
         operation(&mut self.holds.sustain.togs);
         operation(&mut self.holds.inv_sustain.togs);
         operation(&mut self.holds.sostenuto.togs);
@@ -183,10 +187,11 @@ impl Engine<Edit> {
         for set in 0..self.c_multi.len() {
             self.c_multi[set].all_dig_idx_vecs(&operation);
         }
+        Ok(())
     }
     pub fn dig_inputs_purge_dig(&mut self, key_code: KeyCode) {
         if let Some(i) = self.dig_inputs.iter().position(|&key| key == key_code) {
-            let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| {
+            let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                 key_idx_vec.retain_mut(|k: &mut usize| match (*k).cmp(&i) {
                     Less => true,
                     Equal => false,
@@ -194,7 +199,8 @@ impl Engine<Edit> {
                         *k -= 1;
                         true
                     }
-                })
+                });
+                Ok(())
             };
             Engine::dig_inputs_global_vec_manip(self, dig_idx_purge);
             self.dig_inputs.remove(i);
@@ -209,7 +215,7 @@ impl Engine<Edit> {
         if let (Some(i1), Some(i2)) = (i1, i2) {
             self.dig_inputs.swap(i1, i2);
             if swap_all_fields {
-                let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| {
+                let k_idxs_swap = |k_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                     k_idx_vec.iter_mut().for_each(|k: &mut usize| {
                         match ((*k).cmp(&i1), (*k).cmp(&i2)) {
                             (Equal, _) => *k = i2,
@@ -217,6 +223,7 @@ impl Engine<Edit> {
                             (_, _) => {}
                         }
                     });
+                    Ok(())
                 };
                 Engine::dig_inputs_global_vec_manip(self, k_idxs_swap);
             }
@@ -226,7 +233,7 @@ impl Engine<Edit> {
         let i1 = self.dig_inputs.iter().position(|&key| key == kc_old);
         let i2 = self.dig_inputs.iter().position(|&key| key == kc_new);
         if let (Some(i1), Some(i2)) = (i1, i2) {
-            let k_idx_update = |k_idx_vec: &mut Vec<usize>| {
+            let k_idx_update = |k_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                 k_idx_vec.iter_mut().for_each(|k: &mut usize| {
                     if *k == i1 {
                         *k = i2;
@@ -234,42 +241,21 @@ impl Engine<Edit> {
                 });
                 k_idx_vec.sort();
                 k_idx_vec.dedup();
+                Ok(())
             };
             Engine::dig_inputs_global_vec_manip(self, k_idx_update);
         }
     }
-    pub fn check_digitalref_invariants(&self) -> Result<(), String> {
-        for i in 0..self.trnsp_all.len() {
-            for t in 0..self.trnsp_all[i].triggers.len() {
-                assert_lt_expr!(self.trnsp_all[i].triggers[t], self.guts.len())
-            }
-        }
-        for g in 0..self.guts.len() {
-            for t in 0..self.guts[g].togs.len() {
-                assert_lt_expr!(self.guts[g].togs[t], self.dig_inputs.len())
-            }
-            for tg in 0..self.guts[g].trnsp_one.len() {
-                for t in 0..self.guts[g].trnsp_one[tg].triggers.len() {
-                    assert_lt_expr!(
-                        self.guts[g].trnsp_one[tg].triggers[t],
-                        self.dig_inputs.len()
-                    )
-                }
-            }
-        }
-
-        self.holds
-            .check_digitalref_invariants(self.dig_inputs.len())?;
-
-        for set in 0..self.v_multi.len() {
-            self.v_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
-        }
-        for set in 0..self.f_multi.len() {
-            self.f_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
-        }
-        for set in 0..self.c_multi.len() {
-            self.c_multi[set].check_digitalref_invariants(self.dig_inputs.len())?;
-        }
+    pub fn check_digitalref_invariants(&mut self) -> Result<(), String> {
+        let self_guts_len = self.guts.len();
+        let check_invariants_op = |k_idx_vec: &mut Vec<usize>| -> Result<(), String> {
+            for k in 0..k_idx_vec.len() {
+                assert_lt_expr!(k, self_guts_len)
+            };
+            Ok(())
+        };
+        
+        Engine::dig_inputs_global_vec_manip(self, check_invariants_op);        
         Ok(())
     }
 }
@@ -280,59 +266,39 @@ impl Engine<Edit> {
     [ComboSet] [combos];
 )]
 impl SetType {
-    pub fn all_dig_idx_vecs(&mut self, vec_closure: impl Fn(&mut Vec<usize>)) {
+    pub fn all_dig_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
         for b in 0..self.buttons.len() {
-            vec_closure(&mut self.buttons[b].togs);
+            operation(&mut self.buttons[b].togs);
         }
         for c in 0..self.tofield.len() {
             for to in 0..self.tofield[c].trnsp_one.len() {
-                vec_closure(&mut self.tofield[c].trnsp_one[to].triggers);
+                operation(&mut self.tofield[c].trnsp_one[to].triggers);
             }
         }
         for ta in 0..self.trnsp_all.len() {
-            vec_closure(&mut self.trnsp_all[ta].triggers);
+            operation(&mut self.trnsp_all[ta].triggers);
         }
-        vec_closure(&mut self.holds.sustain.togs);
-        vec_closure(&mut self.holds.inv_sustain.togs);
-        vec_closure(&mut self.holds.sostenuto.togs);
-        vec_closure(&mut self.holds.inv_sostenuto.togs);
+        self.holds.all_dig_idx_vecs(operation);
+        Ok(())
     }
-    pub fn check_digitalref_invariants(&self, dig_vec_len: usize) -> Result<(), String> {
-        for b in 0..self.buttons.len() {
-            for t in 0..self.buttons[b].togs.len() {
-                assert_lt_expr!(self.buttons[b].togs[t], dig_vec_len)
-            }
+    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>)) {
+        for aa in 0..self.analog_all.len() {
+            operation(&mut self.analog_all[aa].pots);
         }
         for c in 0..self.tofield.len() {
-            for to in 0..self.tofield[c].trnsp_one.len() {
-                for t in 0..self.tofield[c].trnsp_one[to].triggers.len() {
-                    assert_lt_expr!(self.tofield[c].trnsp_one[to].triggers[t], dig_vec_len)
-                }
+            for ao in 0..self.tofield[c].analog_one.len() {
+                operation(&mut self.tofield[c].analog_one[ao].pots);
             }
         }
-        for ta in 0..self.trnsp_all.len() {
-            for t in 0..self.trnsp_all[ta].triggers.len() {
-                assert_lt_expr!(self.trnsp_all[ta].triggers[t], dig_vec_len)
-            }
-        }
-        self.holds.check_digitalref_invariants(dig_vec_len)
     }
 }
 
 impl HoldBtns {
-    pub fn check_digitalref_invariants(&self, dig_vec_len: usize) -> Result<(), String> {
-        for sus in 0..self.sustain.togs.len() {
-            assert_lt_expr!(self.sustain.togs[sus], dig_vec_len)
-        }
-        for isus in 0..self.inv_sustain.togs.len() {
-            assert_lt_expr!(self.inv_sustain.togs[isus], dig_vec_len)
-        }
-        for sos in 0..self.sostenuto.togs.len() {
-            assert_lt_expr!(self.sostenuto.togs[sos], dig_vec_len)
-        }
-        for isos in 0..self.inv_sostenuto.togs.len() {
-            assert_lt_expr!(self.inv_sostenuto.togs[isos], dig_vec_len)
-        }
+    pub fn all_dig_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+        operation(&mut self.sustain.togs);
+        operation(&mut self.inv_sustain.togs);
+        operation(&mut self.sostenuto.togs);
+        operation(&mut self.inv_sostenuto.togs);
         Ok(())
     }
 }
@@ -343,7 +309,22 @@ impl HoldBtns {
  ****************************************************************************
  ****************************************************************************/
 
-
+impl Engine<Edit> {
+    pub fn ana_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+        for a in 0..self.analog_all.len() {
+            operation(&mut self.analog_all[a].pots);
+        }
+        for set in 0..self.v_multi.len() {
+            self.v_multi[set].all_ana_idx_vecs(&operation);
+        }
+        for set in 0..self.f_multi.len() {
+            self.f_multi[set].all_ana_idx_vecs(&operation);
+        }
+        for set in 0..self.c_multi.len() {
+            self.c_multi[set].all_ana_idx_vecs(&operation);
+        }
+    }
+}
 
 /********************************* _gut.rs **********************************
  ****************************************************************************

@@ -1,7 +1,7 @@
 mod _edit;
 mod _play;
 
-use crate::*;
+use crate::{engine::_edit::*, *};
 use better_default::Default;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
@@ -47,7 +47,7 @@ nest! {
         pub(crate) analog_mode: bool,
         pub(crate) analog_all: Vec<
             pub(crate) struct MulAnalogMod {
-                pot: usize,
+                pots: Vec<usize>,
                 i_mem: Vec<i32>,
                 x_mem: Vec<f64>,
                 pot_input_nodes: Vec<
@@ -79,7 +79,7 @@ nest! {
                 >,
                 pub(crate) analog_one: Vec<
                     pub(crate) struct AnalogMod {
-                        pot: usize,
+                        pots: Vec<usize>,
                         i_mem: i32,
                         x_mem: f64,
                         pot_input_nodes: Vec<
@@ -164,7 +164,45 @@ nest! {
 }
 
 impl Engine<Edit> {
-    pub fn to_play(&self) -> Result<Engine<Play>, String> {
+    pub fn new_saturated() -> Engine<Edit> {
+        let mut engine: Engine<Edit> = Engine {
+            dig_inputs: vec![KeyCode::KeyA],
+            analog_inputs: vec![(0, 1)],
+            ..Default::default()
+        };
+        let mut n = NewEnginePartParams::new(&engine);
+        engine.trnsp_all = vec![MulTrnsp::new(&mut n)];
+        engine.analog_all = vec![MulAnalogMod::new(&mut n)];
+        
+        engine.guts[0].trnsp_one = vec![Trnsp::new(&mut n)];
+        engine.guts[0].analog_one = vec![AnalogMod::new(&mut n)];
+        
+        engine.v_multi = vec![VFSet::new(&mut n)];
+        engine.v_multi[0].trnsp_all = vec![MulTrnsp::new(&mut n)];
+        engine.v_multi[0].analog_all = vec![MulAnalogMod::new(&mut n)];
+        engine.v_multi[0].buttons[0].trnsp_one = vec![MulTrnsp::new(&mut n)];
+        engine.v_multi[0].buttons[0].analog_one = vec![MulAnalogMod::new(&mut n)];
+
+        engine.f_multi = vec![VFSet::new(&mut n)];
+        engine.f_multi[0].trnsp_all = vec![MulTrnsp::new(&mut n)];
+        engine.f_multi[0].analog_all = vec![MulAnalogMod::new(&mut n)];
+        engine.f_multi[0].buttons[0].trnsp_one = vec![MulTrnsp::new(&mut n)];
+        engine.f_multi[0].buttons[0].analog_one = vec![MulAnalogMod::new(&mut n)];
+
+        engine.c_multi = vec![ComboSet::new(&mut n)];
+        engine.c_multi[0].trnsp_all = vec![MulTrnsp::new(&mut n)];
+        engine.c_multi[0].analog_all = vec![MulAnalogMod::new(&mut n)];
+        engine.c_multi[0].combos[0].trnsp_one = vec![MulTrnsp::new(&mut n)];
+        engine.c_multi[0].combos[0].analog_one = vec![MulAnalogMod::new(&mut n)];
+
+        let op = |key_idx_vec: &mut Vec<usize>| -> Result<(), String> {key_idx_vec.push(0); Ok(())};
+        engine.dig_inputs_global_vec_manip(op);
+        engine.ana_inputs_global_vec_manip(op);
+
+        engine
+    }
+    
+    pub fn to_play(&mut self) -> Result<Engine<Play>, String> {
         self.check_gut_vec_lengths()?;
         self.check_digitalref_invariants()?;
 
