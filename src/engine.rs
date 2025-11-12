@@ -11,7 +11,7 @@ use winit::keyboard::KeyCode;
 nest! {
     #[repr(C)]*
     #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
-    pub(crate) struct Engine<Mode = Edit> {
+    pub struct Engine<Mode = Edit> {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
