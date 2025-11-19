@@ -16,7 +16,7 @@ pub struct ETScale {
 pub struct UETScale {
     pub name: String,
     pub origin: String,
-    pub notes: u64,
-    pub notes_ascending: u64,
-    pub notes_descending: u64,
+    pub notes: Vec<f64>,
+    pub notes_ascending: Vec<f64>,
+    pub notes_descending: Vec<f64>,
 }
