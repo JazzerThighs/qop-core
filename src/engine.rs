@@ -15,7 +15,7 @@ nest! {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
-        pub(crate) dig_inputs: Vec<KeyCode>,
+        pub(crate) dig_inputs: Vec<usize>,
         pub(crate) analog_inputs: Vec<(usize, usize)>,
         pub(crate) i_delta_mode: bool,
         pub(crate) x_delta_mode: bool,
@@ -166,7 +166,7 @@ nest! {
 impl Engine<Edit> {
     pub fn new_saturated() -> Engine<Edit> {
         let mut engine: Engine<Edit> = Engine {
-            dig_inputs: vec![KeyCode::KeyA],
+            dig_inputs: vec![1usize],
             analog_inputs: vec![(0, 1)],
             ..Default::default()
         };
