@@ -281,7 +281,7 @@ impl SetType {
         self.holds.all_dig_idx_vecs(operation);
         Ok(())
     }
-    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>)) {
+    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>)) -> Result<(), String> {
         for aa in 0..self.analog_all.len() {
             operation(&mut self.analog_all[aa].pots);
         }
@@ -1025,7 +1025,7 @@ impl Engine<Edit> {
 impl VFSet {
     pub fn insert_btn(&mut self, btn_idx: usize, n: &mut NewEnginePartParams) {
         self.buttons.insert(btn_idx, VFBtn::new(n));
-        self.pressed.insert(btn_idx, false);
+        self.pressed.insert(btn_idx, PressMem::default());
     }
     pub fn remove_btn(&mut self, btn_idx: usize) {
         self.buttons.remove(btn_idx);
@@ -1036,7 +1036,7 @@ impl VFSet {
 impl ComboSet {
     pub fn insert_btn(&mut self, btn_idx: usize) {
         self.buttons.insert(btn_idx, ComboTog::default());
-        self.pressed.insert(btn_idx, false);
+        self.pressed.insert(btn_idx, PressMem::default());
         for c in 0..self.combos.len() {
             self.combos[c].combo.insert(btn_idx, false);
         }

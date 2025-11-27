@@ -65,7 +65,14 @@ nest! {
                 pub name: String,
                 pub description: String,
                 pub(crate) togs: Vec<usize>,
-                pub(crate) pressed: bool,
+                pub(crate) press_mem: 
+                    pub(crate) struct PressMem {
+                        pressed: bool,
+                        sus_hold: bool,
+                        isus_hold: bool,
+                        sos_hold: bool,
+                        isos_hold: bool
+                    },
                 pub(crate) i_mem: i32,
                 pub(crate) x_mem: f64,
                 pub(crate) index_out: usize,
@@ -97,8 +104,8 @@ nest! {
             pub(crate) struct VFSet {
                 pub name: String,
                 pub description: String,
-                #[default(vec![false])]
-                pub(crate) pressed: Vec<bool>,
+                #[default(vec![PressMem::default()])]
+                pub(crate) pressed: Vec<PressMem>,
                 pub(crate) i_mem: Vec<i32>,
                 pub(crate) x_mem: Vec<f64>,
                 pub(crate) max_pressed: usize,
@@ -127,8 +134,8 @@ nest! {
             pub(crate) struct ComboSet {
                 pub name: String,
                 pub description: String,
-                #[default(vec![false])]
-                pub(crate) pressed: Vec<bool>,
+                #[default(vec![PressMem::default()])]
+                pub(crate) pressed: Vec<PressMem>,
                 pub(crate) i_mem: Vec<i32>,
                 pub(crate) x_mem: Vec<f64>,
                 pub(crate) max_pressed: usize,
