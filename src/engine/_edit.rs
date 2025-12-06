@@ -3,7 +3,6 @@ use crate::engine::*;
 use better_default::Default;
 use duplicate::duplicate_item;
 use std::cmp::Ordering::{Equal, Greater, Less};
-use winit::keyboard::KeyCode;
 
 
 #[duplicate_item(
@@ -158,9 +157,9 @@ impl NewTrait for MulAnalogMod {
 
 
 impl Engine<Edit> {
-    pub fn dig_inputs_insert_k(&mut self, key_code: KeyCode) {
-        if !self.dig_inputs.contains(&key_code) {
-            self.dig_inputs.push(key_code)
+    pub fn dig_inputs_insert_k(&mut self, dig: usize) {
+        if !self.dig_inputs.contains(&dig) {
+            self.dig_inputs.push(dig)
         }
     }
     pub fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
@@ -189,8 +188,8 @@ impl Engine<Edit> {
         }
         Ok(())
     }
-    pub fn dig_inputs_purge_dig(&mut self, key_code: KeyCode) {
-        if let Some(i) = self.dig_inputs.iter().position(|&key| key == key_code) {
+    pub fn dig_inputs_purge_dig(&mut self, dig: usize) {
+        if let Some(i) = self.dig_inputs.iter().position(|&key| key == dig) {
             let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                 key_idx_vec.retain_mut(|k: &mut usize| match (*k).cmp(&i) {
                     Less => true,
@@ -206,12 +205,12 @@ impl Engine<Edit> {
             self.dig_inputs.remove(i);
         }
     }
-    pub fn dig_inputs_swap_idxs(&mut self, kc1: KeyCode, kc2: KeyCode, swap_all_fields: bool) {
+    pub fn dig_inputs_swap_idxs(&mut self, dig1: usize, dig2: usize, swap_all_fields: bool) {
         // This function swaps 2 digital input values for 2 existing inputs in the dig_inputs field.
         // swap_all_fields == true -> swaps the nodes of 2 existing keys in all of rest of the Qop's fields,  so all of those affected usize values would be now pointing to the same keys as before.
         // swap_all_fields == false -> leaves all of the rest of the Qop's fields alone, so all of those affected usize values would be now pointing to swapped keys.
-        let i1 = self.dig_inputs.iter().position(|&key| key == kc1);
-        let i2 = self.dig_inputs.iter().position(|&key| key == kc2);
+        let i1 = self.dig_inputs.iter().position(|&key| key == dig1);
+        let i2 = self.dig_inputs.iter().position(|&key| key == dig2);
         if let (Some(i1), Some(i2)) = (i1, i2) {
             self.dig_inputs.swap(i1, i2);
             if swap_all_fields {
@@ -229,9 +228,9 @@ impl Engine<Edit> {
             }
         }
     }
-    pub fn dig_inputs_change_idx_to(&mut self, kc_old: KeyCode, kc_new: KeyCode) {
-        let i1 = self.dig_inputs.iter().position(|&key| key == kc_old);
-        let i2 = self.dig_inputs.iter().position(|&key| key == kc_new);
+    pub fn dig_inputs_change_idx_to(&mut self, dig_old: usize, dig_new: usize) {
+        let i1 = self.dig_inputs.iter().position(|&key| key == dig_old);
+        let i2 = self.dig_inputs.iter().position(|&key| key == dig_new);
         if let (Some(i1), Some(i2)) = (i1, i2) {
             let k_idx_update = |k_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                 k_idx_vec.iter_mut().for_each(|k: &mut usize| {
@@ -281,7 +280,7 @@ impl SetType {
         self.holds.all_dig_idx_vecs(operation);
         Ok(())
     }
-    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>)) -> Result<(), String> {
+    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
         for aa in 0..self.analog_all.len() {
             operation(&mut self.analog_all[aa].pots);
         }
@@ -290,6 +289,7 @@ impl SetType {
                 operation(&mut self.tofield[c].analog_one[ao].pots);
             }
         }
+        Ok(())
     }
 }
 
@@ -323,6 +323,7 @@ impl Engine<Edit> {
         for set in 0..self.c_multi.len() {
             self.c_multi[set].all_ana_idx_vecs(&operation);
         }
+        Ok(())
     }
 }
 
@@ -961,9 +962,9 @@ impl Engine<Edit> {
 }
 
 #[duplicate_item(
-    multifield vf_multi_insert_btn ;
-    [v_multi]  [v_multi_insert_btn];
-    [f_multi]  [f_multi_insert_btn];
+    multifield  vf_multi_insert_btn ;
+    [v_multi]   [v_multi_insert_btn];
+    [f_multi]   [f_multi_insert_btn];
 )]
 impl Engine<Edit> {
     pub fn vf_multi_insert_btn(&mut self, set_idx: usize, btn_idx: usize) {
