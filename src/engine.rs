@@ -6,7 +6,6 @@ use better_default::Default;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Debug, marker::PhantomData};
-use winit::keyboard::KeyCode;
 
 nest! {
     #[repr(C)]*
@@ -15,7 +14,9 @@ nest! {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
+        #[default(vec![0usize])]
         pub(crate) dig_inputs: Vec<usize>,
+        #[default(vec![(1usize, 2usize)])]
         pub(crate) analog_inputs: Vec<(usize, usize)>,
         pub(crate) i_delta_mode: bool,
         pub(crate) x_delta_mode: bool,
@@ -171,12 +172,9 @@ nest! {
 }
 
 impl Engine<Edit> {
-    pub fn new_saturated() -> Engine<Edit> {
-        let mut engine: Engine<Edit> = Engine {
-            dig_inputs: vec![1usize],
-            analog_inputs: vec![(0, 1)],
-            ..Default::default()
-        };
+    pub fn new_saturated() -> Result<Engine<Edit>, String> {
+        let mut engine: Engine<Edit> = Engine::default();
+        
         let mut n = NewEnginePartParams::new(&engine);
         engine.trnsp_all = vec![MulTrnsp::new(&mut n)];
         engine.analog_all = vec![MulAnalogMod::new(&mut n)];
@@ -203,10 +201,10 @@ impl Engine<Edit> {
         engine.c_multi[0].combos[0].analog_one = vec![MulAnalogMod::new(&mut n)];
 
         let op = |key_idx_vec: &mut Vec<usize>| -> Result<(), String> {key_idx_vec.push(0); Ok(())};
-        engine.dig_inputs_global_vec_manip(op);
-        engine.ana_inputs_global_vec_manip(op);
+        engine.dig_inputs_global_vec_manip(op)?;
+        engine.ana_inputs_global_vec_manip(op)?;
 
-        engine
+        Ok(engine)
     }
     
     pub fn to_play(&mut self) -> Result<Engine<Play>, String> {

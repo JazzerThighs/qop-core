@@ -3,11 +3,9 @@ pub mod scale_list;
 
 use crate::*;
 use better_default::Default;
-use duplicate::duplicate_item;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Debug, marker::PhantomData};
-use winit::keyboard::KeyCode;
 
 nest! {
     #[repr(C)]*

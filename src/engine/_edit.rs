@@ -1,9 +1,7 @@
-
 use crate::engine::*;
 use better_default::Default;
 use duplicate::duplicate_item;
 use std::cmp::Ordering::{Equal, Greater, Less};
-
 
 #[duplicate_item(
     pass    fail    assert_expr;
@@ -119,15 +117,12 @@ impl NewTrait for MulTrnsp {
 
 impl NewTrait for AnalogMod {
     fn new(_n: &mut NewEnginePartParams) -> Self {
-       AnalogMod {
+        AnalogMod {
             i_mem: 0,
             x_mem: 0.0,
-            pot_input_nodes: vec![
-                AnalogModNode::default();
-                2
-            ],
+            pot_input_nodes: vec![AnalogModNode::default(); 2],
             ..Default::default()
-        } 
+        }
     }
 }
 
@@ -155,40 +150,42 @@ impl NewTrait for MulAnalogMod {
  ****************************************************************************
  ****************************************************************************/
 
-
 impl Engine<Edit> {
     pub fn dig_inputs_insert_k(&mut self, dig: usize) {
         if !self.dig_inputs.contains(&dig) {
             self.dig_inputs.push(dig)
         }
     }
-    pub fn dig_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+    pub fn dig_inputs_global_vec_manip(
+        &mut self,
+        operation: impl Fn(&mut Vec<usize>) -> Result<(), String>,
+    ) -> Result<(), String> {
         for t in 0..self.trnsp_all.len() {
-            operation(&mut self.trnsp_all[t].triggers);
+            operation(&mut self.trnsp_all[t].triggers)?;
         }
         for g in 0..self.guts.len() {
-            operation(&mut self.guts[g].togs);
+            operation(&mut self.guts[g].togs)?;
             for tg in 0..self.guts[g].trnsp_one.len() {
-                operation(&mut self.guts[g].trnsp_one[tg].triggers);
+                operation(&mut self.guts[g].trnsp_one[tg].triggers)?;
             }
         }
-        self.holds.all_dig_idx_vecs(&operation);
-        operation(&mut self.holds.sustain.togs);
-        operation(&mut self.holds.inv_sustain.togs);
-        operation(&mut self.holds.sostenuto.togs);
-        operation(&mut self.holds.inv_sostenuto.togs);
+        self.holds.all_dig_idx_vecs(&operation)?;
+        operation(&mut self.holds.sustain.togs)?;
+        operation(&mut self.holds.inv_sustain.togs)?;
+        operation(&mut self.holds.sostenuto.togs)?;
+        operation(&mut self.holds.inv_sostenuto.togs)?;
         for set in 0..self.v_multi.len() {
-            self.v_multi[set].all_dig_idx_vecs(&operation);
+            self.v_multi[set].all_dig_idx_vecs(&operation)?;
         }
         for set in 0..self.f_multi.len() {
-            self.f_multi[set].all_dig_idx_vecs(&operation);
+            self.f_multi[set].all_dig_idx_vecs(&operation)?;
         }
         for set in 0..self.c_multi.len() {
-            self.c_multi[set].all_dig_idx_vecs(&operation);
+            self.c_multi[set].all_dig_idx_vecs(&operation)?;
         }
         Ok(())
     }
-    pub fn dig_inputs_purge_dig(&mut self, dig: usize) {
+    pub fn dig_inputs_purge_dig(&mut self, dig: usize) -> Result<(), String> {
         if let Some(i) = self.dig_inputs.iter().position(|&key| key == dig) {
             let dig_idx_purge = |key_idx_vec: &mut Vec<usize>| -> Result<(), String> {
                 key_idx_vec.retain_mut(|k: &mut usize| match (*k).cmp(&i) {
@@ -201,11 +198,19 @@ impl Engine<Edit> {
                 });
                 Ok(())
             };
-            Engine::dig_inputs_global_vec_manip(self, dig_idx_purge);
+            Engine::dig_inputs_global_vec_manip(self, dig_idx_purge)?;
             self.dig_inputs.remove(i);
+            Ok(())
+        } else {
+            Err(String::from("{dig} does not exist in self.dig_inputs."))
         }
     }
-    pub fn dig_inputs_swap_idxs(&mut self, dig1: usize, dig2: usize, swap_all_fields: bool) {
+    pub fn dig_inputs_swap_idxs(
+        &mut self,
+        dig1: usize,
+        dig2: usize,
+        swap_all_fields: bool,
+    ) -> Result<(), String> {
         // This function swaps 2 digital input values for 2 existing inputs in the dig_inputs field.
         // swap_all_fields == true -> swaps the nodes of 2 existing keys in all of rest of the Qop's fields,  so all of those affected usize values would be now pointing to the same keys as before.
         // swap_all_fields == false -> leaves all of the rest of the Qop's fields alone, so all of those affected usize values would be now pointing to swapped keys.
@@ -224,11 +229,25 @@ impl Engine<Edit> {
                     });
                     Ok(())
                 };
-                Engine::dig_inputs_global_vec_manip(self, k_idxs_swap);
+                Engine::dig_inputs_global_vec_manip(self, k_idxs_swap)?;
+            }
+            Ok(())
+        } else {
+            match (i1, i2) {
+                (None, None) => Err(String::from(
+                    "{dig1} and {dig2} do not exist in self.dig_inputs.",
+                )),
+                (None, _) => Err(String::from("{dig1} does not exist in self.dig_inputs.")),
+                (_, None) => Err(String::from("{dig2} does not exist in self.dig_inputs.")),
+                (_, _) => unreachable!(),
             }
         }
     }
-    pub fn dig_inputs_change_idx_to(&mut self, dig_old: usize, dig_new: usize) {
+    pub fn dig_inputs_change_idx_to(
+        &mut self,
+        dig_old: usize,
+        dig_new: usize,
+    ) -> Result<(), String> {
         let i1 = self.dig_inputs.iter().position(|&key| key == dig_old);
         let i2 = self.dig_inputs.iter().position(|&key| key == dig_new);
         if let (Some(i1), Some(i2)) = (i1, i2) {
@@ -242,7 +261,17 @@ impl Engine<Edit> {
                 k_idx_vec.dedup();
                 Ok(())
             };
-            Engine::dig_inputs_global_vec_manip(self, k_idx_update);
+            Engine::dig_inputs_global_vec_manip(self, k_idx_update)?;
+            Ok(())
+        } else {
+            match (i1, i2) {
+                (None, None) => Err(String::from(
+                    "{dig_old} and {dig_new} do not exist in self.dig_inputs.",
+                )),
+                (None, _) => Err(String::from("{dig_old} does not exist in self.dig_inputs.")),
+                (_, None) => Err(String::from("{dig_new} does not exist in self.dig_inputs.")),
+                (_, _) => unreachable!(),
+            }
         }
     }
     pub fn check_digitalref_invariants(&mut self) -> Result<(), String> {
@@ -250,11 +279,11 @@ impl Engine<Edit> {
         let check_invariants_op = |k_idx_vec: &mut Vec<usize>| -> Result<(), String> {
             for k in 0..k_idx_vec.len() {
                 assert_lt_expr!(k, self_guts_len)
-            };
+            }
             Ok(())
         };
-        
-        Engine::dig_inputs_global_vec_manip(self, check_invariants_op);        
+
+        Engine::dig_inputs_global_vec_manip(self, check_invariants_op)?;
         Ok(())
     }
 }
@@ -265,28 +294,34 @@ impl Engine<Edit> {
     [ComboSet] [combos];
 )]
 impl SetType {
-    pub fn all_dig_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+    pub fn all_dig_idx_vecs(
+        &mut self,
+        operation: impl Fn(&mut Vec<usize>) -> Result<(), String>,
+    ) -> Result<(), String> {
         for b in 0..self.buttons.len() {
-            operation(&mut self.buttons[b].togs);
+            operation(&mut self.buttons[b].togs)?;
         }
         for c in 0..self.tofield.len() {
             for to in 0..self.tofield[c].trnsp_one.len() {
-                operation(&mut self.tofield[c].trnsp_one[to].triggers);
+                operation(&mut self.tofield[c].trnsp_one[to].triggers)?;
             }
         }
         for ta in 0..self.trnsp_all.len() {
-            operation(&mut self.trnsp_all[ta].triggers);
+            operation(&mut self.trnsp_all[ta].triggers)?;
         }
-        self.holds.all_dig_idx_vecs(operation);
+        self.holds.all_dig_idx_vecs(operation)?;
         Ok(())
     }
-    pub fn all_ana_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+    pub fn all_ana_idx_vecs(
+        &mut self,
+        operation: impl Fn(&mut Vec<usize>) -> Result<(), String>,
+    ) -> Result<(), String> {
         for aa in 0..self.analog_all.len() {
-            operation(&mut self.analog_all[aa].pots);
+            operation(&mut self.analog_all[aa].pots)?;
         }
         for c in 0..self.tofield.len() {
             for ao in 0..self.tofield[c].analog_one.len() {
-                operation(&mut self.tofield[c].analog_one[ao].pots);
+                operation(&mut self.tofield[c].analog_one[ao].pots)?;
             }
         }
         Ok(())
@@ -294,11 +329,14 @@ impl SetType {
 }
 
 impl HoldBtns {
-    pub fn all_dig_idx_vecs(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
-        operation(&mut self.sustain.togs);
-        operation(&mut self.inv_sustain.togs);
-        operation(&mut self.sostenuto.togs);
-        operation(&mut self.inv_sostenuto.togs);
+    pub fn all_dig_idx_vecs(
+        &mut self,
+        operation: impl Fn(&mut Vec<usize>) -> Result<(), String>,
+    ) -> Result<(), String> {
+        operation(&mut self.sustain.togs)?;
+        operation(&mut self.inv_sustain.togs)?;
+        operation(&mut self.sostenuto.togs)?;
+        operation(&mut self.inv_sostenuto.togs)?;
         Ok(())
     }
 }
@@ -310,18 +348,21 @@ impl HoldBtns {
  ****************************************************************************/
 
 impl Engine<Edit> {
-    pub fn ana_inputs_global_vec_manip(&mut self, operation: impl Fn(&mut Vec<usize>) -> Result<(), String>) -> Result<(), String> {
+    pub fn ana_inputs_global_vec_manip(
+        &mut self,
+        operation: impl Fn(&mut Vec<usize>) -> Result<(), String>,
+    ) -> Result<(), String> {
         for a in 0..self.analog_all.len() {
-            operation(&mut self.analog_all[a].pots);
+            operation(&mut self.analog_all[a].pots)?;
         }
         for set in 0..self.v_multi.len() {
-            self.v_multi[set].all_ana_idx_vecs(&operation);
+            self.v_multi[set].all_ana_idx_vecs(&operation)?;
         }
         for set in 0..self.f_multi.len() {
-            self.f_multi[set].all_ana_idx_vecs(&operation);
+            self.f_multi[set].all_ana_idx_vecs(&operation)?;
         }
         for set in 0..self.c_multi.len() {
-            self.c_multi[set].all_ana_idx_vecs(&operation);
+            self.c_multi[set].all_ana_idx_vecs(&operation)?;
         }
         Ok(())
     }
@@ -392,7 +433,7 @@ impl Engine<Edit> {
     pub fn gut_remove_analog(&mut self, g_idx: usize, analog_idx_val: usize) {
         todo!()
     }
-    
+
     pub fn gut_insert_trnsp_t(&mut self, g_idx: usize, trnsp_idx: usize) {
         if g_idx < self.guts.len() && trnsp_idx <= self.guts[g_idx].trnsp_one.len() {
             let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
@@ -497,15 +538,14 @@ impl SetType {
             self.deltafield[del_idx].x_delta.insertremove_x;
             self.deltafield[del_idx].i_mem.insertremove_i;
             self.deltafield[del_idx].x_mem.insertremove_x;
-            self.deltafield[del_idx].trnsp_one
+            self.deltafield[del_idx]
+                .trnsp_one
                 .iter_mut()
                 .for_each(|element| element.op_gut);
         }
         self.i_mem.insertremove_i;
         self.x_mem.insertremove_x;
-        self.trnsp_all
-            .iter_mut()
-            .for_each(|element| element.op_gut);
+        self.trnsp_all.iter_mut().for_each(|element| element.op_gut);
     }
 }
 
@@ -547,8 +587,6 @@ impl MulTrnsp {
     }
 }
 
-
-
 #[duplicate_item(
     SetType    field;
     [VFSet]    [buttons];
@@ -569,8 +607,18 @@ impl SetType {
                 assert_eq_expr!(self.field[d].analog_one[ao].i_mem.len(), guts_len);
                 assert_eq_expr!(self.field[d].analog_one[ao].x_mem.len(), guts_len);
                 for aon in 0..self.field[d].analog_one[ao].pot_input_nodes.len() {
-                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].i_delta.len(), guts_len);
-                    assert_eq_expr!(self.field[d].analog_one[ao].pot_input_nodes[aon].x_delta.len(), guts_len);
+                    assert_eq_expr!(
+                        self.field[d].analog_one[ao].pot_input_nodes[aon]
+                            .i_delta
+                            .len(),
+                        guts_len
+                    );
+                    assert_eq_expr!(
+                        self.field[d].analog_one[ao].pot_input_nodes[aon]
+                            .x_delta
+                            .len(),
+                        guts_len
+                    );
                 }
             }
         }
@@ -584,8 +632,14 @@ impl SetType {
             assert_eq_expr!(self.analog_all[aa].i_mem.len(), guts_len);
             assert_eq_expr!(self.analog_all[aa].x_mem.len(), guts_len);
             for aon in 0..self.analog_all[aa].pot_input_nodes.len() {
-                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].i_delta.len(), guts_len);
-                assert_eq_expr!(self.analog_all[aa].pot_input_nodes[aon].x_delta.len(), guts_len);
+                assert_eq_expr!(
+                    self.analog_all[aa].pot_input_nodes[aon].i_delta.len(),
+                    guts_len
+                );
+                assert_eq_expr!(
+                    self.analog_all[aa].pot_input_nodes[aon].x_delta.len(),
+                    guts_len
+                );
             }
         }
         Ok(())
@@ -835,12 +889,7 @@ impl SetType {
     pub fn trnsp_one_remove_t(&mut self, del_idx: usize, trnsp_idx: usize) {
         self.deltafield[del_idx].trnsp_one.remove(trnsp_idx);
     }
-    pub fn trnsp_one_insert_dig(
-        &mut self,
-        del_idx: usize,
-        trnsp_idx: usize,
-        key_idx_val: usize,
-    ) {
+    pub fn trnsp_one_insert_dig(&mut self, del_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
         if !self.deltafield[del_idx].trnsp_one[trnsp_idx]
             .triggers
             .contains(&key_idx_val)
@@ -850,12 +899,7 @@ impl SetType {
                 .push(key_idx_val)
         }
     }
-    pub fn trnsp_one_remove_dig(
-        &mut self,
-        del_idx: usize,
-        trnsp_idx: usize,
-        key_idx_val: usize,
-    ) {
+    pub fn trnsp_one_remove_dig(&mut self, del_idx: usize, trnsp_idx: usize, key_idx_val: usize) {
         self.deltafield[del_idx].trnsp_one[trnsp_idx]
             .triggers
             .retain(|&idx| idx != key_idx_val);
