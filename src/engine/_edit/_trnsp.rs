@@ -8,15 +8,21 @@ use duplicate::duplicate_item;
     [c_multi]  [combos]   [c_multi_insert_trnsp_all_t] [c_multi_remove_trnsp_all_t] [c_multi_insert_trnsp_all_dig] [c_multi_remove_trnsp_all_dig] [c_multi_insert_trnsp_one_t] [c_multi_remove_trnsp_one_t] [c_multi_insert_trnsp_one_dig] [c_multi_remove_trnsp_one_dig];
 )]
 impl Engine<Edit> {
-    pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
-        if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
+    pub fn multi_insert_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) -> bool {
+        if set_idx < self.multifield.len() && trnsp_idx <= self.multifield[set_idx].trnsp_all.len() {
             let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield[set_idx].trnsp_all_insert_t(trnsp_idx, &mut n);
+            true
+        } else {
+            false
         }
     }
-    pub fn multi_remove_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) {
+    pub fn multi_remove_trnsp_all_t(&mut self, set_idx: usize, trnsp_idx: usize) -> bool {
         if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
             self.multifield[set_idx].trnsp_all_remove_t(trnsp_idx);
+            true
+        } else {
+            false
         }
     }
     pub fn multi_insert_trnsp_all_dig(
@@ -24,9 +30,15 @@ impl Engine<Edit> {
         set_idx: usize,
         trnsp_idx: usize,
         key_idx_val: usize,
-    ) {
-        if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
+    ) -> bool {
+        if set_idx < self.multifield.len()
+            && trnsp_idx < self.multifield[set_idx].trnsp_all.len()
+            && key_idx_val < self.dig_inputs.len()
+        {
             self.multifield[set_idx].trnsp_all_insert_dig(trnsp_idx, key_idx_val);
+            true
+        } else {
+            false
         }
     }
     pub fn multi_remove_trnsp_all_dig(
@@ -34,24 +46,36 @@ impl Engine<Edit> {
         set_idx: usize,
         trnsp_idx: usize,
         key_idx_val: usize,
-    ) {
+    ) -> bool {
         if set_idx < self.multifield.len() && trnsp_idx < self.multifield[set_idx].trnsp_all.len() {
             self.multifield[set_idx].trnsp_all_remove_dig(trnsp_idx, key_idx_val);
+            true
+        } else {
+            false
         }
     }
 
-    pub fn multi_insert_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) {
+    pub fn multi_insert_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) -> bool {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx <= self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
             let mut n: NewEnginePartParams = NewEnginePartParams::new(&self);
             self.multifield[set_idx].trnsp_one_insert_t(del_idx, trnsp_idx, &mut n);
+            true
+        } else {
+            false
         }
     }
-    pub fn multi_remove_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) {
-        if set_idx < self.multifield.len() {
+    pub fn multi_remove_trnsp_one_t(&mut self, set_idx: usize, del_idx: usize, trnsp_idx: usize,) -> bool {
+        if set_idx < self.multifield.len()
+            && del_idx < self.multifield[set_idx].deltafield.len()
+            && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
+        {
             self.multifield[set_idx].trnsp_one_remove_t(del_idx, trnsp_idx);
+            true
+        } else {
+            false
         }
     }
     pub fn multi_insert_trnsp_one_dig(
@@ -60,12 +84,16 @@ impl Engine<Edit> {
         del_idx: usize,
         trnsp_idx: usize,
         key_idx_val: usize,
-    ) {
+    ) -> bool {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
+            && key_idx_val < self.dig_inputs.len()
         {
             self.multifield[set_idx].trnsp_one_insert_dig(del_idx, trnsp_idx, key_idx_val);
+            true
+        } else {
+            false
         }
     }
     pub fn multi_remove_trnsp_one_dig(
@@ -74,12 +102,15 @@ impl Engine<Edit> {
         del_idx: usize,
         trnsp_idx: usize,
         key_idx_val: usize,
-    ) {
+    ) -> bool {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
         {
             self.multifield[set_idx].trnsp_one_remove_dig(del_idx, trnsp_idx, key_idx_val);
+            true
+        } else {
+            false
         }
     }
 }
@@ -99,12 +130,15 @@ impl Engine<Edit> {
         set_idx: usize,
         trnsp_idx: usize,
         d_del_vec: del_type_vec,
-    ) {
+    ) -> bool {
         if set_idx < self.multifield.len()
             && d_del_vec.len() == self.guts.len()
             && trnsp_idx < self.multifield[set_idx].trnsp_all.len()
         {
             self.multifield[set_idx].trnsp_all_change_deltas(trnsp_idx, d_del_vec);
+            true
+        } else {
+            false
         }
     }
     pub fn multi_trnsp_one_change_deltas(
@@ -113,13 +147,16 @@ impl Engine<Edit> {
         del_idx: usize,
         trnsp_idx: usize,
         d_del_vec: del_type_vec,
-    ) {
+    ) -> bool {
         if set_idx < self.multifield.len()
             && del_idx < self.multifield[set_idx].deltafield.len()
             && trnsp_idx < self.multifield[set_idx].deltafield[del_idx].trnsp_one.len()
             && d_del_vec.len() == self.guts.len()
         {
             self.multifield[set_idx].trnsp_one_change_deltas(del_idx, trnsp_idx, d_del_vec);
+            true
+        } else {
+            false
         }
     }
 }
