@@ -3,16 +3,13 @@ pub mod scale_list;
 
 use crate::*;
 use better_default::Default;
-use duplicate::duplicate_item;
 use nestify::nest;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Debug, marker::PhantomData};
-use winit::keyboard::KeyCode;
 
 nest! {
-    #[repr(C)]*
     #[derive(Debug, Clone, Default, Serialize, Deserialize)]*
-    pub(crate) struct Temperament<Mode = Edit> {
+    pub struct Temperament<Mode = Edit> {
         pub(crate) _mode: PhantomData<Mode>,
         pub name: String,
         pub description: String,
@@ -54,7 +51,7 @@ impl Temperament<Edit> {
         }
     }
 
-    pub(crate) fn new(
+    pub fn new(
         name: Option<String>,
         description: Option<String>,
         temperament_type: Option<TemperamentType>,
@@ -65,27 +62,107 @@ impl Temperament<Edit> {
         note_class_set: Option<Vec<String>>,
         intervals: Option<Vec<f64>>,
     ) -> Temperament<Edit> {
+        let d: Temperament<Edit> = Temperament::default();
+        let octave_factor_given = octave_scalar_factor.is_some();
+        let note_names_given = note_class_set.is_some();
         let mut n: Temperament<Edit> = Temperament {
             _mode: PhantomData,
-            name: name.unwrap_or_default(),
-            description: description.unwrap_or_default(),
-            temperament_type: temperament_type.unwrap_or_default(),
-            reference_note: reference_note.unwrap_or_default(),
-            tuning_hz: tuning_hz.unwrap_or_default(),
-            octave_label: octave_label.unwrap_or_default(),
-            octave_scalar_factor: octave_scalar_factor.unwrap_or_default(),
-            note_class_set: note_class_set.unwrap_or_default(),
-            intervals: intervals.unwrap_or_default(),
+            name: name.unwrap_or(d.name),
+            description: description.unwrap_or(d.description),
+            temperament_type: temperament_type.unwrap_or(d.temperament_type),
+            reference_note: reference_note.unwrap_or(d.reference_note),
+            tuning_hz: tuning_hz.unwrap_or(d.tuning_hz),
+            octave_label: octave_label.unwrap_or(d.octave_label),
+            octave_scalar_factor: octave_scalar_factor.unwrap_or(d.octave_scalar_factor),
+            note_class_set: note_class_set.unwrap_or(d.note_class_set),
+            intervals: intervals.unwrap_or(d.intervals),
         };
-        
+
         // based on what is present in the input, build the other params from that
         // check for list of parameters in order of precedence
 
         if let Some(interval_list) = n.temperament_type.intervals() {
             n.intervals = interval_list;
         }
+        if let TemperamentType::EqualTemperament(_, o) = n.temperament_type {
+            if !octave_factor_given && o.is_finite() && o > 0.0 && o != 1.0 {
+                n.octave_scalar_factor = o;
+            }
+        }
+        if !note_names_given && n.note_class_set.len() != n.intervals.len() {
+            n.note_class_set = (0..n.intervals.len()).map(|i| i.to_string()).collect();
+        }
 
         n
+    }
+}
+
+impl<Mode> Temperament<Mode> {
+    pub fn temperament_type(&self) -> &TemperamentType {
+        &self.temperament_type
+    }
+    pub fn reference_note(&self) -> usize {
+        self.reference_note
+    }
+    pub fn tuning_hz(&self) -> f64 {
+        self.tuning_hz
+    }
+    pub fn octave_label(&self) -> i64 {
+        self.octave_label
+    }
+    pub fn octave_scalar_factor(&self) -> f64 {
+        self.octave_scalar_factor
+    }
+    pub fn note_class_set(&self) -> &[String] {
+        &self.note_class_set
+    }
+    pub fn intervals(&self) -> &[f64] {
+        &self.intervals
+    }
+
+    // `intervals[k]` is the position of note class k inside one octave, measured in steps of
+    // 1/intervals.len() of that octave, so 12 equal notes are 0.0..=11.0 and `extra` is in the same unit.
+    // An index counts note classes upward; `reference_note` sounds at `tuning_hz`.
+    pub fn frequency(&self, index: i32, extra: f64) -> Option<f64> {
+        let n = self.intervals.len() as i64;
+        if n == 0 {
+            return None;
+        }
+        let (index, reference) = (index as i64, self.reference_note as i64);
+        let octaves = index.div_euclid(n) - reference.div_euclid(n);
+        let steps = (octaves * n) as f64 + self.intervals[index.rem_euclid(n) as usize]
+            - self.intervals[reference.rem_euclid(n) as usize]
+            + extra;
+        Some(self.tuning_hz * self.octave_scalar_factor.powf(steps / n as f64))
+    }
+
+    pub fn note_name(&self, index: i32) -> Option<String> {
+        let n = self.intervals.len() as i64;
+        if n == 0 || self.note_class_set.len() as i64 != n {
+            return None;
+        }
+        let (index, reference) = (index as i64, self.reference_note as i64);
+        let octave = self.octave_label + index.div_euclid(n) - reference.div_euclid(n);
+        Some(format!("{}{}", self.note_class_set[index.rem_euclid(n) as usize], octave))
+    }
+}
+
+impl Temperament<Edit> {
+    pub fn set_tuning_hz(&mut self, tuning_hz: f64) -> bool {
+        if tuning_hz.is_finite() && tuning_hz > 0.0 {
+            self.tuning_hz = tuning_hz;
+            true
+        } else {
+            false
+        }
+    }
+    pub fn set_reference_note(&mut self, reference_note: usize) -> bool {
+        self.reference_note = reference_note;
+        true
+    }
+    pub fn set_octave_label(&mut self, octave_label: i64) -> bool {
+        self.octave_label = octave_label;
+        true
     }
 }
 
@@ -100,9 +177,11 @@ impl TemperamentType {
 
     fn intervals(&self) -> Option<Vec<f64>> {
         match self {
-            TemperamentType::EqualTemperament(_d, _o) => todo!(),
-            TemperamentType::PrimeLimit(_p) => todo!(),
-            TemperamentType::Arbitrary => None,
+            TemperamentType::EqualTemperament(d, _o) if d.is_finite() && *d >= 1.0 => {
+                Some((0..d.round() as usize).map(|i| i as f64).collect())
+            }
+            // A prime limit does not pick out one scale, so the caller supplies the intervals.
+            _ => None,
         }
     }
 }

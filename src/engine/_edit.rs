@@ -1,6 +1,9 @@
+mod _analog;
 mod _dig_inputs;
 mod _gut;
 mod _holds;
+#[cfg(test)]
+mod _tests;
 mod _trnsp;
 mod _vfc_sets;
 
@@ -35,8 +38,6 @@ impl NewTrait for VFSet {
     fn new(n: &mut NewEnginePartParams) -> Self {
         VFSet {
             buttons: vec![VFBtn::new(n)],
-            i_mem: vec![0; n.guts_len],
-            x_mem: vec![0.0; n.guts_len],
             ..Default::default()
         }
     }
@@ -47,8 +48,6 @@ impl NewTrait for VFBtn {
         VFBtn {
             i_delta: vec![0; n.guts_len],
             x_delta: vec![0.0; n.guts_len],
-            i_mem: vec![0; n.guts_len],
-            x_mem: vec![0.0; n.guts_len],
             ..Default::default()
         }
     }
@@ -59,8 +58,6 @@ impl NewTrait for ComboSet {
         n.c_btn_len = 1usize;
         ComboSet {
             combos: vec![Combo::new(n)],
-            i_mem: vec![0; n.guts_len],
-            x_mem: vec![0.0; n.guts_len],
             ..Default::default()
         }
     }
@@ -72,8 +69,6 @@ impl NewTrait for Combo {
             combo: vec![false; n.c_btn_len],
             i_delta: vec![0; n.guts_len],
             x_delta: vec![0.0; n.guts_len],
-            i_mem: vec![0; n.guts_len],
-            x_mem: vec![0.0; n.guts_len],
             ..Default::default()
         }
     }
